@@ -110,3 +110,19 @@
     font-size: 16px;
     color: #285a8f;
   }
+
+  .btn-transaction {
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .btn-transaction.active {
+    background-color: #5D92F4;
+    color: white;
+  }
+  
