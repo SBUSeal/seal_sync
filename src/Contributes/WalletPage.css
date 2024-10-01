@@ -1,0 +1,112 @@
+.wallet-page {
+    background-color: #f0f4f8; /* Light background for the page */
+    padding: 20px;
+  }
+  
+  .balance-section {
+    background-color: #d0e6f5; /* Light blue background for balance section */
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    color: #2d4a6e!important; /* Darker blue for text */
+    margin-bottom: 20px;
+  }
+  
+  .balance-section h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+  
+  .balance-amount {
+    font-size: 48px;
+    font-weight: bold;
+    color: #285a8f!important; 
+  }
+
+  /* Flexbox layout for transaction buttons and history title */
+.transaction-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Styling for transaction buttons */
+  .transaction-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn-transaction {
+    padding: 10px 20px;
+    border: none;
+    background-color: #d0e6f5;
+    color: #285a8f;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-transaction.active {
+    background-color: #285a8f;
+    color: white;
+  }
+  
+  .btn-transaction:hover {
+    background-color: #285a8f;
+    color: white;
+  }
+  
+  /* Styling for Transaction History title */
+  .transaction-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2d4a6e;
+  }
+
+  /* Transaction History Styles */
+.transaction-history {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .transaction-item:last-child {
+    border-bottom: none;
+  }
+  
+  .transaction-details {
+    display: flex;
+    flex-direction: column;
+    color: #285a8f;
+  }
+  
+  .transaction-type {
+    font-weight: bold;
+  }
+  
+  .transaction-date {
+    font-size: 12px;
+    color: #6c757d;
+  }
+  
+  .transaction-tofrom {
+    font-size: 14px;
+    color: #6c757d;
+  }
+  
+  .transaction-amount {
+    font-weight: bold;
+    font-size: 16px;
+    color: #285a8f;
+  }

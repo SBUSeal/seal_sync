@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import Files from './Contributes/Files';
 import StatusPage from './Contributes/StatusPage';
+import WalletPage from './Contributes/WalletPage';
   
 //import './Contributes/NavigationBar';
 //import './Contributes/TopBar.js';
@@ -19,7 +20,7 @@ function App() {
       case 'Files':
         return <Files />;
       case 'Wallet':
-        return <h1>Wallet Page Content</h1>;
+        return <WalletPage />;
       case 'Peers':
         return <h1>Peers Page Content</h1>;
       case 'Settings':
