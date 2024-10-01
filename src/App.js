@@ -3,6 +3,7 @@ import './App.css';
 import Files from './Contributes/Files';
 import StatusPage from './Contributes/StatusPage';
 import WalletPage from './Contributes/WalletPage';
+import Sidebar from './Contributes/NavigationBar';
   
 //import './Contributes/NavigationBar';
 //import './Contributes/TopBar.js';
@@ -32,22 +33,7 @@ function App() {
 
   return (
     <div className="App">
-      {/* Sidebar */}
-      <div className="sidebar">
-        <div className="logo">
-          <h2>Seal Share</h2>
-        </div>
-
-        <ul>
-          {/* Sidebar buttons that update the activePage state */}
-          <li><button onClick={() => setActivePage('Status')}>Status</button></li>
-          <li><button onClick={() => setActivePage('Files')}>Files</button></li>
-          <li><button onClick={() => setActivePage('Wallet')}>Wallet</button></li>
-          <li><button onClick={() => setActivePage('Peers')}>Peers</button></li>
-          <li><button onClick={() => setActivePage('Settings')}>Settings</button></li>
-        </ul>
-      </div>
-
+      <Sidebar setActivePage = {setActivePage}> </Sidebar>
       {/* Main Content */}
       <div className="content">
         {/* Topbar */}
