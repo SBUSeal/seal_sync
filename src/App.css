@@ -16,6 +16,17 @@ html, body {
   height: 100vh;
 }
 
+.logo h2 {
+  color: #ecf0f1;
+  margin-bottom: 10px;
+}
+
+.sidebar-logo-image {
+  width: 100px; /* Adjust the size as needed */
+  height: auto;
+  margin-bottom: 20px; /* Space between image and navigation */
+}
+
 /* Sidebar Styles */
 .sidebar {
   width: 250px;
@@ -119,6 +130,24 @@ html, body {
 
 .btn-local {
   background-color: #2ecc71;
+}
+
+/*Status Page Button*/
+.btn-advanced { 
+  background-color: #17a2b8;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.btn-advanced:hover {
+  background-color: #2980b9; /* Darker blue on hover */
+}
+
+.status-info {
+  font-size: 20px; /* Bigger text */
+  color: #17a2b8 !important; /* Light blue color similar to Advanced button */
+  margin-top: 10px;
 }
 
 /* File Table */
