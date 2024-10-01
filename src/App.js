@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import Files from './Contributes/Files';
+import StatusPage from './Contributes/StatusPage';
   
 //import './Contributes/NavigationBar';
 //import './Contributes/TopBar.js';
@@ -14,7 +15,7 @@ function App() {
   const renderContent = () => {
     switch (activePage) {
       case 'Status':
-        return <h1>Status Page Content</h1>;
+        return <StatusPage />;
       case 'Files':
         return <Files />;
       case 'Wallet':
