@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import './WalletPage.css'; // Assume we create a separate CSS file for styling
+import '../stylesheets/WalletPage.css'; // Assume we create a separate CSS file for styling
 
 const WalletPage = () => {
     // Initialize balance using useState
