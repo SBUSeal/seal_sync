@@ -6,8 +6,8 @@ const Files = () => {
     <div>
       {/* Buttons for actions */}
       <div className="buttons">
-        <button className="btn btn-network">Upload to Network</button>
-        <button className="btn btn-local">Upload Local</button>
+        <button className="btn btn-network">Network</button>
+        <button className="btn btn-local">Local</button>
       </div>
 
       {/* File Table */}
