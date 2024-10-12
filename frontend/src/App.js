@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import './App.css';
-import Files from './Contributes/Files';
-import StatusPage from './Contributes/StatusPage';
-import WalletPage from './Contributes/WalletPage';
-import Sidebar from './Contributes/NavigationBar';
+import './stylesheets/App.css';
+import Files from './components/FilesPage';
+import StatusPage from './components/StatusPage';
+import WalletPage from './components/WalletPage';
+import Sidebar from './components/SideBar';
   
 //import './Contributes/NavigationBar';
 //import './Contributes/TopBar.js';
