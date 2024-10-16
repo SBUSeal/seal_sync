@@ -1,0 +1,86 @@
+/* General Page Styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f7f8fc; /* Light gray background */
+    color: #333;
+}
+
+/* Container for file table */
+.container {
+    width: 100%;
+    max-width: 1200px; /* Maintain a maximum width */
+    margin: 20px auto; /* Center the container */
+    padding: 20px; /* Padding around the content */
+    background-color: transparent; /* No extra background color */
+    border-radius: 10px; /* Rounded corners */
+}
+
+/* File Table */
+.file-table {
+    width: 100%;
+    border-collapse: collapse; /* Collapse borders */
+    margin-top: 20px; /* Space above table */
+}
+
+.file-table th,
+.file-table td {
+    padding: 15px; /* Padding inside table cells */
+    text-align: left; /* Align text to the left */
+    font-size: 14px; /* Font size */
+}
+
+.file-table th {
+    background-color: #f2f2f2; /* Light gray header */
+    color: #333; /* Dark text color for headers */
+}
+
+.file-table td {
+    border-bottom: 1px solid #f0f0f0; /* Light border below cells */
+}
+
+.file-table td.icon {
+    width: 40px; /* Fixed width for icons */
+}
+
+.file-table td.actions {
+    text-align: right; /* Align action buttons to the right */
+}
+
+/* Buttons Styling */
+button {
+    padding: 10px 15px; /* Padding inside buttons */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 14px; /* Font size for buttons */
+    transition: background-color 0.3s ease; /* Smooth transition */
+    color: black; /* Black text color */
+}
+
+button:hover {
+    background-color: #e0e0e0; /* Light gray on hover */
+}
+
+/* Specific Button Styles */
+.btn-network {
+    background-color: white; /* White background for Upload to Network */
+    color: #007bff; /* Blue text color */
+}
+
+.btn-local {
+    background-color: white; /* White background for Upload Local */
+    color: #28a745; /* Green text color */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .file-table th,
+    .file-table td {
+        font-size: 12px; /* Smaller font size for smaller screens */
+    }
+
+    button {
+        font-size: 12px; /* Smaller font size for buttons */
+        padding: 8px 15px; /* Adjust padding */
+    }
+}

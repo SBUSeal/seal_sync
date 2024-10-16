@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
-import './App.css';
-import Files from './Contributes/Files';
+import './stylesheets/App.css';
+import Files from './components/FilesPage';
+import StatusPage from './components/StatusPage';
+import WalletPage from './components/WalletPage';
+import Sidebar from './components/SideBar';
+import SettingsPage from './components/SettingsPage';
+
   
 //import './Contributes/NavigationBar';
 //import './Contributes/TopBar.js';
@@ -14,15 +19,15 @@ function App() {
   const renderContent = () => {
     switch (activePage) {
       case 'Status':
-        return <h1>Status Page Content</h1>;
+        return <StatusPage />;
       case 'Files':
         return <Files />;
       case 'Wallet':
-        return <h1>Wallet Page Content</h1>;
+        return <WalletPage />;
       case 'Peers':
         return <h1>Peers Page Content</h1>;
       case 'Settings':
-        return <h1>Settings Page Content</h1>;
+        return <SettingsPage />;
       default:
         return <h1>Connected to Seal Share</h1>;
     }
@@ -30,22 +35,7 @@ function App() {
 
   return (
     <div className="App">
-      {/* Sidebar */}
-      <div className="sidebar">
-        <div className="logo">
-          <h2>Seal Share</h2>
-        </div>
-
-        <ul>
-          {/* Sidebar buttons that update the activePage state */}
-          <li><button onClick={() => setActivePage('Status')}>Status</button></li>
-          <li><button onClick={() => setActivePage('Files')}>Files</button></li>
-          <li><button onClick={() => setActivePage('Wallet')}>Wallet</button></li>
-          <li><button onClick={() => setActivePage('Peers')}>Peers</button></li>
-          <li><button onClick={() => setActivePage('Settings')}>Settings</button></li>
-        </ul>
-      </div>
-
+      <Sidebar setActivePage = {setActivePage}> </Sidebar>
       {/* Main Content */}
       <div className="content">
         {/* Topbar */}
