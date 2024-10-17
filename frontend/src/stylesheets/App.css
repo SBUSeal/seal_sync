@@ -16,30 +16,31 @@ html, body {
   height: 100vh;
 }
 
+/* Force sidebar background to navy blue */
+.sidebar {
+  width: 250px;
+  background-color: #001f3f !important; /* Navy blue background */
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  height: 100vh; /* Full viewport height */
+}
+
+.logo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
 .logo h2 {
   color: #ecf0f1;
   margin-bottom: 10px;
 }
 
 .sidebar-logo-image {
-  width: 100px; /* Adjust the size as needed */
+  width: 100px;
   height: auto;
-  margin-bottom: 20px; /* Space between image and navigation */
-}
-
-/* Sidebar Styles */
-.sidebar {
-  width: 250px;
-  background-color: #2C3E50;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-}
-
-.logo {
-  text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .sidebar ul {
@@ -54,7 +55,7 @@ html, body {
 .sidebar ul li button {
   width: 100%;
   padding: 10px;
-  background-color: #34495E;
+  background-color: #34495E; /* Lighter blue for buttons */
   color: white;
   border: none;
   border-radius: 5px;
@@ -65,14 +66,6 @@ html, body {
   background-color: #1ABC9C;
 }
 
-/* Content Area Styles */
-.content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
 /* Topbar Styles */
 .topbar {
   width: 100%;
@@ -80,6 +73,7 @@ html, body {
   background-color: #34495E;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   padding: 0 20px;
 }
 
@@ -90,6 +84,14 @@ html, body {
   border: none;
 }
 
+/* Content Area Styles */
+.content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
 /* Main Content Styles */
 .main-content {
   flex-grow: 1;
@@ -97,7 +99,6 @@ html, body {
   overflow-y: auto;
 }
 
-/* Heading and Paragraph in Main Content */
 .main-content h1 {
   font-size: 24px;
   color: #2C3E50;
@@ -106,94 +107,4 @@ html, body {
 .main-content p {
   margin-top: 10px;
   color: #7F8C8D;
-}
-
-/* Buttons for File Actions */
-.buttons {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
-}
-
-.btn {
-  padding: 10px 20px;
-  margin-left: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  color: white;
-}
-
-.btn-network {
-  background-color: #3498db;
-}
-
-.btn-local {
-  background-color: #2ecc71;
-}
-
-/*Status Page Button*/
-.btn-advanced { 
-  background-color: #17a2b8;
-  cursor: pointer;
-  color: white;
-  transition: background-color 0.3s ease;
-}
-
-.btn-advanced:hover {
-  background-color: #2980b9; /* Darker blue on hover */
-}
-
-.status-info {
-  font-size: 20px; /* Bigger text */
-  color: #17a2b8 !important; /* Light blue color similar to Advanced button */
-  margin-top: 10px;
-}
-
-/* File Table */
-.file-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.file-table th, .file-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-}
-
-.file-table th {
-  background-color: #34495E;
-  color: white;
-}
-
-.file-table tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-.file-table tr:hover {
-  background-color: #ddd;
-}
-
-.file-table td {
-  color: #2C3E50;
-}
-
-/* Media Queries for Responsive Design */
-@media (max-width: 768px) {
-  .sidebar {
-    width: 200px;
-  }
-
-  .search-input {
-    width: 200px;
-  }
-
-  .btn {
-    padding: 8px 15px;
-  }
-
-  .file-table th, .file-table td {
-    padding: 6px;
-  }
 }

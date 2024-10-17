@@ -4,6 +4,8 @@ import Files from './components/FilesPage';
 import StatusPage from './components/StatusPage';
 import WalletPage from './components/WalletPage';
 import Sidebar from './components/SideBar';
+import SettingsPage from './components/SettingsPage';
+
   
 //import './Contributes/NavigationBar';
 //import './Contributes/TopBar.js';
@@ -25,7 +27,7 @@ function App() {
       case 'Peers':
         return <h1>Peers Page Content</h1>;
       case 'Settings':
-        return <h1>Settings Page Content</h1>;
+        return <SettingsPage />;
       default:
         return <h1>Connected to Seal Share</h1>;
     }

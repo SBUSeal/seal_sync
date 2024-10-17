@@ -5,6 +5,7 @@ import filesIcon from '../images/File_Icon.png';
 import walletIcon from '../images/Wallet_Icon.png';
 import peersIcon from '../images/Peers_Icon.png';
 import settingsIcon from '../images/Settings_Icon.png';
+import '../stylesheets/App.css';
 
 
 function Sidebar(props) {
