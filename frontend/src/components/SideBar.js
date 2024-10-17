@@ -24,7 +24,7 @@ function Sidebar(props) {
       <ul>
            <li>
             <img src={statusIcon} alt="Status Icon" className="sidebar-icon" />
-            <button className='active-bar' onClick={() => setActivePage('Status')}>Status</button>
+            <button className={activePage === 'Status' ? 'active-bar' : ''} onClick={() => setActivePage('Status')}>Status</button>
             </li>
            <li>
             <img src={filesIcon} alt="Files Icon" className="sidebar-icon" />
