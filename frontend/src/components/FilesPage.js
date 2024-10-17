@@ -1,17 +1,19 @@
-
 import React, { useState } from 'react';
 import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share2Icon, UploadIcon } from '@radix-ui/react-icons';
 import '../stylesheets/FilesPage.css';
 
 const FilesPage = () => {
   const [files, setFiles] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); //uploading file
   const [isFileModalOpen, setIsFileModalOpen] = useState(false);
   const [currentFile, setCurrentFile] = useState(null); 
   const [tempFiles, setTempFiles] = useState([]);
   const [newFileDetails, setNewFileDetails] = useState({ price: '', description: '' });
   const [searchQuery, setSearchQuery] = useState(''); 
   const [filteredFiles, setFilteredFiles] = useState(files); 
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false)
+  const [cid, setCid] = useState('');
+
 
   function handleFileUpload(event) {
     const selectedFiles = Array.from(event.target.files);
@@ -20,8 +22,42 @@ const FilesPage = () => {
   }
 
   function handleDownload(file) {
-   
+
   }
+
+  function handleDownloadFile() {
+    setIsDownloadModalOpen(true)
+  }
+
+  function handleCidChange(e) {
+    setCid(e.target.value);
+
+  }
+
+  function closeDownloadModal() {
+    setCid("")
+    setIsDownloadModalOpen(false)
+  }
+
+  // Creates a dummy file after we press download
+  function dummyDownload() {
+    const dummyFile = {
+      name: `Dummy File ${files.length }`, 
+      size: 420,
+      status: 'unlocked',
+      source: 'local',
+      price: '42', 
+      description: 'Dummy description', 
+      isFolder: false,
+    };
+
+    const updatedFiles = [...files, dummyFile];
+    setFiles(updatedFiles);
+    setFilteredFiles(updatedFiles);
+    
+    closeDownloadModal()
+  }
+
 
   function handleModalSubmit() {
     const newFiles = tempFiles.map(file => ({
@@ -93,8 +129,8 @@ const FilesPage = () => {
           onKeyPress={handleSearchKeyPress} // Handle Enter key press
         />
         <div className="action-buttons">
-          <button onClick={createFolder} className="action-btn">
-            <PlusCircledIcon /> <div className='action-btn-text'>Create Folder</div>
+          <button onClick={handleDownloadFile} className="action-btn">
+            <DownloadIcon /> <div className='action-btn-text'> Download </div>
           </button>
           <button className="action-btn">
             <UploadIcon /> 
@@ -190,6 +226,42 @@ const FilesPage = () => {
           </div>
         </div>
       )}
+
+
+      {isDownloadModalOpen && (
+              <div className="modal">
+                <div className="modal-content" style={{maxWidth: "600px"}}>
+                  <label style={{fontSize: "20px", display: 'block'}} htmlFor="cidInput"> <h2> Enter File CID </h2></label>
+                  <input
+                    className='cid-input'
+                    type="text"
+                    id="cidInput"
+                    value={cid}
+                    onChange={handleCidChange}
+                    placeholder="File CID"
+                    required
+                  />
+
+                  <div style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      gap: "50px",
+                      alignItems: 'center',
+                      marginTop: "150px"
+                    }}>
+                    <div>
+                      <button onClick={closeDownloadModal} style={{fontSize: '20px'}}>Close</button>
+                    </div>
+                    <div>
+                      <button onClick={dummyDownload} className='download-modal-download-button' disabled={cid.trim() === ''}>Download</button>
+                    </div>
+                  </div>
+
+
+                </div>
+              </div>
+            )}
+
     </div>
   );
 };
