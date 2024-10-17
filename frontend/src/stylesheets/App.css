@@ -66,6 +66,10 @@ html, body {
   background-color: #1ABC9C;
 }
 
+.sidebar ul li button.active-bar {
+  background-color: #1ABC9C;
+}
+
 /* Topbar Styles */
 .topbar {
   width: 100%;

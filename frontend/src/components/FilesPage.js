@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
-import '@radix-ui/themes/styles.css';
 import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share2Icon, UploadIcon } from '@radix-ui/react-icons';
 import '../stylesheets/FilesPage.css';
-
 
 const FilesPage = () => {
   const [files, setFiles] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isFileModalOpen, setIsFileModalOpen] = useState(false); // File details modal
-  const [currentFile, setCurrentFile] = useState(null); // Store the file details
-  const [tempFiles, setTempFiles] = useState([]); // Temporary storage for uploaded files before modal confirmation
+  const [isFileModalOpen, setIsFileModalOpen] = useState(false);
+  const [currentFile, setCurrentFile] = useState(null); 
+  const [tempFiles, setTempFiles] = useState([]);
   const [newFileDetails, setNewFileDetails] = useState({ price: '', description: '' });
+  const [searchQuery, setSearchQuery] = useState(''); 
+  const [filteredFiles, setFilteredFiles] = useState(files); 
 
   function handleFileUpload(event) {
     const selectedFiles = Array.from(event.target.files);
     setTempFiles(selectedFiles); 
     setIsModalOpen(true); 
+  }
+
+  function handleDownload(file) {
+   
   }
 
   function handleModalSubmit() {
@@ -26,10 +30,12 @@ const FilesPage = () => {
       source: 'local',
       price: newFileDetails.price,
       description: newFileDetails.description,
-      isFolder: false, // Indicate it's a file
+      isFolder: false, 
     }));
 
-    setFiles(prevFiles => [...prevFiles, ...newFiles]);
+    const updatedFiles = [...files, ...newFiles];
+    setFiles(updatedFiles);
+    setFilteredFiles(updatedFiles); 
 
     setTempFiles([]); 
     setNewFileDetails({ price: '', description: '' }); 
@@ -44,11 +50,11 @@ const FilesPage = () => {
   function createFolder() {
     const folderName = prompt('Enter Folder Name');
     if (folderName) {
-      setFiles(prevFiles => [...prevFiles, { name: folderName, size: 0, status: 'unlocked', source: 'local', isFolder: true }]);
+      const updatedFiles = [...files, { name: folderName, size: 0, status: 'unlocked', source: 'local', isFolder: true }];
+      setFiles(updatedFiles);
+      setFilteredFiles(updatedFiles); 
     }
   }
-
-  
 
   // Handle file click to open file details modal
   function openFileDetails(file) {
@@ -61,10 +67,30 @@ const FilesPage = () => {
     setIsFileModalOpen(false); // Close the file details modal
   }
 
+
+  // Handle search query input
+  function handleSearchInput(e) {
+    setSearchQuery(e.target.value);
+  }
+  // Handle search on enter key press
+  function handleSearchKeyPress(e) {
+    if (e.key === 'Enter') {
+      const filtered = files.filter(file => file.name.toLowerCase().includes(searchQuery.toLowerCase()));
+      setFilteredFiles(filtered); // Set the filtered files to display
+    }
+  }
+
   return (
     <div className="file-manager-container">
       <div className="top-bar">
-        <input type="text" className="search-bar" placeholder="Search" />
+        <input
+          type="text"
+          className="search-bar"
+          placeholder="Search"
+          value={searchQuery}
+          onChange={handleSearchInput}
+          onKeyPress={handleSearchKeyPress} // Handle Enter key press
+        />
         <div className="action-buttons">
           <button onClick={createFolder} className="action-btn">
             <PlusCircledIcon /> <div className='action-btn-text'>Create Folder</div>
@@ -88,15 +114,15 @@ const FilesPage = () => {
               <th></th>
             </tr>
           </thead>
-          {files.length === 0 ? (
+          {filteredFiles.length === 0 ? (
             <tbody>
               <tr>
-                <td colSpan="5" className="no-files-message">No files uploaded</td>
+                <td colSpan="5" className="no-files-message">No files match your search</td>
               </tr>
             </tbody>
           ) : (
             <tbody>
-              {files.map((file, index) => (
+              {filteredFiles.map((file, index) => (
                 <tr key={index}>
                   <td>
                     {file.isFolder ? <LayersIcon /> : <FileIcon />} {file.name}
@@ -105,14 +131,15 @@ const FilesPage = () => {
                   <td>{formatFileSize(file.size)}</td>
                   <td>{new Date().toLocaleDateString()}</td>
                   <td>
-                    <button>
+                    <button onClick={() => handleDownload(file)}>
                       <DownloadIcon />
                     </button>
+
                     <button>
                       <Share2Icon />
                     </button>
                     <button onClick={() => file.isFolder ? 'OPENFOLDER' : openFileDetails(file)}>
-                      <DotsVerticalIcon/>
+                      <DotsVerticalIcon />
                     </button>
                   </td>
                 </tr>
@@ -127,14 +154,14 @@ const FilesPage = () => {
         <div className="modal">
           <div className="modal-content">
             <h2>Enter File Details</h2>
-            <label>Price:</label>
+            <label>Price:</label> 
             <input
-              type="number"
+              type='number'
               value={newFileDetails.price}
               onChange={(e) => setNewFileDetails({ ...newFileDetails, price: e.target.value })}
-              placeholder="Enter price"
             />
-            <label>Description:</label>
+            SealTokens
+
             <textarea
               value={newFileDetails.description}
               onChange={(e) => setNewFileDetails({ ...newFileDetails, description: e.target.value })}
@@ -147,7 +174,6 @@ const FilesPage = () => {
           </div>
         </div>
       )}
-
 
       {isFileModalOpen && currentFile && (
         <div className="modal">
@@ -163,7 +189,6 @@ const FilesPage = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };

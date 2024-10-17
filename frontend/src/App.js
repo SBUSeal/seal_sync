@@ -24,8 +24,8 @@ function App() {
         return <Files />;
       case 'Wallet':
         return <WalletPage />;
-      case 'Peers':
-        return <h1>Peers Page Content</h1>;
+      case 'Proxy':
+        return <h1>Proxy Page Content</h1>;
       case 'Settings':
         return <SettingsPage />;
       default:
@@ -35,7 +35,7 @@ function App() {
 
   return (
     <div className="App">
-      <Sidebar setActivePage = {setActivePage}> </Sidebar>
+      <Sidebar setActivePage = {setActivePage} activePage = {activePage}> </Sidebar>
       {/* Main Content */}
       <div className="content">
         {/* Topbar */}
