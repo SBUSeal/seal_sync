@@ -200,8 +200,14 @@ const FilesPage = () => {
             <label>Price:</label> 
             <input
               type='number'
+              min={0}
               value={newFileDetails.price}
               onChange={(e) => setNewFileDetails({ ...newFileDetails, price: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === '-' || e.key === 'e') {
+                  e.preventDefault();  // Prevent typing "-" or "e"
+                }
+              }}
             />
             SealTokens
 
