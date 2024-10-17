@@ -200,8 +200,14 @@ const FilesPage = () => {
             <label>Price:</label> 
             <input
               type='number'
+              min={0}
               value={newFileDetails.price}
               onChange={(e) => setNewFileDetails({ ...newFileDetails, price: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === '-' || e.key === 'e') {
+                  e.preventDefault();  // Prevent typing "-" or "e"
+                }
+              }}
             />
             SealTokens
 
@@ -212,7 +218,7 @@ const FilesPage = () => {
             ></textarea>
             <div className="modal-actions">
               <button onClick={handleModalClose}>Cancel</button>
-              <button onClick={handleModalSubmit}>Submit</button>
+              <button onClick={handleModalSubmit} disabled={newFileDetails.price.trim() === '' || newFileDetails.description.trim() === ''}>Submit</button>
             </div>
           </div>
         </div>
