@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "chart.js": "^4.4.4",
+    "react-scripts": "^3.0.1"
+  }
+}

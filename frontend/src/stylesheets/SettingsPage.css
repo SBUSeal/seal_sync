@@ -1,0 +1,108 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f4f4; /* Background color for the entire page */
+    height: 100vh; /* Full viewport height */
+}
+
+.container {
+    width: 100%; /* Full width of the container */
+    margin: 0; /* No margin */
+    padding: 20px; /* Padding around the content */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: none; /* Remove the shadow */
+    display: flex; /* Use flexbox */
+    flex-direction: column; /* Stack items vertically */
+    justify-content: flex-start; /* Start from the top */
+    height: 100%; /* Full height of the parent container */
+}
+
+h2 {
+    color: #333; /* Heading color */
+    margin-bottom: 10px; /* Space below headings */
+}
+
+.input-group {
+    display: flex; /* Use flexbox for input and button alignment */
+    align-items: center; /* Center items vertically */
+    margin-bottom: 20px; /* Space below input groups */
+}
+
+.input-field {
+    flex: 1; /* Allow input fields to take available space */
+    padding: 10px; /* Padding inside input fields */
+    margin-right: 10px; /* Space between input field and button */
+    border: 1px solid #ccc; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+    color: black; /* Black text color for input fields */
+}
+
+/* Button styles */
+button {
+    padding: 10px 15px; /* Padding inside buttons */
+    border: 1px solid #ccc; /* Border color */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size for buttons */
+    background-color: white; /* White background */
+    color: black; /* Black text color for buttons */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+/* Hover Effect */
+button:hover {
+    background-color: #e0e0e0; /* Light gray on hover */
+}
+
+/* Specific Button Styles */
+.submit-button {
+    color: black; /* Black text */
+}
+
+.share-button {
+    color: black; /* Black text */
+}
+
+.generate-button {
+    color: black; /* Black text */
+}
+
+/* Button Group Styles */
+.button-group {
+    display: flex; /* Flexbox for horizontal layout */
+    justify-content: space-between; /* Space between buttons */
+    margin-top: 20px; /* Space above the button group */
+}
+
+.filter-button {
+    flex: 1; /* Equal width for buttons */
+    padding: 10px 15px; /* Padding for buttons */
+    border: 1px solid #ccc; /* Border color */
+    border-radius: 5px; /* Rounded corners */
+    background-color: white; /* White background */
+    color: black; /* Dark text color */
+    margin-right: 10px; /* Space between buttons */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+/* Hover Effect for Filter Buttons */
+.filter-button:hover {
+    background-color: #e0e0e0; /* Lighter gray on hover */
+}
+
+.filter-button.active {
+    background-color: #4A90E2; /* Active button background color */
+    color: white; /* Active text color */
+    border: none; /* Remove border for active button */
+}
+
+.filter-button:last-child {
+    margin-right: 0; /* No margin for the last button */
+}

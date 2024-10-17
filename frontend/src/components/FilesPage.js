@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import '@radix-ui/themes/styles.css';
 import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share2Icon, UploadIcon } from '@radix-ui/react-icons';
@@ -64,11 +65,11 @@ const FilesPage = () => {
     setIsFileModalOpen(false); // Close the file details modal
   }
 
+
   // Handle search query input
   function handleSearchInput(e) {
     setSearchQuery(e.target.value);
   }
-
   // Handle search on enter key press
   function handleSearchKeyPress(e) {
     if (e.key === 'Enter') {
