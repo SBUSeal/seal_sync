@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import sealImage from '../images/Seal_Logo.png';
 import statusIcon from '../images/Status_Icon.png';
 import filesIcon from '../images/File_Icon.png';
@@ -9,12 +9,19 @@ import settingsIcon from '../images/Settings_Icon.png';
 
 function Sidebar(props) {
 
+  const [isMinimized, setIsMinimized] = useState(false);
+
+  // Function to toggle sidebar size
+  const toggleSidebar = () => {
+    setIsMinimized(!isMinimized);
+  };
+
   const setActivePage = props.setActivePage;
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${isMinimized ? 'sidebar-minimized' : ''}`}>
       <div className="logo">
-        <h2>Seal Share</h2>
         <img src={sealImage} alt="Seal Share Logo" className="sidebar-logo-image"/>
+        {!isMinimized && <h2>Seal Share</h2>}
       </div>
       <ul>
         {/* <li>
@@ -34,25 +41,31 @@ function Sidebar(props) {
           Settings</li> */}
            <li>
             <img src={statusIcon} alt="Status Icon" className="sidebar-icon" />
-            <button onClick={() => setActivePage('Status')}>Status</button>
+            {!isMinimized && <button onClick={() => setActivePage('Status')}>Status</button>}
             </li>
            <li>
             <img src={filesIcon} alt="Files Icon" className="sidebar-icon" />
-            <button onClick={() => setActivePage('Files')}>Files</button>
+            {!isMinimized && <button onClick={() => setActivePage('Files')}>Files</button>}
            </li>
            <li>
             <img src={walletIcon} alt="Wallet Icon" className="sidebar-icon" />
-            <button onClick={() => setActivePage('Wallet')}>Wallet</button>
+            {!isMinimized && <button onClick={() => setActivePage('Wallet')}>Wallet</button>}
             </li>
            <li>
             <img src={peersIcon} alt="Peers Icon" className="sidebar-icon" />
-            <button onClick={() => setActivePage('Peers')}>Peers</button>
+            {!isMinimized && <button onClick={() => setActivePage('Peers')}>Peers</button>}
             </li>
            <li>
            <img src={settingsIcon} alt="Settings Icon" className="sidebar-icon" />
-            <button onClick={() => setActivePage('Settings')}>Settings</button>
+            {!isMinimized && <button onClick={() => setActivePage('Settings')}>Settings</button>}
             </li>
       </ul>
+      {/* Toggle Button */}
+      <div className="sidebar-toggle">
+        <button onClick={toggleSidebar}>
+          {isMinimized ? '▶' : '◀'}
+        </button>
+      </div>
     </div>
   );
 }
