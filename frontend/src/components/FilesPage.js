@@ -26,7 +26,7 @@ const Files = () => {
       },
     };
     axios.post(url, formData, config).then((response) => {
-      console.log(response.data);
+      //console.log(response.data);
     });
 
   }
