@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import '@radix-ui/themes/styles.css';
 import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share2Icon, UploadIcon } from '@radix-ui/react-icons';
 import '../stylesheets/FilesPage.css';
 
@@ -18,6 +17,10 @@ const FilesPage = () => {
     const selectedFiles = Array.from(event.target.files);
     setTempFiles(selectedFiles); 
     setIsModalOpen(true); 
+  }
+
+  function handleDownload(file) {
+   
   }
 
   function handleModalSubmit() {
@@ -129,9 +132,10 @@ const FilesPage = () => {
                   <td>{formatFileSize(file.size)}</td>
                   <td>{new Date().toLocaleDateString()}</td>
                   <td>
-                    <button>
+                    <button onClick={() => handleDownload(file)}>
                       <DownloadIcon />
                     </button>
+
                     <button>
                       <Share2Icon />
                     </button>
@@ -151,14 +155,14 @@ const FilesPage = () => {
         <div className="modal">
           <div className="modal-content">
             <h2>Enter File Details</h2>
-            <label>Price:</label>
+            <label>Price:</label> 
             <input
-              type="number"
+              type='number'
               value={newFileDetails.price}
               onChange={(e) => setNewFileDetails({ ...newFileDetails, price: e.target.value })}
-              placeholder="Enter price"
             />
-            <label>Description:</label>
+            SealTokens
+
             <textarea
               value={newFileDetails.description}
               onChange={(e) => setNewFileDetails({ ...newFileDetails, description: e.target.value })}
