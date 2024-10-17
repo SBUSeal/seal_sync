@@ -178,14 +178,11 @@ margin: 0;
   cursor: pointer;
 }
 
-.download-modal-download-button {
-  font-size: 20px;
-}
-.download-modal-download-button:disabled {
-  background-color: #ccc;
-  color: #666; /* Darker text for contrast */
-  cursor: not-allowed; /* Change cursor to ind */
-  
+
+.modal-actions button:disabled {
+  background-color: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
 }
 
 .cid-input {

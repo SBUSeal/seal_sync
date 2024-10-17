@@ -255,11 +255,11 @@ const FilesPage = () => {
                       alignItems: 'center',
                       marginTop: "150px"
                     }}>
-                    <div>
+                    <div className='modal-actions'>
                       <button onClick={closeDownloadModal} style={{fontSize: '20px'}}>Close</button>
                     </div>
-                    <div>
-                      <button onClick={dummyDownload} className='download-modal-download-button' disabled={cid.trim() === ''}>Download</button>
+                    <div className='modal-actions'>
+                      <button onClick={dummyDownload} style={{fontSize: '20px'}} disabled={cid.trim() === ''}>Download</button>
                     </div>
                   </div>
 
