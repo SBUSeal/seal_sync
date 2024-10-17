@@ -28,19 +28,19 @@ function Sidebar(props) {
             </li>
            <li>
             <img src={filesIcon} alt="Files Icon" className="sidebar-icon" />
-            <button className={activePage === 'Status' ? 'active-bar' : ''} onClick={() => setActivePage('Files')}>Files</button>
+            <button className={activePage === 'Files' ? 'active-bar' : ''} onClick={() => setActivePage('Files')}>Files</button>
            </li>
            <li>
             <img src={walletIcon} alt="Wallet Icon" className="sidebar-icon" />
-            <button className={activePage === 'Status' ? 'active-bar' : ''} onClick={() => setActivePage('Wallet')}>Wallet</button>
+            <button className={activePage === 'Wallet' ? 'active-bar' : ''} onClick={() => setActivePage('Wallet')}>Wallet</button>
             </li>
            <li>
             <img src={proxyIcon} alt="Peers Icon" className="sidebar-icon" />
-            <button className={activePage === 'Status' ? 'active-bar' : ''} onClick={() => setActivePage('Proxy')}>Proxy</button>
+            <button className={activePage === 'Proxy' ? 'active-bar' : ''} onClick={() => setActivePage('Proxy')}>Proxy</button>
             </li>
            <li>
            <img src={settingsIcon} alt="Settings Icon" className="sidebar-icon" />
-            <button className={activePage === 'Status' ? 'active-bar' : ''} onClick={() => setActivePage('Settings')}>Settings</button>
+            <button className={activePage === 'Settings' ? 'active-bar' : ''} onClick={() => setActivePage('Settings')}>Settings</button>
             </li>
       </ul>
     </div>
