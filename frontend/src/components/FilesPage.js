@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share2Icon, UploadIcon } from '@radix-ui/react-icons';
+import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share1Icon, UploadIcon } from '@radix-ui/react-icons';
 import '../stylesheets/FilesPage.css';
 
 const FilesPage = () => {
@@ -179,7 +179,7 @@ const FilesPage = () => {
                     </button>
 
                     <button>
-                      <Share2Icon />
+                      <Share1Icon />
                     </button>
                     <button onClick={() => file.isFolder ? 'OPENFOLDER' : openFileDetails(file)}>
                       <DotsVerticalIcon />
