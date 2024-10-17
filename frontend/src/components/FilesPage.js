@@ -107,15 +107,21 @@ const FilesPage = () => {
 
   // Handle search query input
   function handleSearchInput(e) {
-    setSearchQuery(e.target.value);
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    const filtered = files.filter(file =>
+      file.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredFiles(filtered);
   }
   // Handle search on enter key press
-  function handleSearchKeyPress(e) {
-    if (e.key === 'Enter') {
-      const filtered = files.filter(file => file.name.toLowerCase().includes(searchQuery.toLowerCase()));
-      setFilteredFiles(filtered); // Set the filtered files to display
-    }
-  }
+  // function handleSearchKeyPress(e) {
+  //   if (e.key === 'Enter') {
+  //     const filtered = files.filter(file => file.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  //     setFilteredFiles(filtered); // Set the filtered files to display
+  //   }
+  // }
 
   return (
     <div className="file-manager-container">
@@ -126,7 +132,7 @@ const FilesPage = () => {
           placeholder="Search"
           value={searchQuery}
           onChange={handleSearchInput}
-          onKeyPress={handleSearchKeyPress} // Handle Enter key press
+          // onKeyPress={handle} // Handle Enter key press
         />
         <div className="action-buttons">
           <button onClick={handleDownloadFile} className="action-btn">
@@ -214,13 +220,13 @@ const FilesPage = () => {
 
       {isFileModalOpen && currentFile && (
         <div className="modal">
-          <div className="modal-content">
+          <div className="modal-content"  style={{textAlign: "left"}}>
             <h2>File Details</h2>
             <p><strong>Name:</strong> {currentFile.name}</p>
             <p><strong>Size:</strong> {formatFileSize(currentFile.size)}</p>
-            <p><strong>Price:</strong> {currentFile.price}</p>
+            <p><strong>Price:</strong> {currentFile.price + " Seal Token"}</p>
             <p><strong>Description:</strong> {currentFile.description}</p>
-            <div className="modal-actions">
+            <div className="modal-actions" style={{marginTop: "30px"}}>
               <button onClick={closeFileModal}>Close</button>
             </div>
           </div>
