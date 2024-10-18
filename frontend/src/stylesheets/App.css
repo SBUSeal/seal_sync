@@ -35,20 +35,51 @@ html, body {
   display: flex;
   flex-direction: column;
   padding: 20px;
+  transition: width 0.3s ease; /* Smooth transition */
 }
 
-.logo {
+.sidebar-minimized {
+  width: 60px; /* Shrink sidebar */
+}
+
+/* Hide logo when minimized */
+.sidebar .logo {
   text-align: center;
   margin-bottom: 30px;
+  transition: opacity 0.3s ease;
 }
 
+.sidebar-minimized .logo {
+  opacity: 0;
+  height: 0;
+  overflow: hidden; /* Hide logo */
+}
+
+/* Sidebar Logo Image */
+.sidebar-logo-image {
+  width: 100px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+/* Sidebar navigation list */
 .sidebar ul {
   list-style: none;
   padding: 0;
 }
 
+/* Sidebar items */
 .sidebar ul li {
+  display: flex;
+  align-items: center;
   margin-bottom: 15px;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar ul li img {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
 }
 
 .sidebar ul li button {
@@ -59,10 +90,26 @@ html, body {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
+/* Hover state */
 .sidebar ul li button:hover {
   background-color: #1ABC9C;
+}
+
+/* Hide button text when sidebar is minimized */
+.sidebar-minimized ul li button {
+  opacity: 0;
+  width: 0;
+  padding: 0;
+  overflow: hidden;
+  transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+/* Adjust icon position when minimized */
+.sidebar-minimized ul li img {
+  margin-right: 0;
 }
 
 /* Content Area Styles */
