@@ -1,0 +1,62 @@
+/* Login Page Styles */
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #34495E; /* Match the lighter blue from the topbar */
+  }
+  
+  .login-container {
+    background-color: #001f3f; /* Navy blue background to match sidebar */
+    color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .login-container h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: white !important;
+  }
+  
+  .login-container input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    background-color: #2C3E50;
+    color: white;
+  }
+  
+  .login-container input::placeholder {
+    color: #7F8C8D; /* Lighter text for placeholder */
+  }
+  
+  .login-container button {
+    width: auto; /* Remove full-width */
+    padding: 10px 20px;
+    background-color: #1ABC9C; /* Green hover color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .login-container button:hover {
+    background-color: #16a085;
+  }
+  
+  /* Optional: Adjust spacing for inputs */
+  .login-container .input-group {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  

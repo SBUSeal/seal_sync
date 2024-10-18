@@ -5,7 +5,7 @@ const WalletPage = () => {
     // Initialize balance using useState
 
     const [filter, setFilter] = useState('All');
-    const [sealTokenBalance, setSealTokenBalance] = useState(0);
+    const [sealTokenBalance, setSealTokenBalance] = useState(5);//Change constant to reflect total wallet balance of dummy data
     
     //Placeholder transactions (these will be dynamically loaded later from the backend)
   const transactions = [
