@@ -192,3 +192,21 @@ margin: 0;
   border-radius: 5px;
   padding: 10px;
 }
+
+.provider-item {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #fff;
+  transition: background-color 0.2s ease;
+}
+
+.provider-item:hover {
+  background-color: #e0e0e0; /* Change background on hover */
+}
+
+.provider-item.selected {
+  background-color: #b9b8b8; /* Different background for selected item */
+}
