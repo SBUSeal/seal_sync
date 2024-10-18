@@ -13,10 +13,28 @@ const FilesPage = () => {
   const [filteredFiles, setFilteredFiles] = useState(files); 
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false)
   const [cid, setCid] = useState('');
+  const [isProvidersModalOpen, setIsProvidersModalOpen] = useState(false)
+  const [selectedProvider, setSelectedProvider] = useState(null)
+
+  const dummyProviders = [
+    {ip: "127.0.0.1", price: 2},
+    {ip: "10.0.0.1", price: 9},
+    {ip: "192.168.0.1", price: 5},
+    {ip: "132.145.0.1", price: 8},
+  ]
+
+  const handleSelectProvider = (provider) => {
+    console.log("Selected provider is: ", provider)
+    setSelectedProvider(provider);
+  };
 
 
   function handleFileUpload(event) {
     const selectedFiles = Array.from(event.target.files);
+    if (selectedFiles.length === 0) {
+      setIsModalOpen(false)
+      return
+    }
     setTempFiles(selectedFiles); 
     setIsModalOpen(true); 
   }
@@ -39,14 +57,23 @@ const FilesPage = () => {
     setIsDownloadModalOpen(false)
   }
 
+  function closeProvidersModal() {
+    setIsProvidersModalOpen(false)
+  }
+
+  function showProvidersModal() {
+    closeDownloadModal()
+    setIsProvidersModalOpen(true)
+  }
+
   // Creates a dummy file after we press download
   function dummyDownload() {
     const dummyFile = {
       name: `Dummy File ${files.length }`, 
-      size: 420,
+      size: 100,
       status: 'unlocked',
       source: 'local',
-      price: '42', 
+      price: '1', 
       description: 'Dummy description', 
       isFolder: false,
     };
@@ -54,8 +81,9 @@ const FilesPage = () => {
     const updatedFiles = [...files, dummyFile];
     setFiles(updatedFiles);
     setFilteredFiles(updatedFiles);
+    setIsProvidersModalOpen(false)
+    setSelectedProvider(null)
     
-    closeDownloadModal()
   }
 
 
@@ -81,6 +109,7 @@ const FilesPage = () => {
 
   function handleModalClose() {
     setTempFiles([]); 
+    setNewFileDetails({ price: '', description: '' }); 
     setIsModalOpen(false); 
   }
 
@@ -115,13 +144,6 @@ const FilesPage = () => {
     );
     setFilteredFiles(filtered);
   }
-  // Handle search on enter key press
-  // function handleSearchKeyPress(e) {
-  //   if (e.key === 'Enter') {
-  //     const filtered = files.filter(file => file.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  //     setFilteredFiles(filtered); // Set the filtered files to display
-  //   }
-  // }
 
   return (
     <div className="file-manager-container">
@@ -199,24 +221,29 @@ const FilesPage = () => {
         <div className="modal">
           <div className="modal-content">
             <h2>Enter File Details</h2>
-            <label>Price:</label> 
-            <input
-              type='number'
-              min={0}
-              value={newFileDetails.price}
-              onChange={(e) => setNewFileDetails({ ...newFileDetails, price: e.target.value })}
-              onKeyDown={(e) => {
-                if (e.key === '-' || e.key === 'e') {
-                  e.preventDefault();  // Prevent typing "-" or "e"
-                }
-              }}
-            />
-            SealTokens
+            <div style={{fontSize: "20px"}}> 
+              <label style={{marginRight: "10px"}}>Price:</label> 
+                <input
+                  type='number'
+                  min={0}
+                  value={newFileDetails.price}
+                  onChange={(e) => setNewFileDetails({ ...newFileDetails, price: e.target.value })}
+                  onKeyDown={(e) => {
+                    if (e.key === '-' || e.key === 'e') {
+                      e.preventDefault();  // Prevent typing "-" or "e"
+                    }
+                  }}
+                  style={{marginRight: "10px", fontSize: "18px"}}
+                />
+                SealTokens
+            </div>
 
             <textarea
               value={newFileDetails.description}
+              maxLength={150}
               onChange={(e) => setNewFileDetails({ ...newFileDetails, description: e.target.value })}
               placeholder="Enter description"
+              style={{fontSize: "18px"}}
             ></textarea>
             <div className="modal-actions">
               <button onClick={handleModalClose}>Cancel</button>
@@ -267,13 +294,46 @@ const FilesPage = () => {
                       <button onClick={closeDownloadModal} style={{fontSize: '20px'}}>Close</button>
                     </div>
                     <div className='modal-actions'>
-                      <button onClick={dummyDownload} style={{fontSize: '20px'}} disabled={cid.trim() === ''}>Download</button>
+                      <button onClick={showProvidersModal} style={{fontSize: '20px'}} disabled={cid.trim() === ''}>Download</button>
                     </div>
                   </div>
 
 
                 </div>
               </div>
+            )}
+
+      {isProvidersModalOpen && (
+              <div className="modal">
+                <div className="modal-content" style={{maxWidth: "600px"}}>
+                    <h2> Found Providers </h2>
+                      {dummyProviders.map((provider, index) => (
+                        <div
+                          key={index}
+                          className={`provider-item ${ selectedProvider && selectedProvider.ip === provider.ip && selectedProvider.price === provider.price ? 'selected' : ''}`}
+                          onClick={() => handleSelectProvider(provider)}
+                        >
+                          <p>IP: {provider.ip}</p>
+                          <p>Price: {provider.price} SealTokens</p>
+                        </div>
+                      ))}
+
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',  
+                      alignItems: 'center',
+                      marginTop: '150px'
+                    }}>
+                      <div className='modal-actions'>
+                        <button onClick={closeProvidersModal} style={{fontSize: '20px'}}> Close </button>
+                      </div>
+                      <div className='modal-actions'>
+                        <button onClick={dummyDownload} style={{fontSize: '20px'}}>Download</button>
+                      </div>
+                    
+                    </div>
+                  </div>
+                </div>
             )}
 
     </div>
