@@ -1,0 +1,61 @@
+/* GLOBAL */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f4f4; /* Background color for the entire page */
+    height: 100vh; /* Full viewport height */
+}
+
+div.container {
+    padding: 10px;
+}
+
+div.proxy-head {
+    background-color: #d0e6f5;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    color: #2d4a6e!important; 
+    margin-bottom: 20px;
+}
+
+div.proxy-head h1 {
+    font-size: 30px;
+}
+
+.heading-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: center;
+}
+
+.toggle-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .toggle-button.off {
+    background-color: #34495E;
+    color: white;
+  }
+  
+  /* On state */
+  .toggle-button.on {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .toggle-button:hover {
+    opacity: 0.9;
+  }
