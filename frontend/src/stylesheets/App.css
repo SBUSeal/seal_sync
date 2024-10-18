@@ -40,7 +40,6 @@ html, body {
 .sidebar-logo-image {
   width: 100px;
   height: auto;
-<<<<<<< HEAD
   margin-bottom: 20px; /* Space between image and navigation */
 }
 
@@ -64,9 +63,7 @@ html, body {
   text-align: center;
   margin-bottom: 30px;
   transition: opacity 0.3s ease;
-=======
   margin-bottom: 20px;
->>>>>>> dev
 }
 
 .sidebar-minimized .logo {
@@ -118,7 +115,6 @@ html, body {
   background-color: #1ABC9C;
 }
 
-<<<<<<< HEAD
 /* Hide button text when sidebar is minimized */
 .sidebar-minimized ul li button {
   opacity: 0;
@@ -139,10 +135,6 @@ html, body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-=======
-.sidebar ul li button.active-bar {
-  background-color: #1ABC9C;
->>>>>>> dev
 }
 
 /* Topbar Styles */
