@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share2Icon, UploadIcon } from '@radix-ui/react-icons';
+import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share1Icon, UploadIcon } from '@radix-ui/react-icons';
 import '../stylesheets/FilesPage.css';
 
 const FilesPage = () => {
   const [files, setFiles] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); //uploading file
   const [isFileModalOpen, setIsFileModalOpen] = useState(false);
   const [currentFile, setCurrentFile] = useState(null); 
   const [tempFiles, setTempFiles] = useState([]);
   const [newFileDetails, setNewFileDetails] = useState({ price: '', description: '' });
   const [searchQuery, setSearchQuery] = useState(''); 
   const [filteredFiles, setFilteredFiles] = useState(files); 
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false)
+  const [cid, setCid] = useState('');
+
 
   function handleFileUpload(event) {
     const selectedFiles = Array.from(event.target.files);
@@ -19,8 +22,42 @@ const FilesPage = () => {
   }
 
   function handleDownload(file) {
-   
+
   }
+
+  function handleDownloadFile() {
+    setIsDownloadModalOpen(true)
+  }
+
+  function handleCidChange(e) {
+    setCid(e.target.value);
+
+  }
+
+  function closeDownloadModal() {
+    setCid("")
+    setIsDownloadModalOpen(false)
+  }
+
+  // Creates a dummy file after we press download
+  function dummyDownload() {
+    const dummyFile = {
+      name: `Dummy File ${files.length }`, 
+      size: 420,
+      status: 'unlocked',
+      source: 'local',
+      price: '42', 
+      description: 'Dummy description', 
+      isFolder: false,
+    };
+
+    const updatedFiles = [...files, dummyFile];
+    setFiles(updatedFiles);
+    setFilteredFiles(updatedFiles);
+    
+    closeDownloadModal()
+  }
+
 
   function handleModalSubmit() {
     const newFiles = tempFiles.map(file => ({
@@ -67,18 +104,24 @@ const FilesPage = () => {
     setIsFileModalOpen(false); // Close the file details modal
   }
 
+
   // Handle search query input
   function handleSearchInput(e) {
-    setSearchQuery(e.target.value);
-  }
+    const query = e.target.value;
+    setSearchQuery(query);
 
-  // Handle search on enter key press
-  function handleSearchKeyPress(e) {
-    if (e.key === 'Enter') {
-      const filtered = files.filter(file => file.name.toLowerCase().includes(searchQuery.toLowerCase()));
-      setFilteredFiles(filtered); // Set the filtered files to display
-    }
+    const filtered = files.filter(file =>
+      file.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredFiles(filtered);
   }
+  // Handle search on enter key press
+  // function handleSearchKeyPress(e) {
+  //   if (e.key === 'Enter') {
+  //     const filtered = files.filter(file => file.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  //     setFilteredFiles(filtered); // Set the filtered files to display
+  //   }
+  // }
 
   return (
     <div className="file-manager-container">
@@ -89,11 +132,11 @@ const FilesPage = () => {
           placeholder="Search"
           value={searchQuery}
           onChange={handleSearchInput}
-          onKeyPress={handleSearchKeyPress} // Handle Enter key press
+          // onKeyPress={handle} // Handle Enter key press
         />
         <div className="action-buttons">
-          <button onClick={createFolder} className="action-btn">
-            <PlusCircledIcon /> <div className='action-btn-text'>Create Folder</div>
+          <button onClick={handleDownloadFile} className="action-btn">
+            <DownloadIcon /> <div className='action-btn-text'> Download </div>
           </button>
           <button className="action-btn">
             <UploadIcon /> 
@@ -138,7 +181,7 @@ const FilesPage = () => {
                     </button>
 
                     <button>
-                      <Share2Icon />
+                      <Share1Icon />
                     </button>
                     <button onClick={() => file.isFolder ? 'OPENFOLDER' : openFileDetails(file)}>
                       <DotsVerticalIcon />
@@ -159,8 +202,14 @@ const FilesPage = () => {
             <label>Price:</label> 
             <input
               type='number'
+              min={0}
               value={newFileDetails.price}
               onChange={(e) => setNewFileDetails({ ...newFileDetails, price: e.target.value })}
+              onKeyDown={(e) => {
+                if (e.key === '-' || e.key === 'e') {
+                  e.preventDefault();  // Prevent typing "-" or "e"
+                }
+              }}
             />
             SealTokens
 
@@ -171,7 +220,7 @@ const FilesPage = () => {
             ></textarea>
             <div className="modal-actions">
               <button onClick={handleModalClose}>Cancel</button>
-              <button onClick={handleModalSubmit}>Submit</button>
+              <button onClick={handleModalSubmit} disabled={newFileDetails.price.trim() === '' || newFileDetails.description.trim() === ''}>Submit</button>
             </div>
           </div>
         </div>
@@ -179,18 +228,54 @@ const FilesPage = () => {
 
       {isFileModalOpen && currentFile && (
         <div className="modal">
-          <div className="modal-content">
+          <div className="modal-content"  style={{textAlign: "left"}}>
             <h2>File Details</h2>
             <p><strong>Name:</strong> {currentFile.name}</p>
             <p><strong>Size:</strong> {formatFileSize(currentFile.size)}</p>
-            <p><strong>Price:</strong> {currentFile.price}</p>
+            <p><strong>Price:</strong> {currentFile.price + " Seal Token"}</p>
             <p><strong>Description:</strong> {currentFile.description}</p>
-            <div className="modal-actions">
+            <div className="modal-actions" style={{marginTop: "30px"}}>
               <button onClick={closeFileModal}>Close</button>
             </div>
           </div>
         </div>
       )}
+
+
+      {isDownloadModalOpen && (
+              <div className="modal">
+                <div className="modal-content" style={{maxWidth: "600px"}}>
+                  <label style={{fontSize: "20px", display: 'block'}} htmlFor="cidInput"> <h2> Enter File CID </h2></label>
+                  <input
+                    className='cid-input'
+                    type="text"
+                    id="cidInput"
+                    value={cid}
+                    onChange={handleCidChange}
+                    placeholder="File CID"
+                    required
+                  />
+
+                  <div style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      gap: "50px",
+                      alignItems: 'center',
+                      marginTop: "150px"
+                    }}>
+                    <div className='modal-actions'>
+                      <button onClick={closeDownloadModal} style={{fontSize: '20px'}}>Close</button>
+                    </div>
+                    <div className='modal-actions'>
+                      <button onClick={dummyDownload} style={{fontSize: '20px'}} disabled={cid.trim() === ''}>Download</button>
+                    </div>
+                  </div>
+
+
+                </div>
+              </div>
+            )}
+
     </div>
   );
 };
