@@ -28,6 +28,7 @@ div.container {
     align-items: center;
     gap: 70px;
     justify-content: center;
+    margin-bottom: 20px;
   }
 
   div.proxy-head h1 {
@@ -90,12 +91,8 @@ div.container {
 
 /* Container of list of proxies */
 .proxy-list {
-    text-align: center;
     display: flex;
     flex-direction: column;
-    align-items: center;   
-    justify-content: center;
-
     margin-top: 20px;
     gap: 20px;    
     padding: 20px;
@@ -104,11 +101,12 @@ div.container {
   }
 
   div.proxy-list h1 {
+    text-align: center;
     font-size: 30px;
   }
 
-  /* Per Proxy Card */
-  .proxy-item {
+/* Per Proxy Card */
+.proxy-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -116,9 +114,42 @@ div.container {
     border-bottom: 1px solid #e0e0e0;
   }
 
-  /* price and buy button */
+  .proxy-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .proxy-details p {
+    font-size: 16px;
+    color: #6c757d;
+  }
+
+  /* Proxy Join Button Container */
   .proxy-join {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  /* Proxy Join Button Style */
+  .purchase-button {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    color: #285a8f;
     font-weight: bold;
     font-size: 16px;
-    color: #285a8f;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    height: 75%;
+    width: 175px;
+  }
+  
+  .purchase-button:hover {
+    background-color: #285a8f;
+    color: white;
+    font-weight: bold;
   }
