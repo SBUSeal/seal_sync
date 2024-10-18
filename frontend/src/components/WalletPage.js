@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
 import '../stylesheets/WalletPage.css'; // Assume we create a separate CSS file for styling
 
-const WalletPage = () => {
-    // Initialize balance using useState
+const WalletPage = ({ sealTokenBalance }) => { // extract balance from props
 
-    const [filter, setFilter] = useState('All');
-    const [sealTokenBalance, setSealTokenBalance] = useState(5);//Change constant to reflect total wallet balance of dummy data
+  // Initialize balance using useState
+  const [filter, setFilter] = useState('All');
     
     //Placeholder transactions (these will be dynamically loaded later from the backend)
   const transactions = [
