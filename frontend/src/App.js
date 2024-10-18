@@ -4,6 +4,8 @@ import Files from './components/FilesPage';
 import StatusPage from './components/StatusPage';
 import WalletPage from './components/WalletPage';
 import Sidebar from './components/SideBar';
+import SettingsPage from './components/SettingsPage';
+
   
 //import './Contributes/NavigationBar';
 //import './Contributes/TopBar.js';
@@ -22,10 +24,10 @@ function App() {
         return <Files />;
       case 'Wallet':
         return <WalletPage />;
-      case 'Peers':
-        return <h1>Peers Page Content</h1>;
+      case 'Proxy':
+        return <h1>Proxy Page Content</h1>;
       case 'Settings':
-        return <h1>Settings Page Content</h1>;
+        return <SettingsPage />;
       default:
         return <h1>Connected to Seal Share</h1>;
     }
@@ -33,7 +35,7 @@ function App() {
 
   return (
     <div className="App">
-      <Sidebar setActivePage = {setActivePage}> </Sidebar>
+      <Sidebar setActivePage = {setActivePage} activePage = {activePage}> </Sidebar>
       {/* Main Content */}
       <div className="content">
         {/* Topbar */}
