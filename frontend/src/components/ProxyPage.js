@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import '../stylesheets/ProxyPage.css';
 
 /* States */
-const ProxyPage = () => {
+const ProxyPage = ({ sealTokenBalance, setSealTokenBalance }) => { // Destruct Properties
     const proxies = [   /* Dummy Data */
         {
             id: 1,
             ip_addr: '41.77.0.1',
             host: '1B3qRz5g4dEF4DMPGT1L3TThzv6CvzNB',
-            price: 20,
+            price: 5,
             users: 2
         },
         {
@@ -114,19 +114,31 @@ const ProxyPage = () => {
         <h1 style={{ textAlign: 'center', fontSize: '30px' }}>Available Proxies</h1>
 
         <div className='proxy-list'>
-            {proxies.map((proxy) => (
-                <ProxyItem key={proxy.id} proxy={proxy} />
+            {proxies.map((proxy) => ( // Map each proxy to a ProxyItem component pass in proxy obj
+                <ProxyItem key={proxy.id} proxy={proxy} sealTokenBalance ={sealTokenBalance}  setSealTokenBalance = {setSealTokenBalance}/>
             ))}
         </div>
       </div>
     );
   };
 
-  const ProxyItem = ({ proxy }) => {
+    //   Indiviual Proxy Card
+  const ProxyItem = ({ proxy, sealTokenBalance, setSealTokenBalance }) => {
     const [isHovered, setIsHovered] = useState(false);
   
+    // Handle hover state
     const handleMouseEnter = () => setIsHovered(true);
     const handleMouseLeave = () => setIsHovered(false);
+  
+    // Handle purchase logic
+    const handlePurchase = (price) => {
+      if (sealTokenBalance >= price) {
+        alert(`Purchase successful! You spent ${price} SealTokens.`);
+        setSealTokenBalance((prevBalance) => prevBalance - price); // Update balance
+      } else {
+        alert('Insufficient balance.');
+      }
+    };
   
     return (
       <div className="proxy-item">
@@ -139,6 +151,7 @@ const ProxyPage = () => {
             className="purchase-button"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
+            onClick={() => handlePurchase(proxy.price)} // No need to pass state here
           >
             {isHovered ? 'Purchase' : `${proxy.price} SealToken`}
           </button>
