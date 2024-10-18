@@ -7,8 +7,10 @@ import StatusPage from './components/StatusPage';
 import WalletPage from './components/WalletPage';
 import Sidebar from './components/SideBar';
 import SettingsPage from './components/SettingsPage';
+import ProxyPage from './components/ProxyPage';
 import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
+
 
   
 //import './Contributes/NavigationBar';
@@ -52,7 +54,7 @@ function App() {
       case 'Wallet':
         return <WalletPage />;
       case 'Proxy':
-        return <h1>Proxy Page Content</h1>;
+        return <ProxyPage />;
       case 'Settings':
         return <SettingsPage />;
       default:
