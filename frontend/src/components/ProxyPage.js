@@ -3,7 +3,7 @@ import '../stylesheets/ProxyPage.css';
 
 /* States */
 const ProxyPage = () => {
-    const proxies = [
+    const proxies = [   /* Dummy Data */
         {
             id: 1,
             ip_addr: '41.77.0.1',
@@ -111,20 +111,37 @@ const ProxyPage = () => {
             </div>
         </div>
         {/* list of available proxies */}
+        <h1 style={{ textAlign: 'center', fontSize: '30px' }}>Available Proxies</h1>
+
         <div className='proxy-list'>
-            <h1>Available Proxies</h1>
             {proxies.map((proxy) => (
-            <div key={proxy.id} className="proxy-item">
-                <div className="proxy-details">
-                    {/* <p className="transaction-type">{transaction.type} SealToken</p>
-                    <p className="transaction-date">{transaction.date}</p>
-                    <p className="transaction-address">{transaction.type === 'Sent' ? `To: ${transaction.to}` : `From: ${transaction.from}`}</p> */}
-                </div>
-                <div className="proxy-join">
-                    {proxy.price} SealToken
-                </div>
-            </div>
+                <ProxyItem key={proxy.id} proxy={proxy} />
             ))}
+        </div>
+      </div>
+    );
+  };
+
+  const ProxyItem = ({ proxy }) => {
+    const [isHovered, setIsHovered] = useState(false);
+  
+    const handleMouseEnter = () => setIsHovered(true);
+    const handleMouseLeave = () => setIsHovered(false);
+  
+    return (
+      <div className="proxy-item">
+        <div className="proxy-details">
+          <p>{proxy.ip_addr}</p>
+          <p>Host: {proxy.host}</p>
+        </div>
+        <div className="proxy-join">
+          <button
+            className="purchase-button"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            {isHovered ? 'Purchase' : `${proxy.price} SealToken`}
+          </button>
         </div>
       </div>
     );
