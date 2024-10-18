@@ -146,6 +146,8 @@ const FilesPage = () => {
         </div>
       </div>
 
+      <>Filter</>
+
       <div className="file-section">
         <table className="file-table">
           <thead>
