@@ -98,77 +98,76 @@
   background-color: #357ABD;
 }
 
-/* Transaction section with filter buttons */
-.transaction-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
+/* Transaction Filters */
 .transaction-buttons {
   display: flex;
   gap: 10px;
+  margin-bottom: 20px;
 }
 
 .btn-transaction {
   padding: 10px 20px;
-  border: none;
-  background-color: #e0e6ed;
-  color: #285a8f;
-  font-size: 16px;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-weight: bold;
+  color: #333; 
 }
 
 .btn-transaction.active {
-  background-color: #285a8f;
+  background-color: #007bff;
   color: white;
 }
 
-/* Transaction history */
+/* Transaction History Section */
 .transaction-history {
-  background-color: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
 }
 
+/* Transaction Item Box */
 .transaction-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
   padding: 15px;
-  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr; /* 3 columns */
+  gap: 20px; /* Space between columns */
+  align-items: center;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.transaction-item:last-child {
-  border-bottom: none;
-}
-
-.transaction-details {
+.transaction-column {
   display: flex;
   flex-direction: column;
-  color: #285a8f;
+  justify-content: space-between;
 }
 
-.transaction-type {
-  font-weight: bold;
-}
-
-.transaction-date {
-  font-size: 12px;
-  color: #6c757d;
-}
-
-.transaction-address {
-  font-size: 14px;
-  color: #6c757d;
+.transaction-status,
+.transaction-id,
+.transaction-reason {
+  font-size: 1rem;
+  color: #333;
+  margin: 5px 0;
 }
 
 .transaction-amount {
   font-weight: bold;
-  font-size: 16px;
-  color: #285a8f;
+  font-size: 1.2rem;
+  text-align: right;
+}
+
+.transaction-amount.sent {
+  color: red;
+}
+
+.transaction-amount.received {
+  color: green;
+}
+
+.transaction-date {
+  font-size: 0.9rem;
+  color: #6c757d;
 }
