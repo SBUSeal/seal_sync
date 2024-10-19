@@ -42,9 +42,9 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
         ip_addr: '11.79.0.1',
         price: price,
         users: 5,
-        get total_rev() {
-            return this.users * this.price; // Dynamically calculate total revenue
-        },
+        // get total_rev() {
+        //     return this.users * this.price; // Dynamically calculate total revenue
+        // },
         dataTransferred: 1024, 
         latency: 50,
     };
@@ -126,7 +126,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                         <p>Connected Users: {host_data.users}</p>
                         <p>Data Transferred: {host_data.dataTransferred} MB</p>
                         <p>Latency: {host_data.latency} ms</p>
-                        <p>Total Revenue: ${host_data.total_rev}</p>
+                        {/* <p>Total Revenue: ${host_data.total_rev}</p> */}
                     </div>
                     <div>
                         <button className = 'disconnect-button' onClick={() => setIsOn(false)}>Turn Off Proxy</button>
