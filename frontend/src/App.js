@@ -7,8 +7,10 @@ import StatusPage from './components/StatusPage';
 import WalletPage from './components/WalletPage';
 import Sidebar from './components/SideBar';
 import SettingsPage from './components/SettingsPage';
+import ProxyPage from './components/ProxyPage';
 import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
+
 
   
 //import './Contributes/NavigationBar';
@@ -20,6 +22,12 @@ function App() {
   const [activePage, setActivePage] = useState('Status');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false); 
+
+  // State to manage Token Balance
+  const [sealTokenBalance, setSealTokenBalance] = useState(100); //Change constant to reflect total wallet balance of dummy data
+  const [currentProxy, setcurrentProxy] = useState(null); // State of current proxy being used
+
+
 
   //Handle login
   const handleLogin = (walletAddress, privateKey) => {
@@ -50,9 +58,11 @@ function App() {
       case 'Files':
         return <Files />;
       case 'Wallet':
-        return <WalletPage />;
+        return <WalletPage sealTokenBalance = {sealTokenBalance}/>;
       case 'Proxy':
-        return <h1>Proxy Page Content</h1>;
+        return <ProxyPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} currentProxy = {currentProxy}
+          setcurrentProxy = {setcurrentProxy}
+        />;
       case 'Settings':
         return <SettingsPage />;
       default:

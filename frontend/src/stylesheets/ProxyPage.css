@@ -1,0 +1,199 @@
+/* GLOBALS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+
+  body {
+    background-color: #f4f4f4; /* Background color for the entire page */
+    height: 100vh; /* Full viewport height */
+}
+
+div.container {
+    padding: 10px;
+    background-color: #f0f4f8; /* Light background for the page */
+
+}
+
+/* Main Head Divider */
+.proxy-head {
+    background-color: #d0e6f5;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    color: #2d4a6e!important; 
+    display: flex;
+    align-items: center;
+    gap: 70px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  div.proxy-head h1 {
+    font-size: 30px;
+   }
+  
+  .proxy-head div {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Proxy Toggle Button */
+.toggle-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .toggle-button.off {
+    background-color: #34495E;
+    color: white;
+  }
+  
+  .toggle-button.on {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .toggle-button:hover {
+    opacity: 0.9;
+}
+
+/* Price Input Styles */
+.price-input {
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 18px;
+    width: 240px;
+    transition: border-color 0.3s, background-color 0.3s;
+  }
+  
+  .price-input.editing {
+    border: 1px solid #4caf50;
+    background-color: #e8f5e9;
+  }
+  
+  .price-input.saved {
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    cursor: pointer;
+  }
+  
+  .price-input.saved:hover {
+    background-color: #e0e0e0;
+}
+
+/* When proxy is on */
+.proxy-active {
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 20px;    
+    padding: 20px 20px 20px 30px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+}
+
+/* Container of list of proxies */
+.proxy-list {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    gap: 20px;    
+    padding: 20px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+  }
+
+  div.proxy-list h1 {
+    text-align: center;
+    font-size: 30px;
+  }
+
+/* Per Proxy Card */
+.proxy-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .proxy-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .proxy-details p {
+    font-size: 16px;
+    color: #6c757d;
+  }
+
+  /* Proxy Join Button Container */
+  .proxy-join {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  /* Proxy Join Button Style */
+  .purchase-button {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    color: #285a8f;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    height: 75%;
+    width: 175px;
+  }
+  
+  .purchase-button:hover {
+    background-color: #285a8f;
+    color: white;
+    font-weight: bold;
+}
+
+/* Current Proxy */
+.current-proxy-details {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    gap: 20px;    
+    padding: 20px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+   }
+
+   .disconnect-button {
+    background-color: #c34646;
+    color: white;
+    font-weight: bold; 
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 270px;
+    text-align: center;
+    margin: 20px auto;
+    display: block;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Hover effect */
+  .disconnect-button:hover {
+    background-color: #c34646ce; /* Red background */
+
+}

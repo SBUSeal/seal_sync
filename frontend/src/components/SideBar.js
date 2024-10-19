@@ -44,9 +44,9 @@ function Sidebar(props) {
           <img src={walletIcon} alt="Wallet Icon" className="sidebar-icon" />
           {!isMinimized && <button>Wallet</button>}
         </li>
-        <li onClick={() => setActivePage('Peers')}>
-          <img src={proxyIcon} alt="Peers Icon" className="sidebar-icon" />
-          {!isMinimized && <button>Peers</button>}
+        <li onClick={() => setActivePage('Proxy')}>
+          <img src={proxyIcon} alt="Proxy Icon" className="sidebar-icon" />
+          {!isMinimized && <button>Proxy</button>}
         </li>
         <li onClick={() => setActivePage('Settings')}>
           <img src={settingsIcon} alt="Settings Icon" className="sidebar-icon" />
