@@ -5,7 +5,9 @@ import FileViewer from './FileViewer';
 
 
 const FilesPage = (props) => {
-  const [files, setFiles] = useState([]);
+  // const [files, setFiles] = useState([]);
+  const files = props.files
+  const setFiles = props.setFiles
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [isFileModalOpen, setIsFileModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -114,6 +116,11 @@ const FilesPage = (props) => {
       description: 'Dummy description', 
       isFolder: false,
     };
+    const newBalance = props.sealTokenBalance - dummyFile.price;
+    if (newBalance < 0) {
+      alert("Insufficient funds, cannot download file")
+      return
+    }
 
     const updatedFiles = [...files, dummyFile];
     setFiles(updatedFiles);
@@ -126,9 +133,8 @@ const FilesPage = (props) => {
     setIsProvidersModalOpen(false)
     setSelectedProvider(null)
 
-    console.log("Updating balance ");
-    
     props.setSealTokenBalance(props.sealTokenBalance - dummyFile.price)
+    alert(`Successfully bought file for ${dummyFile.price} STK!`)
     
   }
 
