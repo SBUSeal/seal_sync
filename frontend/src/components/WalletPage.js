@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../stylesheets/WalletPage.css'; // Assuming this exists
 
-const WalletPage = ({ sealTokenBalance }) => { // extract balance from props
+const WalletPage = ({ sealTokenBalance, setSealTokenBalance}) => { // extract balance from props
     const [filter, setFilter] = useState('All');
     const [receiverId, setReceiverId] = useState('');
     const [amount, setAmount] = useState('');
