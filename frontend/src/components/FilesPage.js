@@ -3,6 +3,7 @@ import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, 
 import '../stylesheets/FilesPage.css';
 import FileViewer from './FileViewer';  
 
+
 const FilesPage = () => {
   const [files, setFiles] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); 
@@ -44,7 +45,6 @@ const FilesPage = () => {
   const dummyCid = "baguqeerasorqs4njcts6vs7qvdjfcvgnume4hqohf65zsfguprqphs3icwea"
 
   const handleSelectProvider = (provider) => {
-    console.log("Selected provider is: ", provider)
     setSelectedProvider(provider);
   };
 
@@ -105,6 +105,7 @@ const FilesPage = () => {
   }
 
   function dummyDownload() {
+<<<<<<< HEAD
     const dummyFile = {
       name: `Dummy File ${files.length }`, 
       size: 100,
@@ -128,9 +129,33 @@ const FilesPage = () => {
     
   }
 
+=======
+    fetch('./dummydata/dummyTestFile.txt')
+    .then((response) => response.text())
+    .then((fileContent) => {
+      const dummyFile = {
+        name: "dummyTestFile.txt",
+        size: fileContent.length, 
+        status: 'unlocked',
+        source: 'local',
+        price: '599',
+        fileObject: new Blob([fileContent], { type: "text/plain" }),
+        description: 'Dummy description',
+        isFolder: false,
+        type: "text/plain"
+      };
+      const updatedFiles = [...files, dummyFile];
+      setFiles(updatedFiles);
+      setFilteredFiles(updatedFiles);
+    setIsProvidersModalOpen(false);
+    setSelectedProvider(null);
+  });
+}
+  
+>>>>>>> dev
 
   function handleModalSubmit() {
-    console.log(tempFiles)
+
     const newFiles = tempFiles.map(file => ({
       name: file.name,
       size: file.size,
@@ -140,9 +165,10 @@ const FilesPage = () => {
       description: newFileDetails.description,
       fileObject: file,  
       isFolder: false,
-      type: file.type
+      type: file.type,
+      price: newFileDetails.price,        
+      description: newFileDetails.description
     }));
-  
     const updatedFiles = [...files, ...newFiles];
     setFiles(updatedFiles);
     const filtered = updatedFiles.filter(file => {
@@ -162,29 +188,23 @@ const FilesPage = () => {
     setIsModalOpen(false); 
   }
 
-  function createFolder() {
-    const folderName = prompt('Enter Folder Name');
-    if (folderName) {
-      const updatedFiles = [...files, { name: folderName, size: 0, status: 'unlocked', source: 'local', isFolder: true }];
-      setFiles(updatedFiles);
-      setFilteredFiles(updatedFiles); 
-    }
-  }
 
-  // Handle file click to open file details modal
   function openFileDetails(file) {
+<<<<<<< HEAD
     setCurrentFile(file); // Set the clicked file details    
     setIsFileModalOpen(true); // Open the file details modal
     console.log("Current File is: ", currentFile);
+=======
+    setCurrentFile(file); 
+    setIsFileModalOpen(true); 
+>>>>>>> dev
   }
 
-  // Close file modal
   function closeFileModal() {
-    setIsFileModalOpen(false); // Close the file details modal
+    setIsFileModalOpen(false); 
   }
 
 
-  // Handle search query input
   function handleSearchInput(e) {
     const query = e.target.value;
     setSearchQuery(query);
@@ -221,7 +241,6 @@ const FilesPage = () => {
           placeholder="Search"
           value={searchQuery}
           onChange={handleSearchInput}
-          // onKeyPress={handle} // Handle Enter key press
         />
         <div className="action-buttons">
           <button onClick={handleDownloadFile} className="action-btn">
@@ -275,7 +294,6 @@ const FilesPage = () => {
                       <DownloadIcon />
                     </button>
                     <button onClick={() => {
-                                        console.log(file);
                                         return openFile(file)}}>
                       Open
                     </button>
@@ -310,7 +328,7 @@ const FilesPage = () => {
                   onChange={(e) => setNewFileDetails({ ...newFileDetails, price: e.target.value })}
                   onKeyDown={(e) => {
                     if (e.key === '-' || e.key === 'e') {
-                      e.preventDefault();  // Prevent typing "-" or "e"
+                      e.preventDefault();
                     }
                   }}
                   style={{marginRight: "10px", fontSize: "18px"}}
