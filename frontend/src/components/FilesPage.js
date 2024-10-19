@@ -19,6 +19,7 @@ const FilesPage = () => {
   const [dummyLink, setDummyLink] = useState('');
   const [isProvidersModalOpen, setIsProvidersModalOpen] = useState(false)
   const [selectedProvider, setSelectedProvider] = useState(null)
+  const [filter, setFilter] = useState("All")
 
   
   function openFile(file) {
@@ -39,6 +40,8 @@ const FilesPage = () => {
     {ip: "192.168.0.1", price: 5},
     {ip: "132.145.0.1", price: 8},
   ]
+
+  const dummyCid = "baguqeerasorqs4njcts6vs7qvdjfcvgnume4hqohf65zsfguprqphs3icwea"
 
   const handleSelectProvider = (provider) => {
     console.log("Selected provider is: ", provider)
@@ -106,7 +109,7 @@ const FilesPage = () => {
       name: `Dummy File ${files.length }`, 
       size: 100,
       status: 'unlocked',
-      source: 'local',
+      source: 'downloaded',
       price: '1', 
       description: 'Dummy description', 
       isFolder: false,
@@ -114,7 +117,12 @@ const FilesPage = () => {
 
     const updatedFiles = [...files, dummyFile];
     setFiles(updatedFiles);
-    setFilteredFiles(updatedFiles);
+ 
+    const filtered = updatedFiles.filter(file => {
+      return (file.source === filter || filter === "All") && file.name.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+
+    setFilteredFiles(filtered);    
     setIsProvidersModalOpen(false)
     setSelectedProvider(null)
     
@@ -127,7 +135,9 @@ const FilesPage = () => {
       name: file.name,
       size: file.size,
       status: 'unlocked',
-      source: 'local',
+      source: 'uploaded',
+      price: newFileDetails.price,
+      description: newFileDetails.description,
       fileObject: file,  
       isFolder: false,
       type: file.type
@@ -135,7 +145,11 @@ const FilesPage = () => {
   
     const updatedFiles = [...files, ...newFiles];
     setFiles(updatedFiles);
-    setFilteredFiles(updatedFiles); 
+    const filtered = updatedFiles.filter(file => {
+      return (file.source === filter || filter === "All") && file.name.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+
+    setFilteredFiles(filtered);   
 
     setTempFiles([]); 
     setNewFileDetails({ price: '', description: '' }); 
@@ -159,8 +173,9 @@ const FilesPage = () => {
 
   // Handle file click to open file details modal
   function openFileDetails(file) {
-    setCurrentFile(file); // Set the clicked file details
+    setCurrentFile(file); // Set the clicked file details    
     setIsFileModalOpen(true); // Open the file details modal
+    console.log("Current File is: ", currentFile);
   }
 
   // Close file modal
@@ -174,10 +189,27 @@ const FilesPage = () => {
     const query = e.target.value;
     setSearchQuery(query);
 
-    const filtered = files.filter(file =>
-      file.name.toLowerCase().includes(query.toLowerCase())
-    );
+    const filtered = files.filter(file => {
+      return (file.source === filter || filter === "All") && file.name.toLowerCase().includes(query.toLowerCase())      
+    }
+    );    
     setFilteredFiles(filtered);
+  }
+
+  function FilterByAll() {
+    setFilter("All")
+    setFilteredFiles(files)
+  }
+  function FilterByDownloaded() {
+    setFilter("downloaded")
+    const downloadedFiles = files.filter((file) => file.source === "downloaded")
+    setFilteredFiles(downloadedFiles)
+
+  }  
+  function FilterByUploaded() {
+    setFilter("uploaded")
+    const uploadedFiles = files.filter((file) => file.source === "uploaded")
+    setFilteredFiles(uploadedFiles)
   }
 
   return (
@@ -203,7 +235,11 @@ const FilesPage = () => {
         </div>
       </div>
 
-      <>Filter</>
+      <div className='filter-section'>
+        <button className={`filter-button ${filter === "All" ? "active" : ""}`} onClick={FilterByAll}> All </button>
+        <button className={`filter-button ${filter === "downloaded" ? "active" : ""}`} onClick={FilterByDownloaded}> Downloaded </button>
+        <button className={`filter-button ${filter === "uploaded" ? "active" : ""}`} onClick={FilterByUploaded}> Uploaded </button>
+      </div>
 
       <div className="file-section">
         <table className="file-table">
@@ -212,6 +248,7 @@ const FilesPage = () => {
               <th>name</th>
               <th>type</th>
               <th>size</th>
+              <th>source</th>
               <th>date added</th>
               <th></th>
             </tr>
@@ -231,6 +268,7 @@ const FilesPage = () => {
                   </td>
                   <td>{file.isFolder ? 'Folder' : 'File'}</td>
                   <td>{formatFileSize(file.size)}</td>
+                  <td> {file.source} </td>
                   <td>{new Date().toLocaleDateString()}</td>
                   <td>
                     <button onClick={() => handleDownload(file)}>
@@ -303,6 +341,7 @@ const FilesPage = () => {
             <p><strong>Size:</strong> {formatFileSize(currentFile.size)}</p>
             <p><strong>Price:</strong> {currentFile.price + " Seal Token"}</p>
             <p><strong>Description:</strong> {currentFile.description}</p>
+            <p><strong>File CID:</strong> {dummyCid}</p>
             <div className="modal-actions" style={{marginTop: "30px"}}>
               <button onClick={closeFileModal}>Close</button>
             </div>
@@ -336,7 +375,7 @@ const FilesPage = () => {
                       <button onClick={closeDownloadModal} style={{fontSize: '20px'}}>Close</button>
                     </div>
                     <div className='modal-actions'>
-                      <button onClick={showProvidersModal} style={{fontSize: '20px'}} disabled={cid.trim() === ''}>Download</button>
+                      <button onClick={showProvidersModal} style={{fontSize: '20px'}} disabled={cid.trim() === ''}>Find Providers</button>
                     </div>
                   </div>
 
@@ -344,7 +383,7 @@ const FilesPage = () => {
                 </div>
               </div>
             )}
-             {isShareModalOpen && (
+      {isShareModalOpen && (
         <div className="modal">
           <div className="modal-content">
             <h2>Share File</h2>
