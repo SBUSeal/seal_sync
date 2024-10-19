@@ -89,6 +89,18 @@ div.container {
     background-color: #e0e0e0;
 }
 
+/* When proxy is on */
+.proxy-active {
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 20px;    
+    padding: 20px 20px 20px 30px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+}
+
 /* Container of list of proxies */
 .proxy-list {
     display: flex;
@@ -152,4 +164,36 @@ div.container {
     background-color: #285a8f;
     color: white;
     font-weight: bold;
+}
+
+/* Current Proxy */
+.current-proxy-details {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    gap: 20px;    
+    padding: 20px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+   }
+
+   .disconnect-button {
+    background-color: #c34646;
+    color: white;
+    font-weight: bold; 
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 270px;
+    text-align: center;
+    margin: 20px auto;
+    display: block;
+    transition: background-color 0.3s ease;
   }
+  
+  /* Hover effect */
+  .disconnect-button:hover {
+    background-color: #c34646ce; /* Red background */
+
+}
