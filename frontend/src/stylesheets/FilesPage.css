@@ -210,3 +210,33 @@ margin: 0;
 .provider-item.selected {
   background-color: #b9b8b8; /* Different background for selected item */
 }
+
+.filter-section {
+  display: flex;
+  width: 400px;
+  gap: 10px;
+}
+
+.filter-button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #d0e6f5;
+  color: #285a8f;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+/* 
+.filter-button.active {
+  background-color: #285a8f;
+  color: white;
+} */
+
+
+.filter-section button:hover {
+  background-color: #285a8f;
+  color: white;
+}
+
+
