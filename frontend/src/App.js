@@ -23,6 +23,12 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false); 
 
+  // State to manage Token Balance
+  const [sealTokenBalance, setSealTokenBalance] = useState(100); //Change constant to reflect total wallet balance of dummy data
+  const [currentProxy, setcurrentProxy] = useState(null); // State of current proxy being used
+
+
+
   //Handle login
   const handleLogin = (walletAddress, privateKey) => {
     //PLACEHOLDER LOGIC FOR NOW
@@ -52,9 +58,11 @@ function App() {
       case 'Files':
         return <Files />;
       case 'Wallet':
-        return <WalletPage />;
+        return <WalletPage sealTokenBalance = {sealTokenBalance}/>;
       case 'Proxy':
-        return <ProxyPage />;
+        return <ProxyPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} currentProxy = {currentProxy}
+          setcurrentProxy = {setcurrentProxy}
+        />;
       case 'Settings':
         return <SettingsPage />;
       default:
