@@ -1,108 +1,63 @@
-/* Global Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+/* Main container for full-screen layout */
+.settings-container {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    gap: 20px; /* Space between sections */
+    width: 100%; /* Take up full width */
+    height: 100%; /* Take up full height */
+    padding: 20px;
+    background-color: #fff; /* White background */
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Scroll if content overflows */
 }
 
-body {
-    background-color: #f4f4f4; /* Background color for the entire page */
-    height: 100vh; /* Full viewport height */
-}
 
-.container {
-    width: 100%; /* Full width of the container */
-    margin: 0; /* No margin */
-    padding: 20px; /* Padding around the content */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: none; /* Remove the shadow */
-    display: flex; /* Use flexbox */
-    flex-direction: column; /* Stack items vertically */
-    justify-content: flex-start; /* Start from the top */
-    height: 100%; /* Full height of the parent container */
+/* Individual section styling */
+.section {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
-    color: #333; /* Heading color */
-    margin-bottom: 10px; /* Space below headings */
-}
-
-.input-group {
-    display: flex; /* Use flexbox for input and button alignment */
-    align-items: center; /* Center items vertically */
-    margin-bottom: 20px; /* Space below input groups */
+    font-size: 1.5rem;
+    color: #4A90E2;
+    margin-bottom: 10px;
 }
 
 .input-field {
-    flex: 1; /* Allow input fields to take available space */
-    padding: 10px; /* Padding inside input fields */
-    margin-right: 10px; /* Space between input field and button */
-    border: 1px solid #ccc; /* Border color */
-    border-radius: 4px; /* Rounded corners */
-    color: black; /* Black text color for input fields */
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
 }
 
-/* Button styles */
-button {
-    padding: 10px 15px; /* Padding inside buttons */
-    border: 1px solid #ccc; /* Border color */
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    font-size: 16px; /* Font size for buttons */
-    background-color: white; /* White background */
-    color: black; /* Black text color for buttons */
-    transition: background-color 0.3s ease; /* Smooth transition */
+.primary-button, .secondary-button {
+    font-size: 1rem;
+    padding: 12px;
+    border-radius: 6px;
+    width: 100%; /* Make buttons full width */
+    border: none;
+    cursor: pointer;
 }
 
-/* Hover Effect */
-button:hover {
-    background-color: #e0e0e0; /* Light gray on hover */
+.primary-button {
+    background-color: #4A90E2;
+    color: #fff;
 }
 
-/* Specific Button Styles */
-.submit-button {
-    color: black; /* Black text */
+.primary-button:hover {
+    background-color: #357ABD;
 }
 
-.share-button {
-    color: black; /* Black text */
+.secondary-button {
+    background-color: #4A90E2;
+    color: #fff;
 }
 
-.generate-button {
-    color: black; /* Black text */
-}
-
-/* Button Group Styles */
-.button-group {
-    display: flex; /* Flexbox for horizontal layout */
-    justify-content: space-between; /* Space between buttons */
-    margin-top: 20px; /* Space above the button group */
-}
-
-.filter-button {
-    flex: 1; /* Equal width for buttons */
-    padding: 10px 15px; /* Padding for buttons */
-    border: 1px solid #ccc; /* Border color */
-    border-radius: 5px; /* Rounded corners */
-    background-color: white; /* White background */
-    color: black; /* Dark text color */
-    margin-right: 10px; /* Space between buttons */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: background-color 0.3s ease; /* Smooth transition */
-}
-
-/* Hover Effect for Filter Buttons */
-.filter-button:hover {
-    background-color: #e0e0e0; /* Lighter gray on hover */
-}
-
-.filter-button.active {
-    background-color: #4A90E2; /* Active button background color */
-    color: white; /* Active text color */
-    border: none; /* Remove border for active button */
-}
-
-.filter-button:last-child {
-    margin-right: 0; /* No margin for the last button */
+.secondary-button:hover {
+    background-color: #357ABD;
 }
