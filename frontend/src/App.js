@@ -10,6 +10,7 @@ import SettingsPage from './components/SettingsPage';
 import ProxyPage from './components/ProxyPage';
 import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
+import MiningPage from './components/MiningPage';
 
 //import './Contributes/NavigationBar';
 //import './Contributes/TopBar.js';
@@ -63,6 +64,8 @@ function App() {
         return <ProxyPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} currentProxy = {currentProxy}
           setcurrentProxy = {setcurrentProxy}
         />;
+      case 'Mining':
+        return <MiningPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance}/>;
       case 'Settings':
         return <SettingsPage />;
       default:
