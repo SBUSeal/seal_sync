@@ -25,6 +25,8 @@ function App() {
 
   // State to manage Token Balance
   const [sealTokenBalance, setSealTokenBalance] = useState(100); //Change constant to reflect total wallet balance of dummy data
+  const [currentProxy, setcurrentProxy] = useState(null); // State of current proxy being used
+
 
 
   //Handle login
@@ -58,7 +60,9 @@ function App() {
       case 'Wallet':
         return <WalletPage sealTokenBalance = {sealTokenBalance}/>;
       case 'Proxy':
-        return <ProxyPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance}/>;
+        return <ProxyPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} currentProxy = {currentProxy}
+          setcurrentProxy = {setcurrentProxy}
+        />;
       case 'Settings':
         return <SettingsPage />;
       default:
