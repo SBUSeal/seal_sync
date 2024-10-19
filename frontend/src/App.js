@@ -11,8 +11,6 @@ import ProxyPage from './components/ProxyPage';
 import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
 
-
-  
 //import './Contributes/NavigationBar';
 //import './Contributes/TopBar.js';
 
@@ -76,12 +74,12 @@ function App() {
       {isLoggedIn && <Sidebar setActivePage={setActivePage} activePage={activePage} />}
       {/* Main Content */}
       <div className="content">
-        {/* Topbar */}
+        {/* Topbar
         {isLoggedIn && (
         <div className="topbar">
           <input type="text" placeholder="Search..." className="search-input" />
         </div>
-        )}
+        )} */}
         {/* Main Area */}
         <div className="main-content">
           {/* Display content based on the active page */}

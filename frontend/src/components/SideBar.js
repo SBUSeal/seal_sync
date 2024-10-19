@@ -18,9 +18,7 @@ function Sidebar(props) {
   };
 
   const setActivePage = props.setActivePage;
-  const activePage = props.activePage;
 
-  console.log(activePage);
   
   return (
     <div className={`sidebar ${isMinimized ? 'sidebar-minimized' : ''}`}>
