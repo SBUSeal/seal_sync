@@ -105,7 +105,6 @@ const FilesPage = () => {
   }
 
   function dummyDownload() {
-<<<<<<< HEAD
     const dummyFile = {
       name: `Dummy File ${files.length }`, 
       size: 100,
@@ -129,7 +128,6 @@ const FilesPage = () => {
     
   }
 
-=======
     fetch('./dummydata/dummyTestFile.txt')
     .then((response) => response.text())
     .then((fileContent) => {
@@ -152,7 +150,6 @@ const FilesPage = () => {
   });
 }
   
->>>>>>> dev
 
   function handleModalSubmit() {
 
@@ -190,14 +187,9 @@ const FilesPage = () => {
 
 
   function openFileDetails(file) {
-<<<<<<< HEAD
     setCurrentFile(file); // Set the clicked file details    
     setIsFileModalOpen(true); // Open the file details modal
     console.log("Current File is: ", currentFile);
-=======
-    setCurrentFile(file); 
-    setIsFileModalOpen(true); 
->>>>>>> dev
   }
 
   function closeFileModal() {
@@ -353,7 +345,7 @@ const FilesPage = () => {
 
       {isFileModalOpen && currentFile && (
         <div className="modal">
-          <div className="modal-content"  style={{textAlign: "left"}}>
+          <div className="modal-content"  style={{textAlign: "left", width}}>
             <h2>File Details</h2>
             <p><strong>Name:</strong> {currentFile.name}</p>
             <p><strong>Size:</strong> {formatFileSize(currentFile.size)}</p>
