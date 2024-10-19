@@ -4,7 +4,7 @@ import '../stylesheets/FilesPage.css';
 import FileViewer from './FileViewer';  
 
 
-const FilesPage = () => {
+const FilesPage = (props) => {
   const [files, setFiles] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [isFileModalOpen, setIsFileModalOpen] = useState(false);
@@ -110,7 +110,7 @@ const FilesPage = () => {
       size: 100,
       status: 'unlocked',
       source: 'downloaded',
-      price: '1', 
+      price: selectedProvider.price, 
       description: 'Dummy description', 
       isFolder: false,
     };
@@ -125,29 +125,33 @@ const FilesPage = () => {
     setFilteredFiles(filtered);    
     setIsProvidersModalOpen(false)
     setSelectedProvider(null)
+
+    console.log("Updating balance ");
+    
+    props.setSealTokenBalance(props.sealTokenBalance - dummyFile.price)
     
   }
 
-    fetch('./dummydata/dummyTestFile.txt')
-    .then((response) => response.text())
-    .then((fileContent) => {
-      const dummyFile = {
-        name: "dummyTestFile.txt",
-        size: fileContent.length, 
-        status: 'unlocked',
-        source: 'local',
-        price: '599',
-        fileObject: new Blob([fileContent], { type: "text/plain" }),
-        description: 'Dummy description',
-        isFolder: false,
-        type: "text/plain"
-      };
-      const updatedFiles = [...files, dummyFile];
-      setFiles(updatedFiles);
-      setFilteredFiles(updatedFiles);
-    setIsProvidersModalOpen(false);
-    setSelectedProvider(null);
-  });
+  //   fetch('./dummydata/dummyTestFile.txt')
+  //   .then((response) => response.text())
+  //   .then((fileContent) => {
+  //     const dummyFile = {
+  //       name: "dummyTestFile.txt",
+  //       size: fileContent.length, 
+  //       status: 'unlocked',
+  //       source: 'local',
+  //       price: '599',
+  //       fileObject: new Blob([fileContent], { type: "text/plain" }),
+  //       description: 'Dummy description',
+  //       isFolder: false,
+  //       type: "text/plain"
+  //     };
+  //     const updatedFiles = [...files, dummyFile];
+  //     setFiles(updatedFiles);
+  //     setFilteredFiles(updatedFiles);
+  //   setIsProvidersModalOpen(false);
+  //   setSelectedProvider(null);
+  // });
 
   
 
@@ -325,7 +329,7 @@ const FilesPage = () => {
                   }}
                   style={{marginRight: "10px", fontSize: "18px"}}
                 />
-                SealTokens
+                STK
             </div>
 
             <textarea
@@ -349,9 +353,8 @@ const FilesPage = () => {
             <h2>File Details</h2>
             <p><strong>Name:</strong> {currentFile.name}</p>
             <p><strong>Size:</strong> {formatFileSize(currentFile.size)}</p>
-            <p><strong>Price:</strong> {currentFile.price + " Seal Token"}</p>
+            <p><strong>Price:</strong> {currentFile.price + " STK"}</p>
             <p><strong>Description:</strong> {currentFile.description}</p>
-            <p><strong>File CID:</strong> {dummyCid}</p>
             <div className="modal-actions" style={{marginTop: "30px"}}>
               <button onClick={closeFileModal}>Close</button>
             </div>
@@ -397,7 +400,7 @@ const FilesPage = () => {
         <div className="modal">
           <div className="modal-content">
             <h2>Share File</h2>
-            <p>Copy the link below to share the file:</p>
+            <p style={{marginBottom: "10px"}}>Copy the link below to share the file:</p>
             <input
               type="text"
               value={dummyLink}
@@ -405,6 +408,18 @@ const FilesPage = () => {
               style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
             />
             <button onClick={copyToClipboard}>Copy Link</button>
+            <h2 style={{marginTop: "5px"}}> Or </h2>
+            <p style={{marginBottom: "10px"}}> Copy the file CID below </p>
+            <input
+              type="text"
+              value={dummyCid}
+              readOnly
+              style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+            />
+            <button onClick={() => {
+              navigator.clipboard.writeText(dummyCid);
+              alert('CID copied to clipboard!');
+            }}>Copy CID </button>
             <div className="modal-actions">
               <button onClick={closeShareModal}>Close</button>
             </div>
@@ -423,7 +438,7 @@ const FilesPage = () => {
                           onClick={() => handleSelectProvider(provider)}
                         >
                           <p>IP: {provider.ip}</p>
-                          <p>Price: {provider.price} SealTokens</p>
+                          <p>Price: {provider.price} STK </p>
                         </div>
                       ))}
 
