@@ -12,7 +12,6 @@ function Sidebar(props) {
 
   const [isMinimized, setIsMinimized] = useState(false);
 
-  // Function to toggle sidebar size
   const toggleSidebar = () => {
     setIsMinimized(!isMinimized);
   };
@@ -45,6 +44,10 @@ function Sidebar(props) {
         <li onClick={() => setActivePage('Proxy')}>
           <img src={proxyIcon} alt="Proxy Icon" className="sidebar-icon" />
           {!isMinimized && <span>Proxy</span>}
+        </li>
+        <li onClick={() => setActivePage('Mining')}>
+          <img src={settingsIcon} alt="Mining Icon" className="sidebar-icon" />
+          {!isMinimized && <span>Mining</span>}
         </li>
         <li onClick={() => setActivePage('Settings')}>
           <img src={settingsIcon} alt="Settings Icon" className="sidebar-icon" />

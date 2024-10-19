@@ -5,7 +5,7 @@ import FileViewer from './FileViewer';
 
 
 const FilesPage = (props) => {
-  // const [files, setFiles] = useState([]);
+
   const files = props.files
   const setFiles = props.setFiles
   const [isModalOpen, setIsModalOpen] = useState(false); 
@@ -115,13 +115,9 @@ const FilesPage = (props) => {
       price: selectedProvider.price, 
       description: 'Dummy description', 
       isFolder: false,
+      downloading: true, 
     };
-    const newBalance = props.sealTokenBalance - dummyFile.price;
-    if (newBalance < 0) {
-      alert("Insufficient funds, cannot download file")
-      return
-    }
-
+   
     const updatedFiles = [...files, dummyFile];
     setFiles(updatedFiles);
  
@@ -133,8 +129,18 @@ const FilesPage = (props) => {
     setIsProvidersModalOpen(false)
     setSelectedProvider(null)
 
-    props.setSealTokenBalance(props.sealTokenBalance - dummyFile.price)
     alert(`Successfully bought file for ${dummyFile.price} STK!`)
+
+    setTimeout(() => {
+      setFiles(prevFiles => {
+        return prevFiles.map(f => {
+          if (f.name === dummyFile.name) {
+            return { ...f, downloading: false }; 
+          }
+          return f;
+        });
+      });
+    }, 3000);
     
   }
 
@@ -168,13 +174,11 @@ const FilesPage = (props) => {
       size: file.size,
       status: 'unlocked',
       source: 'uploaded',
-      price: newFileDetails.price,
       description: newFileDetails.description,
       fileObject: file,  
       isFolder: false,
       type: file.type,
-      price: newFileDetails.price,        
-      description: newFileDetails.description
+      downloading: file.downloading
     }));
     const updatedFiles = [...files, ...newFiles];
     setFiles(updatedFiles);
@@ -197,9 +201,8 @@ const FilesPage = (props) => {
 
 
   function openFileDetails(file) {
-    setCurrentFile(file); // Set the clicked file details    
-    setIsFileModalOpen(true); // Open the file details modal
-    console.log("Current File is: ", currentFile);
+    setCurrentFile(file); 
+    setIsFileModalOpen(true); 
   }
 
   function closeFileModal() {
@@ -282,30 +285,36 @@ const FilesPage = (props) => {
             </tbody>
           ) : (
             <tbody>
-              {filteredFiles.map((file, index) => (
-                <tr key={index}>
+              {filteredFiles.map((file, index) => ( 
+                 <tr key={index} style={{ color: 'red' }}>
                   <td>
                     {file.isFolder ? <LayersIcon /> : <FileIcon />} {file.name}
                   </td>
                   <td>{file.isFolder ? 'Folder' : 'File'}</td>
                   <td>{formatFileSize(file.size)}</td>
-                  <td> {file.source} </td>
+                  <td> {file.source == 'uploaded'? 'local': 'seal-network'} </td>
                   <td>{new Date().toLocaleDateString()}</td>
-                  <td>
-                    <button onClick={() => handleDownload(file)}>
+                  {file.downloading ? (
+                    <td className='icon-cell' >
+                        <div className="spinner"></div> Downloading...
+                    </td>
+                    ) :
+                  <td className='icon-cell'>
+                    <button onClick={() => handleDownload(file)} disabled={file.downloading}>
                       <DownloadIcon />
                     </button>
                     <button onClick={() => {
-                                        return openFile(file)}}>
+                                        return openFile(file)}} disabled={file.downloading}>
                       Open
                     </button>
-                    <button onClick={() => openShareModal(file)}>
+                    <button onClick={() => openShareModal(file)} disabled={file.downloading}>
                       <Share1Icon />
                     </button>
-                    <button onClick={() => file.isFolder ? 'OPENFOLDER' : openFileDetails(file)}>
+                    <button onClick={() => file.isFolder ? 'OPENFOLDER' : openFileDetails(file)} disabled={file.downloading}>
                       <DotsVerticalIcon />
                     </button>
                   </td>
+                }
                 </tr>
               ))}
             </tbody>
