@@ -447,7 +447,7 @@ const FilesPage = () => {
 
     </div>
   );
-};
+
 
 function formatFileSize(size) {
   if (size === 0) return 'Folder';
