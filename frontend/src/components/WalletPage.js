@@ -7,10 +7,7 @@ const WalletPage = () => {
     const [receiverId, setReceiverId] = useState('');
     const [amount, setAmount] = useState('');
     const [reason, setReason] = useState('');
-
-    const walletId = '13hgruwdGXvPyWFABDX6QBy';
-
-    const transactions = [
+    const [transactions, setTransactions] = useState([
         {
             id: 1,
             type: 'Received',
@@ -25,7 +22,9 @@ const WalletPage = () => {
             to: '1A72tpP5QGeiF2DMPfTT1S5LLmv7DivFNa',
             sealTokens: 15,
         },
-    ];
+    ]);
+
+    const walletId = '13hgruwdGXvPyWFABDX6QBy';
 
     const filteredTransactions = transactions.filter((transaction) => {
         if (filter === 'All') return true;
@@ -40,16 +39,32 @@ const WalletPage = () => {
 
     // Function to handle token transfer (you can implement the actual transfer logic here)
     const handleTransfer = () => {
-        if (!receiverId || !amount) {
-            alert("Please fill in the receiver ID and amount.");
-            return;
-        }
-        alert(`Transferred ${amount} SealTokens to ${receiverId} for ${reason || 'no reason provided'}.`);
-        setReceiverId('');
-        setAmount('');
-        setReason('');
-        // Add your logic to process the transfer here
-    };
+      if (!receiverId || !amount) {
+          alert("Please fill in the receiver ID and amount.");
+          return;
+      }
+  
+      // Add new transaction to the transaction list as "Sent"
+      const newTransaction = {
+          id: transactions.length + 1,
+          type: 'Sent',
+          date: new Date().toLocaleString(), // Current date and time
+          to: receiverId,
+          sealTokens: parseInt(amount),
+          reason: reason || 'No reason provided', // Add the reason here
+      };
+  
+      setTransactions([...transactions, newTransaction]);
+      setSealTokenBalance((prevBalance) => prevBalance - parseInt(amount)); // Update balance
+  
+      alert(`Transferred ${amount} SealTokens to ${receiverId} for ${reason || 'no reason provided'}.`);
+  
+      // Clear form fields
+      setReceiverId('');
+      setAmount('');
+      setReason('');
+  };
+  
 
     return (
         <div className="wallet-page">
@@ -57,7 +72,7 @@ const WalletPage = () => {
             <div className="top-section">
                 <div className="card balance-card">
                     <h3>Current Balance</h3>
-                    <p className="balance-amount">{sealTokenBalance} ORC</p>
+                    <p className="balance-amount">{sealTokenBalance} STK</p>
                 </div>
                 <div className="card wallet-id-card">
                     <h3>Wallet ID</h3>
@@ -68,11 +83,11 @@ const WalletPage = () => {
                 </div>
                 <div className="card earning-card">
                     <h3>Monthly Earning</h3>
-                    <p className="earning">100.00 ORC</p>
+                    <p className="earning">100.00 STK</p>
                 </div>
                 <div className="card spending-card">
                     <h3>Monthly Spending</h3>
-                    <p className="spending">0.00 ORC</p>
+                    <p className="spending">0.00 STK</p>
                 </div>
             </div>
 
@@ -134,17 +149,27 @@ const WalletPage = () => {
             <div className="transaction-history">
                 {filteredTransactions.map((transaction) => (
                     <div key={transaction.id} className="transaction-item">
-                        <div className="transaction-details">
-                            <p className="transaction-type">{transaction.type} SealToken</p>
+                        <div className="transaction-column">
+                            <p className="transaction-status">{transaction.type} SealToken</p>
                             <p className="transaction-date">{transaction.date}</p>
-                            <p className="transaction-address">
-                                {transaction.type === 'Sent' ? `To: ${transaction.to}` : `From: ${transaction.from}`}
-                            </p>
                         </div>
-                        <div className="transaction-amount">{transaction.sealTokens} SealToken</div>
+                        <div className="transaction-column">
+                            <p className="transaction-id">
+                                {transaction.type === 'Sent' 
+                                    ? `To: ${transaction.to}` 
+                                    : `From: ${transaction.from}`}
+                            </p>
+                            <p className="transaction-reason">Reason: {transaction.reason || 'No reason provided'}</p>
+                        </div>
+                        <div className={`transaction-amount ${transaction.type.toLowerCase()}`}>
+                            {transaction.type === 'Sent' 
+                                ? `- ${transaction.sealTokens} STK` 
+                                : `+ ${transaction.sealTokens} STK`}
+                        </div>
                     </div>
                 ))}
             </div>
+
         </div>
     );
 };
