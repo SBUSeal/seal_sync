@@ -148,7 +148,7 @@ const FilesPage = () => {
     setIsProvidersModalOpen(false);
     setSelectedProvider(null);
   });
-}
+
   
 
   function handleModalSubmit() {
@@ -345,7 +345,7 @@ const FilesPage = () => {
 
       {isFileModalOpen && currentFile && (
         <div className="modal">
-          <div className="modal-content"  style={{textAlign: "left", width}}>
+          <div className="modal-content"  style={{textAlign: "left"}}>
             <h2>File Details</h2>
             <p><strong>Name:</strong> {currentFile.name}</p>
             <p><strong>Size:</strong> {formatFileSize(currentFile.size)}</p>
@@ -447,6 +447,7 @@ const FilesPage = () => {
 
     </div>
   );
+}
 
 
 function formatFileSize(size) {
@@ -454,5 +455,6 @@ function formatFileSize(size) {
   const i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
   return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
 }
+
 
 export default FilesPage;
