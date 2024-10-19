@@ -54,7 +54,7 @@ function App() {
       case 'Status':
         return <StatusPage />;
       case 'Files':
-        return <Files />;
+        return <Files sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance}/>;
       case 'Wallet':
         return <WalletPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance}/>;
       case 'Proxy':
