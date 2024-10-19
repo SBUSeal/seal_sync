@@ -182,12 +182,12 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
         return (
             <div className="proxy-item">
                 <div className="proxy-details">
-                    <p>{historyProxy.proxy.ip_addr}</p>
+                    <p>IP: {historyProxy.proxy.ip_addr}</p>
                     <p>Host: {historyProxy.proxy.host}</p>
                     <p>Price: {historyProxy.proxy.price}</p>
                 </div>
                 <div className="proxy-details">
-                    <p>{historyProxy.timestamp}</p>
+                    <p>Used on {historyProxy.timestamp}</p>
                 </div>
             </div>  
         );
@@ -274,7 +274,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     return (
       <div className="proxy-item">
         <div className="proxy-details">
-          <p>{proxy.ip_addr}</p>
+          <p>IP: {proxy.ip_addr}</p>
           <p>Host: {proxy.host}</p>
         </div>
         <div className="proxy-join">
@@ -284,7 +284,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
             onMouseLeave={handleMouseLeave}
             onClick={() => handlePurchase(proxy.price)} // No need to pass state here
           >
-            {isHovered ? 'Purchase' : `${proxy.price} SealToken${proxy.price > 1 ? 's' : ''}`}
+            {isHovered ? 'Purchase' : `${proxy.price} STK`}
           </button>
         </div>
       </div>
