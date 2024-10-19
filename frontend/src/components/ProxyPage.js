@@ -34,7 +34,6 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
           },
     ];
 
-
     const [isOn, setIsOn] = useState(() => JSON.parse(localStorage.getItem('proxy')) || false); /* Proxy Toggle State */
     const [price, setPrice] = useState(() => JSON.parse(localStorage.getItem('price')) || '');  /* State of Proxy Price */
     const [isEditing, setIsEditing] = useState(price === '');   /* State of proxy price input */
@@ -42,7 +41,6 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     const [filteredProxies, setFilteredProxies] = useState(proxies);  /*State of filtered proxies*/
     const [proxyHistory, setProxyHistory] = useState([]); // State to store proxy history
     const [showHistory, setShowHistory] = useState(false); // State if history button is shown
-    
 
     const host_data = { // Dummy Data
         ip_addr: '11.79.0.1',
@@ -146,48 +144,24 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                     </div>
                 </div>
             )}
-            {currentProxy ? //If you bought proxy then it shows
-            (
-                <div id="current-proxy-container">
-                    <div className="available-proxy-container">
-                        <h1 style={{ textAlign: 'center', fontSize: '30px' }}>Current Proxy</h1>
-                        {/* If there is previous proxy history, show the button */}
-                        {proxyHistory.length !== 0 && (
-                                <HistoryButton setShowHistory={setShowHistory} />
-                        )} 
-                    </div>
-                    <div className='current-proxy-details'>
-                        <p>IP Address: {currentProxy.ip_addr}</p>
-                        <p>Host: {currentProxy.host}</p>
-                        <p>Price: {currentProxy.price} SealToken{currentProxy.price > 1 ? 's' : ''}</p>
-                        <button className="disconnect-button" onClick={() => setcurrentProxy(null)}>Disconnect From Proxy</button>
-                    </div>
-                    
+            {showHistory ? // if show history on
+            (   <div>
+                    {proxyHistory.map((historyProxy) => ( // Map each history proxy to a HistoryProxyItem component pass in proxy obj
+                                <ProxyHistoryItem key={historyProxy.proxy.id} historyProxy={historyProxy}/>
+                    ))}
+                    <button className="history-button" onClick={() => setShowHistory(false)}>
+                        Back
+                    </button>
                 </div>
-            ) : 
-            ( //didnt buy proxy shows list of proxies
-                <div> 
-                    <div className="available-proxy-container">
-                        <input
-                            type="text"
-                            className="proxy-search-bar"
-                            placeholder="Search"
-                            value={searchQuery}
-                            onChange={handleSearchInput}
-                        />
-                        <h1>Available HTTP Proxies</h1>
-                        {/* If there is previous proxy history, show the button */}
-                        {proxyHistory.length !== 0 && (
-                            <HistoryButton setShowHistory={setShowHistory} />
-                        )} 
-                    </div>
-                    <div className='proxy-list'>
-                        {filteredProxies.map((proxy) => ( // Map each proxy to a ProxyItem component pass in proxy obj
-                            <ProxyItem key={proxy.id} proxy={proxy} sealTokenBalance ={sealTokenBalance}  setSealTokenBalance = {setSealTokenBalance}
-                                setcurrentProxy = {setcurrentProxy} setProxyHistory = {setProxyHistory}
-                            />
-                        ))}
-                    </div>
+            ) :
+            (   <div>
+                {currentProxy ? //If you bought proxy then it shows
+                (<PurchasedProxyPage proxyHistory = {proxyHistory} setShowHistory = {setShowHistory} currentProxy = {currentProxy} setcurrentProxy = {setcurrentProxy}/>
+                ) : 
+                (<AvailableProxyPage searchQuery = {searchQuery} handleSearchInput = {handleSearchInput} proxyHistory = {proxyHistory} 
+                    setProxyHistory = {setProxyHistory} setShowHistory = {setShowHistory} filteredProxies = {filteredProxies} sealTokenBalance = {sealTokenBalance} 
+                    setSealTokenBalance = {setSealTokenBalance} setcurrentProxy = {setcurrentProxy} />
+                )}
                 </div>
             )}
         </div>
@@ -197,14 +171,78 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     // history button component
     const HistoryButton = ({ setShowHistory }) => {
         return (
-            <button
-                className="history-button"
-                onClick={() => setShowHistory(true)}
-            >
+            <button className="history-button" onClick={() => setShowHistory(true)}>
                 Proxy History
             </button>
         );
     }
+
+    // individual History item
+    const ProxyHistoryItem = ({historyProxy}) => {
+        return (
+            <div className="proxy-item">
+                <div className="proxy-details">
+                    <p>{historyProxy.proxy.ip_addr}</p>
+                    <p>Host: {historyProxy.proxy.host}</p>
+                    <p>Price: {historyProxy.proxy.price}</p>
+                </div>
+                <div className="proxy-details">
+                    <p>{historyProxy.timestamp}</p>
+                </div>
+            </div>  
+        );
+    }
+
+    // After purchasing a proxy this page shows
+    const PurchasedProxyPage = ({proxyHistory, setShowHistory, currentProxy, setcurrentProxy}) => {
+        return (
+            <div id="current-proxy-container">
+                <div className="available-proxy-container">
+                    <h1 style={{ textAlign: 'center', fontSize: '30px' }}>Current Proxy</h1>
+                    {/* If there is previous proxy history, show the button */}
+                    {proxyHistory.length !== 0 && (
+                        <HistoryButton setShowHistory={setShowHistory} />
+                    )} 
+                </div>
+                <div className='current-proxy-details'>
+                    <p>IP Address: {currentProxy.ip_addr}</p>
+                    <p>Host: {currentProxy.host}</p>
+                    <p>Price: {currentProxy.price} SealToken{currentProxy.price > 1 ? 's' : ''}</p>
+                    <button className="disconnect-button" onClick={() => setcurrentProxy(null)}>Disconnect From Proxy</button>
+                </div>
+            </div>
+        );
+    }
+
+    //didnt buy proxy shows list of proxies
+    const AvailableProxyPage = ({searchQuery, handleSearchInput, proxyHistory, setProxyHistory, setShowHistory, filteredProxies, sealTokenBalance, setSealTokenBalance, setcurrentProxy}) => {
+        return (
+            <div> 
+                <div className="available-proxy-container">
+                    <input
+                        type="text"
+                        className="proxy-search-bar"
+                        placeholder="Search"
+                        value={searchQuery}
+                        onChange={handleSearchInput}
+                    />
+                    <h1>Available HTTP Proxies</h1>
+                    {/* If there is previous proxy history, show the button */}
+                    {proxyHistory.length !== 0 && (
+                        <HistoryButton setShowHistory={setShowHistory} />
+                    )} 
+                </div>
+                <div className='proxy-list'>
+                    {filteredProxies.map((proxy) => ( // Map each proxy to a ProxyItem component pass in proxy obj
+                        <ProxyItem key={proxy.id} proxy={proxy} sealTokenBalance ={sealTokenBalance}  setSealTokenBalance = {setSealTokenBalance}
+                            setcurrentProxy = {setcurrentProxy} setProxyHistory = {setProxyHistory}
+                        />
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
 
     //   Indiviual Proxy Card
     const ProxyItem = ({ proxy, sealTokenBalance, setSealTokenBalance, setcurrentProxy, setProxyHistory}) => {
@@ -220,7 +258,14 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
             alert(`Purchase successful! You spent ${price} SealTokens.`);
             setSealTokenBalance((prevBalance) => prevBalance - price); // Update balance
             setcurrentProxy(proxy);
-            setProxyHistory((prevHistory) => [...prevHistory, proxy]);
+
+            // Create a new proxy object with a timestamp
+            const historyProxy = {
+                proxy,
+                timestamp: new Date().toLocaleString(), // Add a timestamp
+            };
+            setProxyHistory((prevHistory) => [...prevHistory, historyProxy]);
+
         } else {
             alert('Insufficient balance.');
         }
