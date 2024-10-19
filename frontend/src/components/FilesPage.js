@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share1Icon, UploadIcon } from '@radix-ui/react-icons';
 import '../stylesheets/FilesPage.css';
+import FileViewer from './FileViewer';  
 
 const FilesPage = () => {
   const [files, setFiles] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false); //uploading file
+  const [isModalOpen, setIsModalOpen] = useState(false); 
   const [isFileModalOpen, setIsFileModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [currentFile, setCurrentFile] = useState(null); 
   const [tempFiles, setTempFiles] = useState([]);
   const [newFileDetails, setNewFileDetails] = useState({ price: '', description: '' });
@@ -13,8 +16,22 @@ const FilesPage = () => {
   const [filteredFiles, setFilteredFiles] = useState(files); 
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false)
   const [cid, setCid] = useState('');
+  const [dummyLink, setDummyLink] = useState('');
   const [isProvidersModalOpen, setIsProvidersModalOpen] = useState(false)
   const [selectedProvider, setSelectedProvider] = useState(null)
+
+  
+  function openFile(file) {
+    if (file.isFolder) return; 
+    setCurrentFile(file);
+    setIsViewerOpen(true);
+  }
+
+  function closeViewer() {
+    setIsViewerOpen(false);
+    setCurrentFile(null);
+  }
+  
 
   const dummyProviders = [
     {ip: "127.0.0.1", price: 2},
@@ -31,17 +48,21 @@ const FilesPage = () => {
 
   function handleFileUpload(event) {
     const selectedFiles = Array.from(event.target.files);
-    if (selectedFiles.length === 0) {
-      setIsModalOpen(false)
-      return
-    }
-    setTempFiles(selectedFiles); 
+    setTempFiles(selectedFiles)
     setIsModalOpen(true); 
   }
-
+  
   function handleDownload(file) {
-
+    const url = URL.createObjectURL(file.fileObject)
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = file.name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
+  
 
   function handleDownloadFile() {
     setIsDownloadModalOpen(true)
@@ -50,6 +71,20 @@ const FilesPage = () => {
   function handleCidChange(e) {
     setCid(e.target.value);
 
+  }
+  function openShareModal(file) {
+    setDummyLink(`https://sharelink.com/${file.name}`);
+    setCurrentFile(file);
+    setIsShareModalOpen(true);
+  }
+
+  function closeShareModal() {
+    setIsShareModalOpen(false);
+  }
+
+  function copyToClipboard() {
+    navigator.clipboard.writeText(dummyLink);
+    alert('Link copied to clipboard!');
   }
 
   function closeDownloadModal() {
@@ -66,7 +101,6 @@ const FilesPage = () => {
     setIsProvidersModalOpen(true)
   }
 
-  // Creates a dummy file after we press download
   function dummyDownload() {
     const dummyFile = {
       name: `Dummy File ${files.length }`, 
@@ -88,16 +122,17 @@ const FilesPage = () => {
 
 
   function handleModalSubmit() {
+    console.log(tempFiles)
     const newFiles = tempFiles.map(file => ({
       name: file.name,
       size: file.size,
       status: 'unlocked',
       source: 'local',
-      price: newFileDetails.price,
-      description: newFileDetails.description,
-      isFolder: false, 
+      fileObject: file,  
+      isFolder: false,
+      type: file.type
     }));
-
+  
     const updatedFiles = [...files, ...newFiles];
     setFiles(updatedFiles);
     setFilteredFiles(updatedFiles); 
@@ -201,8 +236,12 @@ const FilesPage = () => {
                     <button onClick={() => handleDownload(file)}>
                       <DownloadIcon />
                     </button>
-
-                    <button>
+                    <button onClick={() => {
+                                        console.log(file);
+                                        return openFile(file)}}>
+                      Open
+                    </button>
+                    <button onClick={() => openShareModal(file)}>
                       <Share1Icon />
                     </button>
                     <button onClick={() => file.isFolder ? 'OPENFOLDER' : openFileDetails(file)}>
@@ -216,7 +255,10 @@ const FilesPage = () => {
         </table>
       </div>
 
-      {/* Modal for additional file details */}
+      {isViewerOpen && currentFile && (
+            <FileViewer file={currentFile} closeViewer={closeViewer} />
+          )}
+
       {isModalOpen && (
         <div className="modal">
           <div className="modal-content">
@@ -302,6 +344,24 @@ const FilesPage = () => {
                 </div>
               </div>
             )}
+             {isShareModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>Share File</h2>
+            <p>Copy the link below to share the file:</p>
+            <input
+              type="text"
+              value={dummyLink}
+              readOnly
+              style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+            />
+            <button onClick={copyToClipboard}>Copy Link</button>
+            <div className="modal-actions">
+              <button onClick={closeShareModal}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isProvidersModalOpen && (
               <div className="modal">
