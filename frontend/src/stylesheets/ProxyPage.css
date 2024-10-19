@@ -117,8 +117,29 @@ div.container {
     font-size: 30px;
   }
 
-/* Per Proxy Card */
-.proxy-item {
+/* for the Available proxy and search Bar */
+.available-proxy-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 50px;
+  }
+
+   .proxy-search-bar {
+    position: absolute;
+    left: 0;
+    width: 200px;
+    padding: 5px;
+   }
+
+   .available-proxy-container h1 {
+    margin: 0 auto;
+    font-size: 30px;
+    transform: translateX(10px);
+   }
+
+   /* Per Proxy Card */
+   .proxy-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -195,5 +216,25 @@ div.container {
   /* Hover effect */
   .disconnect-button:hover {
     background-color: #c34646ce; /* Red background */
-
 }
+
+/* Histoy Button */
+.history-button {
+    background-color: #285a8f;
+    border: 1px solid #ccc;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 75%;
+    width: 175px;
+  }
+  
+  .history-button:hover {
+    background-color: #285a8fd7;
+    font-weight: bold;
+}
+
