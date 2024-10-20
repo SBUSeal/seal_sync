@@ -17,6 +17,7 @@ div.container {
 
 }
 
+
 .proxy-head {
   background-color: #dde4e9;
   padding: 20px;
@@ -42,54 +43,87 @@ div.container {
     gap: 20px;
   }
 
-
-/* Proxy Toggle Button */
+  
 .toggle-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-  }
-  
-  .toggle-button.off {
-    background-color: #34495E;
-    color: white;
-  }
-  
-  .toggle-button.on {
-    background-color: #4CAF50;
-    color: white;
-  }
-  
-  .toggle-button:hover {
-    opacity: 0.9;
+  font-size: 16px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+  width: 160px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.toggle-button.off {
+  background-color: #34495E;
+  color: white;
+}
+
+.toggle-button.on {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.toggle-button:hover {
+  opacity: 0.9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 
 /* Price Input Styles */
-.price-input {
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 18px;
-    width: 240px;
-    transition: border-color 0.3s, background-color 0.3s;
-  }
-  
-  .price-input.editing {
-    border: 1px solid #4caf50;
-    background-color: #e8f5e9;
-  }
-  
-  .price-input.saved {
-    border: 1px solid #ccc;
-    background-color: #f0f0f0;
-    cursor: pointer;
-  }
-  
-  .price-input.saved:hover {
-    background-color: #e0e0e0;
+
+.price-input::-webkit-outer-spin-button,
+.price-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
+
+.price-input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+
+/* Price input field */
+.price-input {
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  width: 150px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  margin-top: 10px;
+  color: black;
+}
+
+/* Editing state */
+.price-input.editing {
+  background-color: #eaffea;
+}
+
+/* Saved state */
+.price-input.saved {
+  border-color: #ccc;
+  background-color: #f5f5f5;
+}
+
+/* Disabled input */
+.price-input:disabled {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}
+
+/* .units{
+
+} */
+
 
 /* Container of list of proxies */
 .proxy-list {
@@ -118,7 +152,7 @@ div.container {
    .proxy-search-bar {
     position: absolute;
     left: 0;
-    width: 300px;
+    width: 250px;
     font-size: 17px;
     padding: 5px;
    }
@@ -147,6 +181,7 @@ div.container {
     gap: 20px;
     padding: 15px;
     border-bottom: 1px solid #e0e0e0;
+    text-align: start;
   }
 
 
@@ -155,6 +190,10 @@ div.container {
     color: #6c757d;
   }
 
+
+  .proxy-price{
+    font-weight: bold;
+  }
   /* Proxy Join Button Container */
   .proxy-join {
     display: flex;
@@ -163,27 +202,34 @@ div.container {
     height: 100%;
   }
 
-  /* Proxy Join Button Style */
   .purchase-button {
-    background-color: #f0f0f0;
+    background-color: #f9f9f9;
     border: 1px solid #ccc;
     color: #285a8f;
-    font-weight: bold;
+    font-weight: 600;
     font-size: 16px;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 12px 24px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    width: 100px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow for depth */
+}
 
-    height: 75%;
-    width: 175px;
-  }
-  
-  .purchase-button:hover {
+.purchase-button:hover {
     background-color: #285a8f;
     color: white;
-    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adds a more prominent shadow on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+    font-weight: 700; /* Slightly bolder on hover */
 }
+
+.purchase-button:active {
+    transform: translateY(0); /* Reset the lift effect when clicked */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle pressed effect */
+}
+
 
 /* Current Proxy */
 .current-proxy-details {
@@ -212,9 +258,8 @@ div.container {
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.3s ease;
-
-    height: 75%;
     width: 175px;
+    text-align: center;
   } 
   
   /* Hover effect */
@@ -241,4 +286,5 @@ div.container {
     background-color: #285a8fd7;
     font-weight: bold;
 }
+
 
