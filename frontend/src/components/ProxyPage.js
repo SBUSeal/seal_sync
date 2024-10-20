@@ -3,7 +3,7 @@ import '../stylesheets/ProxyPage.css';
 
 /* States */
 const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcurrentProxy, proxyHistory, 
-    setProxyHistory, isOn, setIsOn, setTransactions}) => { // Destruct Properties
+    setProxyHistory, isOn, setIsOn, setTransactions, price, setPrice}) => { // Destruct Properties
     const proxies = [   /* Dummy Data */
         {
             id: 1,
@@ -43,10 +43,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
           },
     ];
 
-    const [price, setPrice] = useState(() => JSON.parse(localStorage.getItem('price')) || '');  /* State of Proxy Price */
-    const [bandwidth, setBandwidth] = useState(() => JSON.parse(localStorage.getItem('bandwidth')) || '');  /* State of max bandwidth */
     const [isPriceEditing, setIsPriceEditing] = useState(price === '');   /* State of proxy price input */
-    const [isBandEditing, setIsBandEditing] = useState(bandwidth === '');   /* State of bandwidth input */
     const [searchQuery, setSearchQuery] = useState('');  /* State of the search query */
     const [filteredProxies, setFilteredProxies] = useState(proxies);  /*State of filtered proxies*/
     const [showHistory, setShowHistory] = useState(false); // State if history button is shown
@@ -61,14 +58,12 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
 
     /* Proxy on/off handler */
     const handleToggle = () => {
-        if (price === '' || bandwidth === '') {
-            alert('Proxy Price Or Bandwidth Can Not Be Empty')
+        if (price === '') {
+            alert('Proxy Price Can Not Be Empty')
         } else {
             const newIsOn = !isOn;
             setIsPriceEditing(false);
-            setIsBandEditing(false);
             setIsOn(newIsOn);
-            localStorage.setItem('proxy', JSON.stringify(newIsOn));
         }
     };
 
@@ -83,12 +78,11 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     /* proxy price saving */
     const savePrice = (e) => {
         e.preventDefault();
+        setPrice(price)
         if (price !== '') { /* submitting price that is a valid number */
-            localStorage.setItem('price', JSON.stringify(price));
             setIsPriceEditing(false);  /* after enter, save and set input into css save mode */
         } 
         else {  /* submitting empty field */
-            localStorage.setItem('price', JSON.stringify(''));
             setIsPriceEditing(true);  /* after enter, save and set input into css save mode */
         }
      };
@@ -96,31 +90,6 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     /* form on click = editing, changes css */
     const editPrice = () => {
         setIsPriceEditing(true);
-    };
-
-    /* Proxy input price handler */
-    const handleBandwidthChange = (e) => {
-        const value = e.target.value;
-        if (/^\d*\.?\d*$/.test(value)) {
-          setBandwidth(value);
-        }
-    };
-
-    /* proxy max bandwidth */
-    const saveBandwidth = (e) => {
-        e.preventDefault();
-        if (bandwidth !== '') { /* submitting price that is a valid number */
-            localStorage.setItem('bandwidth', JSON.stringify(bandwidth));
-            setIsBandEditing(false);  /* after enter, save and set input into css save mode */
-        } 
-        else {  /* submitting empty field */
-            localStorage.setItem('bandwidth', JSON.stringify(''));
-            setIsBandEditing(true);  /* after enter, save and set input into css save mode */
-        }
-     };
-
-    const editBand = () => {
-        setIsBandEditing(true);
     };
 
     // Handle search query input
@@ -162,23 +131,6 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                             />
                         </form>
                     </div>
-                    <div>
-                        <h1>Maximum Bandwdith</h1>
-                        {/* Bandwidth Input Form */}
-                        <form onSubmit={saveBandwidth}>
-                            <input
-                                type="number"
-                                value={bandwidth}
-                                onChange={handleBandwidthChange}
-                                placeholder="Enter Bandwdith"
-                                min="0"
-                                readOnly={!isBandEditing}
-                                disabled={isOn} 
-                                className={`price-input ${isBandEditing ? 'editing' : 'saved'}`}
-                                onClick={isOn ? null : editBand}
-                            />
-                        </form>
-                    </div>
                 </div>
                 {isOn && (  // If proxy on share metrics about the proxy
                 <div className="proxy-form">
@@ -188,8 +140,6 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                         <p>Connected Users: {host_data.users}</p>
                         <p>Data Transferred: {host_data.dataTransferred} MB</p>
                         <p>Latency: {host_data.latency} ms</p>
-                        <p>Bandwidth: {host_data.bandwidth} ms</p>
-
                     </div>
                 </div>
                 )}

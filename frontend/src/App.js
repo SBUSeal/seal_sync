@@ -22,7 +22,7 @@ function App() {
   const [currentProxy, setcurrentProxy] = useState(null); 
   const [proxyHistory, setProxyHistory] = useState([]); // State to store proxy history
   const [isOn, setIsOn] = useState(false); /* Proxy Toggle State */
-
+  const [price, setPrice] = useState('');  /* State of Proxy Price */
 
 
   // State to manage Files
@@ -96,7 +96,7 @@ function App() {
       case 'Proxy':
         return <ProxyPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} currentProxy = {currentProxy}
           setcurrentProxy = {setcurrentProxy} proxyHistory = {proxyHistory} setProxyHistory = {setProxyHistory} isOn = {isOn}
-          setIsOn = {setIsOn} setTransactions = {setTransactions}
+          setIsOn = {setIsOn} setTransactions = {setTransactions} price = {price} setPrice = {setPrice}
         />;
       case 'Mining':
         return <MiningPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} miningLog={miningLog} setMiningLog={setMiningLog}/>;
