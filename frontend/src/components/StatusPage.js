@@ -33,16 +33,15 @@ const StatusPage = ({downloadsInProgress}) => {
       <div className="header">
         <h1>SealShare Dashboard</h1>
         <p className="status-info">
-          Hosting {dataAmount} KiB of data - Connected to {peers} peers
+          Hosting {dataAmount} MiB of data - Connected to {peers} peers
         </p>
       </div>
 
       <div className="dashboard-grid">
-        {/* Network Traffic Section with Progress Bars */}
         <div className="network-traffic card">
           <h3>Network Traffic</h3>
           <div className="traffic-item">
-            <p><strong>Incoming:</strong> {incomingData} KiB/s</p>
+            <p><strong>Incoming:</strong> {incomingData} MiB/s</p>
             <div className="bar">
               <div
                 className="bar-fill"
@@ -51,7 +50,7 @@ const StatusPage = ({downloadsInProgress}) => {
             </div>
           </div>
           <div className="traffic-item">
-            <p><strong>Outgoing:</strong> {outgoingData} KiB/s</p>
+            <p><strong>Outgoing:</strong> {outgoingData} MiB/s</p>
             <div className="bar">
               <div
                 className="bar-fill"
@@ -102,16 +101,11 @@ const StatusPage = ({downloadsInProgress}) => {
           <p>[Graph placeholder - future enhancement]</p>
         </div>
 
-        {/* Traffic Counters */}
-        <div className="traffic-counters card">
-          <h3>Traffic Counters</h3>
-          <p>Data Processed: 1.5 MiB</p>
-          <p>Packets: 10,500</p>
-        </div>
 
-        {/* Peer Information Section */}
+      
+
         <div className="peer-info card">
-          <h3>Peer Information</h3>
+          <h3>Peers on the Network</h3>
           <p>Active Peers: {peers}</p>
         </div>
       </div>
