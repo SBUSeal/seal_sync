@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../stylesheets//SignUpPage.css';
 
-const SignUpPage = () => {
+const SignUpPage = ({onSignUpSuccess}) => {
   const [publicKey, setPublicKey] = useState('');
   const [privateKey, setPrivateKey] = useState('');
 
@@ -34,6 +34,8 @@ const SignUpPage = () => {
         return;
     }
     console.log('Signing Up with:', { publicKey, privateKey });
+    //For now, will route back to the login page.
+    onSignUpSuccess();
   };
 
   return (
@@ -55,7 +57,7 @@ const SignUpPage = () => {
             <textarea value={privateKey} readOnly />
           </div>
         )}
-        <button type="submit">Sign Up</button>
+        <button onClick={onSignUpSuccess} class-name="signup-button">Sign Up</button>
       </form>
     </div>
   );

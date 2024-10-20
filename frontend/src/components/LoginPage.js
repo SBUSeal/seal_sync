@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../stylesheets/LoginPage.css';
 import SealLogo from '../images/Seal_Logo.png';
 
-function LoginPage({ onLogin }) {
+function LoginPage({ onLogin, onSignUp }) {
   const [walletAddress, setWalletAddress] = useState('');
   const [privateKey, setPrivateKey] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -56,9 +56,8 @@ function LoginPage({ onLogin }) {
         </div>
         <button type="submit">Login</button>
       </form>
-      <p>
-      Don't have a private key? <a href="/signup">Sign Up</a>
-      {/*<button onClick={onSignUp}>Sign Up</button> */}{/* UNCOMMENT THIS BUTTON LINE WHEN THE handleSignUP function in LoginPage.js is complete */}
+      <p>Don't have a private key?
+      <button onClick={onSignUp} classname="signup-button">Sign Up</button>{/* UNCOMMENT THIS BUTTON LINE WHEN THE handleSignUP function in LoginPage.js is complete */}
       </p>
     </div>
     </div>

@@ -52,8 +52,8 @@ function App() {
         return <SignUpPage />; // Render Sign-Up page
     }
     if(!isLoggedIn) {
-      return <LoginPage onLogin={handleLogin} />
-      //return <LoginPage onLogin={handleLogin} onSignUp={handleSignUp}/>;//Should show login page when not logged in. onSignUp will not be valid until you handleSignUP function is complete, and the Sign Up link is changed to button (See LoginPage.js)
+      //return <LoginPage onLogin={handleLogin} />
+      return <LoginPage onLogin={handleLogin} onSignUp={handleSignUp}/>;//Should show login page when not logged in. onSignUp will not be valid until you handleSignUP function is complete, and the Sign Up link is changed to button (See LoginPage.js)
     }
     switch (activePage) {
       case 'Status':
