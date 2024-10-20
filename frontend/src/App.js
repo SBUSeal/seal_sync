@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './stylesheets/App.css';
-import './stylesheets/LoginPage.css';
 import './stylesheets/SignUpPage.css';
 import Files from './components/FilesPage';
 import StatusPage from './components/StatusPage';
