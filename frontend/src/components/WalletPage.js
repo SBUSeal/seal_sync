@@ -89,7 +89,7 @@ const WalletPage = (props) => {
         // Update the balance, ensuring it doesn't go negative
         props.setSealTokenBalance((prevBalance) => {
             const updatedBalance = prevBalance - transferAmount;
-            return parseFloat(updatedBalance.toFixed(2));  // Round to 5 decimal places
+            return parseFloat(updatedBalance.toFixed(2));  // Round to 2 decimal places
         });
 
         // Clear form fields and close modal
@@ -114,10 +114,10 @@ const WalletPage = (props) => {
             <div className="top-section">
                 <div className="card balance-card">
                     <h3>Current Balance</h3>
-                    <p className="balance-amount">{props.sealTokenBalance.toFixed(5)} STK</p>  {/* Round displayed balance to 5 decimals */}
+                    <p className="balance-amount">{props.sealTokenBalance.toFixed(2)} STK</p>  {/* Round displayed balance to 5 decimals */}
                 </div>
                 <div className="card wallet-id-card">
-                    <h3>Wallet ID</h3>
+                    <h3>Wallet Address</h3>
                     <p className="wallet-id">
                         {walletId} 
                         <button onClick={copyToClipboard} className="copy-btn">Copy</button>
