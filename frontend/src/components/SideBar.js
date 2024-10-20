@@ -58,9 +58,7 @@ function Sidebar(props) {
           {!isMinimized && <span>Settings</span>}
         </li>
       </ul>
-      <div className="sign-out-container">
-        <button onClick={handleSignOut} className="sign-out-button">Sign Out</button>
-      </div>
+      
     </div>
   );
 }
