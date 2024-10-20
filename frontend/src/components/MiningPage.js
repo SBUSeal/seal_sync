@@ -10,22 +10,22 @@ const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMining
         if (isMining) {
             interval = setInterval(() => {
                 setSealTokenBalance(prevBalance => prevBalance + (hashPower * 0.0001));
-                if (miningLog.length === 0 || miningLog[miningLog.length - 1].type === 'stop') {
+                if (miningLog.length === 0 || miningLog[0].type === 'stop') {
                     const startEntry = {
                         type: 'start',
                         timestamp: new Date().toLocaleString()
                     };
-                    setMiningLog(prevLog => [...prevLog, startEntry]);
+                    setMiningLog(prevLog => [startEntry, ...prevLog]);
                 }
             }, 1000);
         } else {
             clearInterval(interval);
-            if (miningLog.length !== 0 && miningLog[miningLog.length - 1].type === 'start') {
+            if (miningLog.length !== 0 && miningLog[0].type === 'start') {
                 const stopEntry = {
                     type: 'stop',
                     timestamp: new Date().toLocaleString()
                 };
-                setMiningLog(prevLog => [...prevLog, stopEntry]);
+                setMiningLog(prevLog => [stopEntry, ...prevLog]);
             }
         }
 
