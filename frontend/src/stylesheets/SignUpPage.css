@@ -125,3 +125,19 @@
     width: 150px;/*Adjustable*/
     height: auto;
   }
+
+  .download-button {
+    width: auto; /* Keep it as small as needed */
+    padding: 8px 16px; /* Smaller padding than the other buttons */
+    background-color: black; /* Black background */
+    color: white; /* White text */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 10px 0; /* Space around the button */
+}
+
+.download-button:hover {
+    background-color: #444; /* Darker black on hover */
+}

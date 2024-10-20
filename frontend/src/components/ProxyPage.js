@@ -115,14 +115,14 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                         </button>
                     </div>
                     <div>
-                        <h1>Proxy Price/Day</h1>
+                        <h1>Set Proxy Price/Day</h1>
                         {/* Price Input Form */}
                         <form onSubmit={savePrice}>
                             <input
                                 type="number"
                                 value={price}
                                 onChange={handlePriceChange}
-                                placeholder="Enter SealToken Price"
+                                placeholder="Enter Rate"
                                 min="0"
                                 readOnly={!isPriceEditing}
                                 disabled={isOn} 
@@ -130,16 +130,18 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                                 onClick={isOn ? null : editPrice}
                             />
                         </form>
+                        <div className='units'>                        STK / MB                       </div>
                     </div>
                 </div>
+
                 {isOn && (  // If proxy on share metrics about the proxy
                 <div className="proxy-form">
                     <div>
                         <p>Active Proxy Details:</p>
-                        <p>Your IP: {host_data.ip_addr}</p>
-                        <p>Connected Users: {host_data.users}</p>
-                        <p>Data Transferred: {host_data.dataTransferred} MB</p>
-                        <p>Latency: {host_data.latency} ms</p>
+                        <p>Your IP: <strong>{host_data.ip_addr}</strong></p>
+                        <p>Connected Users: <strong>{host_data.users}</strong></p>
+                        <p>Data Transferred: <strong>{host_data.dataTransferred} MB</strong></p>
+                        <p>Latency: <strong>50 ms</strong></p>
                     </div>
                 </div>
                 )}
@@ -327,11 +329,11 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
             <p>{proxy.host}</p>
             <p>{proxy.ip_addr}</p>
             <p>{proxy.location}</p>
-            <p>{proxy.price} STK/Day</p>
+            <p><span className='proxy-price'>{proxy.price} STK/Day</span></p>
             <p>{proxy.bandwidth} Mbps</p>
         <div className="proxy-join">
           <button className="purchase-button" onClick={() => handlePurchase(proxy.price)}>
-            Purchase
+           Select
           </button>
         </div>
       </div>

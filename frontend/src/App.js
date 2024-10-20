@@ -22,6 +22,10 @@ function App() {
   const [currentProxy, setcurrentProxy] = useState(null); 
   const [proxyHistory, setProxyHistory] = useState([]); // State to store proxy history
   const [isOn, setIsOn] = useState(false); /* Proxy Toggle State */
+
+
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
   const [price, setPrice] = useState('');  /* State of Proxy Price */
 
 
@@ -72,15 +76,23 @@ function App() {
     setIsSigningUp(true);
   };
 
+   // Handle sign-out
+   const handleSignOut = () => {
+    setIsLoggedIn(false);// Set logged in state to false
+    setIsSigningUp(false);// Optionally reset signing up state
+    setActivePage('');// Reset active page (testing)
+   }
+
   const handleLogout = () => {
     setIsLoggedIn(false); // Log the user out and navigate back to the login page
   };
+
 
   // Function to render content based on activePage
   const renderContent = () => 
     {
     if (isSigningUp) {
-        return <SignUpPage />; // Render Sign-Up page
+        return <SignUpPage setActivePage = {setActivePage} setIsSigningUp = {setIsSigningUp} setIsLoggedIn = {setIsLoggedIn}/>; // Render Sign-Up page
     }
     if(!isLoggedIn) {
       //return <LoginPage onLogin={handleLogin} />
@@ -108,9 +120,9 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className={`App ${isDarkMode ? 'dark-mode' : ''}`}> {/* Apply dark mode class */}
       {/* Only show sidebar when logged in */}
-      {isLoggedIn && <Sidebar setActivePage={setActivePage} activePage={activePage} />}
+      {isLoggedIn && <Sidebar setActivePage={setActivePage} activePage={activePage} onSignOut={handleSignOut}/>}
       {/* Main Content */}
       <div className="content">
         {/* Topbar

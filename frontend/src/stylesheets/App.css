@@ -182,3 +182,32 @@ html, body {
   margin-top: 10px;
   color: #7F8C8D;
 }
+
+/* Dark Mode Styles */
+.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.dark-mode .settings-container,
+.dark-mode .section {
+  background-color: #1e1e1e;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .input-field {
+  background-color: #333;
+  border: 1px solid #555;
+  color: #fff;
+}
+
+.dark-mode .primary-button,
+.dark-mode .secondary-button {
+  background-color: #4A90E2;
+  color: #fff;
+}
+
+.dark-mode .primary-button:hover,
+.dark-mode .secondary-button:hover {
+  background-color: #357ABD;
+}
