@@ -44,20 +44,20 @@ function LoginPage({ onLogin, onSignUp }) {
           />
         </div>
         <div className="input-group">
-          <label htmlFor="privateKey">Private Key:</label>
+          <label htmlFor="privateKey">Wallet Password:</label>
           <input
             type="password"// Will add more security later
             id="privateKey"
             value={privateKey}
             maxLength={maxPrivateKeyLength}//Char limit for now
             onChange={(e) => {setPrivateKey(e.target.value);  setErrorMessage('');}}
-            placeholder="Enter your private key"
+            placeholder="Enter your wallet password"
           />
         </div>
         <button type="submit">Login</button>
       </form>
-      <p>Don't have a private key?
-      <button onClick={onSignUp} classname="signup-button">Sign Up</button>{/* UNCOMMENT THIS BUTTON LINE WHEN THE handleSignUP function in LoginPage.js is complete */}
+      <p>Don't have a Wallet?
+      <button onClick={onSignUp} className="signup-button"> Generate Wallet </button>{/* UNCOMMENT THIS BUTTON LINE WHEN THE handleSignUP function in LoginPage.js is complete */}
       </p>
     </div>
     </div>
