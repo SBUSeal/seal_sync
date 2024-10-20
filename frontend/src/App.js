@@ -19,7 +19,8 @@ import MiningPage from './components/MiningPage';
 function App() {
   // State to manage which page is active
   const [activePage, setActivePage] = useState('Status');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [isSigningUp, setIsSigningUp] = useState(false); 
 
   // State to manage Token Balance
@@ -28,6 +29,9 @@ function App() {
 
   // State to manage Files
   const [files, setFiles] = useState([]);
+  const [miningLog, setMiningLog] = useState([]);
+
+  
 
 
   //Handle login
@@ -65,7 +69,7 @@ function App() {
           setcurrentProxy = {setcurrentProxy}
         />;
       case 'Mining':
-        return <MiningPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance}/>;
+        return <MiningPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} miningLog={miningLog} setMiningLog={setMiningLog}/>;
       case 'Settings':
         return <SettingsPage />;
       default:
