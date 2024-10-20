@@ -39,6 +39,21 @@ const SignUpPage = ({onSignUpSuccess}) => {
     onSignUpSuccess();
   };
 
+  const downloadPrivateKey = () => {
+
+    if(!privateKey) {
+      alert('No private key generated yet!');
+      return;
+    }
+    const blob = new Blob([privateKey], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'privateKey.txt';
+    document.body.appendChild(link); // Append to body for Firefox compatibility
+    link.click(); // Trigger download
+    document.body.removeChild(link); // Clean up
+  };
+
   return (
     <div className="signup-page">
         <div className="logo-container">
@@ -63,6 +78,7 @@ const SignUpPage = ({onSignUpSuccess}) => {
             <textarea value={privateKey} readOnly />
           </div>
         )}
+        <button type="button" onClick={downloadPrivateKey} className="download-button">Download Private Key</button>
         <button onClick={onSignUpSuccess} class-name="button">Sign Up</button>
       </form>
       </div>
