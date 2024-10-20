@@ -45,6 +45,12 @@ function App() {
     setIsSigningUp(true);
   };
 
+   // Handle sign-out
+   const handleSignOut = () => {
+    setIsLoggedIn(false);// Set logged in state to false
+    setIsSigningUp(false);// Optionally reset signing up state
+    setActivePage('');// Reset active page (testing)
+   }
   // Function to render content based on activePage
   const renderContent = () => 
     {
@@ -78,7 +84,7 @@ function App() {
   return (
     <div className="App">
       {/* Only show sidebar when logged in */}
-      {isLoggedIn && <Sidebar setActivePage={setActivePage} activePage={activePage} />}
+      {isLoggedIn && <Sidebar setActivePage={setActivePage} activePage={activePage} onSignOut={handleSignOut}/>}
       {/* Main Content */}
       <div className="content">
         {/* Topbar

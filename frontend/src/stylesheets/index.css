@@ -88,6 +88,27 @@
 .sidebar-toggle button:hover {
   opacity: 0.8;
 }
+/* Sign Out Button Styles */
+.sign-out-container {
+  margin-top: auto; /* Pushes the sign out button to the bottom */
+  padding: 10px 0; /* Space around the button */
+  text-align: center; /* Center the button */
+}
+
+.sign-out-button {
+  background-color: #1ABC9C; /* Red color for sign out */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  width: 100%; /* Full width for the button */
+  transition: background-color 0.3s ease;
+}
+
+.sign-out-button:hover {
+  background-color: #16a085; /* Darker red on hover */
+}
   
   /* Content area */
   .content {
