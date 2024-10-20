@@ -19,8 +19,7 @@ import MiningPage from './components/MiningPage';
 function App() {
   // State to manage which page is active
   const [activePage, setActivePage] = useState('Status');
-  // const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false); 
 
   // State to manage Token Balance
