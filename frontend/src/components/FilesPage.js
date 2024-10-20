@@ -26,6 +26,7 @@ const FilesPage = (props) => {
   const [isProvidersModalOpen, setIsProvidersModalOpen] = useState(false)
   const [selectedProvider, setSelectedProvider] = useState(null)
   const [filter, setFilter] = useState("All")
+  const [hasGeneratedLink, setHasGeneratedLink] = useState(false)
 
 
 
@@ -130,6 +131,7 @@ const FilesPage = (props) => {
 
   function closeShareModal() {
     setIsShareModalOpen(false);
+    setHasGeneratedLink(false);
   }
 
   function copyToClipboard() {
@@ -539,14 +541,18 @@ const FilesPage = (props) => {
         <div className="modal">
           <div className="modal-content">
             <h2>Share File</h2>
-            <p style={{marginBottom: "10px"}}>Copy the link below to share the file:</p>
-            <input
-              type="text"
-              value={dummyLink}
-              readOnly
-              style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
-            />
-            <button onClick={copyToClipboard}>Copy Link</button>
+            <button onClick={()=>setHasGeneratedLink(true)} style={{marginBottom: "10px"}}>Generate Share Link </button>
+            {hasGeneratedLink && <div> 
+              <input
+                type="text"
+                value={dummyLink}
+                readOnly
+                style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+              />
+              <button onClick={copyToClipboard}> 
+                Copy Link
+              </button>
+            </div>}
             <h2 style={{marginTop: "5px"}}> Or </h2>
             <p style={{marginBottom: "10px"}}> Copy the file CID below </p>
             <input
