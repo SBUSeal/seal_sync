@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../stylesheets/StatusPage.css'; // Ensure the CSS is updated for the new look
 
-const StatusPage = ({ downloadsInProgress = [] }) => { // Defaulting downloadsInProgress to an empty array  const [dataAmount, setDataAmount] = useState(100); // Example data amount
+const StatusPage = ({downloadsInProgress}) => { 
   const [dataAmount, setDataAmount] = useState(100); // Example data amount
   const [peers, setPeers] = useState(5); // Example peers
   const [incomingData, setIncomingData] = useState(1.2); // Incoming traffic
@@ -80,7 +80,6 @@ const StatusPage = ({ downloadsInProgress = [] }) => { // Defaulting downloadsIn
           </div>
         </div>
 
-        {/* Downloads In Progress Section */}
         <div className="downloads-progress card">
           <h3>Downloads In Progress</h3>
           
@@ -90,14 +89,14 @@ const StatusPage = ({ downloadsInProgress = [] }) => { // Defaulting downloadsIn
           ) : (
             downloadsInProgress.map((file, index) => (
               <div key={index} className="download-item">
+                {console.log(file)}
                 <p><strong>{file.name}</strong> - {file.size}</p>
-                <p>Downloading...</p>
+                <p>{file.paused ? 'Paused': 'Downloading...'}</p>
               </div>
             ))
           )}
         </div>
 
-        {/* Bandwidth Over Time Section */}
         <div className="bandwidth-section card">
           <h3>Bandwidth Over Time</h3>
           <p>[Graph placeholder - future enhancement]</p>

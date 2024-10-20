@@ -241,17 +241,28 @@ margin: 0;
 }
 
 
+.icon-cell{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.icon-cell button {
+  margin-right: 0;
+}
 
 .icon-cell button:disabled {
+  display: flex;
+  flex-direction: row;
   color: #aaa;          
+  justify-content: center;
   cursor: not-allowed;  
   opacity: 0.5;        
 }
 
 .spinner {
   border: 4px solid rgba(0,0,0,0.1);
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border-left-color: #09f;
   animation: spin 1s infinite linear;
@@ -305,4 +316,25 @@ input:checked + .slider {
 
 input:checked + .slider:before {
   transform: translateX(14px);
+}
+
+
+.download-container{
+  
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  
+  
+}
+
+.pause-button {
+  border: none;
+  cursor: pointer;
+}
+.resume-button {
+  border: none;
+  cursor: pointer;
 }

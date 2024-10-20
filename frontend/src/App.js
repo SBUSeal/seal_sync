@@ -14,6 +14,7 @@ import MiningPage from './components/MiningPage';
 function App() {
   const [activePage, setActivePage] = useState('Status');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const [isSigningUp, setIsSigningUp] = useState(false); 
 
   const [sealTokenBalance, setSealTokenBalance] = useState(100); 
@@ -86,9 +87,7 @@ function App() {
       case 'Status':
         return <StatusPage downloadsInProgress={downloadsInProgress} />;
       case 'Files':
-
         return <Files sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} files = {files} setFiles = {setFiles} transactions = {transactions} setTransactions = {setTransactions} setDownloadsInProgress={setDownloadsInProgress}/>;
-
       case 'Wallet':
         return <WalletPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} transactions = {transactions} setTransactions = {setTransactions}/>;
       case 'Proxy':
