@@ -87,9 +87,7 @@ function App() {
       case 'Status':
         return <StatusPage downloadsInProgress={downloadsInProgress} />;
       case 'Files':
-
         return <Files sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} files = {files} setFiles = {setFiles} transactions = {transactions} setTransactions = {setTransactions} setDownloadsInProgress={setDownloadsInProgress}/>;
-
       case 'Wallet':
         return <WalletPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} transactions = {transactions} setTransactions = {setTransactions}/>;
       case 'Proxy':

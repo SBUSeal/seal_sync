@@ -10,7 +10,7 @@ const FilesPage = (props) => {
 
   const files = props.files
   const setFiles = props.setFiles
-  const setDownloadsInProgress = props.setDownloadsInProgress; // Get prop to update downloads in progress
+  const setDownloadsInProgress = props.setDownloadsInProgress; 
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [isFileModalOpen, setIsFileModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -27,14 +27,23 @@ const FilesPage = (props) => {
   const [selectedProvider, setSelectedProvider] = useState(null)
   const [filter, setFilter] = useState("All")
 
+
+
+  useEffect(() => {
+      refetchFiles();
+  }, [filteredFiles]);
+
+  const refetchFiles = () => {
+    setFilteredFiles([...files]);
+  };
+
   useEffect(() => {
     const uploadCount = files.filter(file => file.source === 'uploaded').length;
     const downloadCount = files.filter(file => file.source === 'downloaded').length;
 
-    // Save counts to localStorage
     localStorage.setItem('uploadedFilesCount', uploadCount);
     localStorage.setItem('downloadedFilesCount', downloadCount);
-  }, [files]); // This runs every time files are updated
+  }, [files]); 
 
   function openFile(file) {
     if (file.isFolder) return; 
@@ -83,6 +92,23 @@ const FilesPage = (props) => {
   function handleDownloadFile() {
     setIsDownloadModalOpen(true)
   }
+
+  function handlePause(file) {
+    setFiles(prevFiles =>
+      prevFiles.map(f =>
+        f.name === file.name ? { ...f, paused: true } : f
+      )
+    );
+  }
+  
+  function handleResume(file) {
+    setFiles(prevFiles =>
+      prevFiles.map(f =>
+        f.name === file.name ? { ...f, paused: false } : f
+      )
+    );
+  }
+  
 
   function handleCidChange(e) {
     setCid(e.target.value);
@@ -149,7 +175,8 @@ const FilesPage = (props) => {
       description: 'Dummy description', 
       isFolder: false,
       downloading: true, 
-    };
+      paused: false
+      }
     const newBalance = props.sealTokenBalance - dummyFile.price;
     if (newBalance < 0) {
       alert("Insufficient funds, cannot download file")
@@ -159,13 +186,12 @@ const FilesPage = (props) => {
     const updatedFiles = [...files, dummyFile];
     setFiles(updatedFiles);
 
-    //props.setDownloadsInProgress(prevDownloads => [...prevDownloads, dummyFile]);
     props.setDownloadsInProgress(prevDownloads => {
       const isAlreadyDownloading = prevDownloads.some(f => f.name === dummyFile.name);
       if (!isAlreadyDownloading) {
-        return [...prevDownloads, dummyFile]; // Add to downloads if not already downloading
+        return [...prevDownloads, dummyFile]; 
       }
-      return prevDownloads; // If already downloading, do nothing
+      return prevDownloads;
     });
  
     const filtered = updatedFiles.filter(file => {
@@ -176,8 +202,7 @@ const FilesPage = (props) => {
     setIsProvidersModalOpen(false)
     setSelectedProvider(null)
 
-    // Add file to downloads in progress
-    setDownloadsInProgress(prevDownloads => [...prevDownloads, dummyFile]);
+    // setDownloadsInProgress(prevDownloads => [...prevDownloads, dummyFile]);
 
     props.setSealTokenBalance(props.sealTokenBalance - dummyFile.price)
     alert(`Successfully bought file for ${dummyFile.price} STK!`)
@@ -192,21 +217,26 @@ const FilesPage = (props) => {
       reason: dummyFile.name,
     },] )
 
+
+    const randomDelay = Math.floor(Math.random() * (20000 - 10000 + 1)) + 10000;
+
     setTimeout(() => {
       setFiles(prevFiles => {
         return prevFiles.map(f => {
-          if (f.name === dummyFile.name) {
+          if (f.name === dummyFile.name && !f.paused) { // If not paused, mark as finished
             return { ...f, downloading: false }; 
           }
           return f;
         });
       });
-
-      props.setDownloadsInProgress(prevDownloads => 
+    
+      setDownloadsInProgress(prevDownloads => 
         prevDownloads.filter(f => f.name !== dummyFile.name)
       );
+    
+    }, randomDelay);
+    
 
-    }, 7000);
     
   }
 
@@ -370,7 +400,18 @@ const FilesPage = (props) => {
 
                   {file.downloading ? (
                     <td className='icon-cell' >
-                        <div className="spinner"></div> Downloading...
+                       {file.paused ? (
+                            <button onClick={() => handleResume(file)}>
+                            Resume
+                            </button>
+                          ) : (
+                            <div className="download-container">
+                              <div className="spinner"></div> 
+                              <button onClick={() => handlePause(file)}>
+                              Pause
+                              </button>
+                            </div>
+                          )}
                     </td>
                     ) :
                     

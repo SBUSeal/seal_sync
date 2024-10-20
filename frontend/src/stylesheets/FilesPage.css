@@ -306,3 +306,10 @@ input:checked + .slider {
 input:checked + .slider:before {
   transform: translateX(14px);
 }
+
+
+.download-container{
+  display: flex;
+  flex-direction: row;
+  
+}
