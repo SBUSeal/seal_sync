@@ -1,42 +1,33 @@
 import React, { useState } from 'react';
 import '../stylesheets/WalletPage.css';  // Assuming this exists
 
-
 const WalletPage = (props) => {
-    const [filter, setFilter] = useState('All');
     const [receiverId, setReceiverId] = useState('');
     const [amount, setAmount] = useState('');
     const [reason, setReason] = useState('');
-    // const [transactions, setTransactions] = useState([
-    //     {
-    //         id: 1,
-    //         type: 'Received',
-    //         date: '8:27 on 18 Sep 2024',
-    //         from: '1B3qRz5g4dEF4DMPGT1L3TThzv6CvzNB',
-    //         sealTokens: 20,
-    //     },
-    //     {
-    //         id: 2,
-    //         type: 'Sent',
-    //         date: '2:14 on 15 Sep 2024',
-    //         to: '1A72tpP5QGeiF2DMPfTT1S5LLmv7DivFNa',
-    //         sealTokens: 15,
-    //     },
-    // ]);
-    const transactions = props.transactions
-    const setTransactions = props.setTransactions
+    const transactions = props.transactions;
+    const setTransactions = props.setTransactions;
 
     const [showModal, setShowModal] = useState(false);  // Modal visibility
     const [pendingTransaction, setPendingTransaction] = useState(null);  // Pending transaction
     const [notification, setNotification] = useState({ message: '', type: '' });
 
     const walletId = '13hgruwdGXvPyWFABDX6QBy';
-  
 
-    const filteredTransactions = transactions.filter((transaction) => {
-        if (filter === 'All') return true;
-        return transaction.type === filter;
+    // Sort transactions by date (newest first), keeping dummy transactions at the bottom
+    const sortedTransactions = [...transactions].sort((a, b) => {
+        if (a.id < 3 && b.id < 3) return 0; // Keep the dummy transactions at the bottom
+        return new Date(b.date) - new Date(a.date); // Sort others by date
     });
+
+    // Display only the first 5 transactions (recent ones)
+    const displayedTransactions = sortedTransactions.slice(0, 5);
+
+    // Function to format date
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    };
 
     // Function to handle wallet ID copy
     const copyToClipboard = () => {
@@ -46,7 +37,6 @@ const WalletPage = (props) => {
 
     const showNotification = (message, type) => {
         setNotification({ message, type });
-
         setTimeout(() => {
             setNotification({ message: '', type: '' });
         }, 3000);  // 3 seconds
@@ -72,7 +62,7 @@ const WalletPage = (props) => {
         const transactionToConfirm = {
             id: transactions.length + 1,
             type: 'Sent',
-            date: new Date().toLocaleString(),
+            date: new Date().toISOString(),  // Save as ISO to easily parse
             to: receiverId,
             sealTokens: transferAmount,
             reason: reason || 'No reason provided',
@@ -112,11 +102,11 @@ const WalletPage = (props) => {
                 </div>
             )}
 
-            {/* Top Section with Balance, Wallet ID, Earning/Spending */}
+            {/* Top Section with Balance, Wallet ID */}
             <div className="top-section">
                 <div className="card balance-card">
                     <h3>Current Balance</h3>
-                    <p className="balance-amount">{props.sealTokenBalance.toFixed(2)} STK</p>  {/* Round displayed balance to 5 decimals */}
+                    <p className="balance-amount">{props.sealTokenBalance.toFixed(2)} STK</p>
                 </div>
                 <div className="card wallet-id-card">
                     <h3>Wallet Address</h3>
@@ -127,67 +117,43 @@ const WalletPage = (props) => {
                 </div>
             </div>
 
-            {/* Transfer Box */}
+            {/* Transfer Section */}
             <div className="transfer-section">
                 <h3>Transfer SealTokens</h3>
                 <div className="transfer-form">
                     <input 
                         type="text" 
-                        placeholder="Receiver ID" 
+                        placeholder="Receiver Address" 
                         value={receiverId}
                         onChange={(e) => setReceiverId(e.target.value)}
-                        className="input-field"
+                        className="tranfer-field"
                     />
                     <input 
                         type="number" 
                         placeholder="Amount" 
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
-                        className="input-field"
+                        className="tranfer-field"
                     />
                     <input 
                         type="text" 
-                        placeholder="Reason " 
+                        placeholder="Reason (optional)" 
                         value={reason}
                         onChange={(e) => setReason(e.target.value)}
-                        className="input-field"
+                        className="tranfer-field"
                     />
                     <button onClick={handleTransfer} className="primary-button">Send</button>
                 </div>
             </div>
 
-            {/* Transaction Filters */}
-            <div className="transaction-section">
-                <div className="transaction-buttons">
-                    <button
-                        className={`btn-transaction ${filter === 'All' ? 'active' : ''}`}
-                        onClick={() => setFilter('All')}
-                    >
-                        All
-                    </button>
-                    <button
-                        className={`btn-transaction ${filter === 'Sent' ? 'active' : ''}`}
-                        onClick={() => setFilter('Sent')}
-                    >
-                        Sent
-                    </button>
-                    <button
-                        className={`btn-transaction ${filter === 'Received' ? 'active' : ''}`}
-                        onClick={() => setFilter('Received')}
-                    >
-                        Received
-                    </button>
-                </div>
-                <h3 className="transaction-title">Transaction History</h3>
-            </div>
-
             {/* Transaction History */}
             <div className="transaction-history">
-                {filteredTransactions.map((transaction) => (
+                <h3>Transaction History</h3>
+                {displayedTransactions.map((transaction) => (
                     <div key={transaction.id} className="transaction-item">
                         <div className="transaction-column">
                             <p className="transaction-status">{transaction.type} SealToken</p>
-                            <p className="transaction-date">{transaction.date}</p>
+                            <p className="transaction-date">{formatDate(transaction.date)}</p>
                         </div>
                         <div className="transaction-column">
                             <p className="transaction-id">
@@ -205,6 +171,15 @@ const WalletPage = (props) => {
                     </div>
                 ))}
             </div>
+
+            {/* Show More Button */}
+            {transactions.length > 5 && (
+                <div className="show-more">
+                    <button onClick={props.onShowMore} className="primary-button">
+                        View All Transactions
+                    </button>
+                </div>
+            )}
 
             {/* Confirmation Modal */}
             {showModal && (

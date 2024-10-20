@@ -1,0 +1,146 @@
+/* General Styling for the Transactions Page */
+.transactions-page {
+    background-color: #f4f6f8;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  /* Transaction History Heading */
+  h3 {
+    color: #343a40;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  /* Filter and Search Section */
+  .search-filter-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 20px;
+  }
+  
+  /* Labels for Filter and Search */
+  .search-filter-section label {
+    font-weight: bold;
+    margin-right: 10px;
+    color: #495057;
+  }
+  
+  /* Input Fields */
+  .input-field {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    font-size: 16px;
+    width: 100%;
+    max-width: 400px;
+    transition: all 0.3s ease;
+  }
+  
+  .input-field:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* Transaction Buttons */
+  .transaction-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn-transaction {
+    padding: 10px 20px;
+    border: 1px solid #ced4da;
+    background-color: #e9ecef;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #343a40;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .btn-transaction:hover,
+  .btn-transaction.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+  
+  /* Transaction History */
+  .transaction-history {
+    margin-top: 30px;
+  }
+  
+  /* Transaction Item Box */
+  .transaction-item {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 20px;
+    align-items: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .transaction-item:hover {
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Transaction Columns */
+  .transaction-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .transaction-status,
+  .transaction-id,
+  .transaction-reason {
+    font-size: 1rem;
+    color: #495057;
+    margin: 6px 0;
+    font-weight: 500;
+  }
+  
+  .transaction-amount {
+    font-weight: bold;
+    font-size: 1.3rem;
+    text-align: right;
+  }
+  
+  .transaction-amount.sent {
+    color: #dc3545; /* Red for sent */
+  }
+  
+  .transaction-amount.received {
+    color: #28a745; /* Green for received */
+  }
+  
+  .transaction-date {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-top: 5px;
+  }
+  
+  /* Button Hover Effects */
+  .btn-transaction:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  /* Smooth Input Focus Effects */
+  .input-field:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
