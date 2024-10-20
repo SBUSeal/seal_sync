@@ -1,49 +1,66 @@
-import React, { useState } from 'react';
-import '../stylesheets/MiningPage.css'; 
+import React, { useState, useEffect } from 'react';
+import '../stylesheets/MiningPage.css';
 
-const MiningPage = () => {
-    const [devices, setDevices] = useState([
-        { name: 'AMD Ryzen Threadripper PRO 7995WX', hashPower: '37.56 MH/s', powerUsage: '50W', status: 'Mining', profitability: '0.5523342/day' },
-        { name: 'GeForce RTX 3090', hashPower: '37.56 MH/s', powerUsage: '100W', status: 'Mining', profitability: '0.2323/day' },
-        { name: 'GeForce RTX 4090', hashPower: '37.56 MH/s', powerUsage: '200W', status: 'Mining', profitability: '0.8311008/day' },
-        { name: 'NVIDIA RTX 6000 Ada Generation', hashPower: '37.56 MH/s', powerUsage: '300W', status: 'Mining', profitability: '0.66345/day' },
-        { name: 'GeForce RTX 3090', hashPower: '37.56 MH/s', powerUsage: 'Disabled', status: 'Disabled', profitability: '0/day' }
-    ]);
-    const [balance, setBalance] = useState(100.00);
-    const [hashPower, setHashPower] = useState(175.24);
-    const [unpaidBalance, setUnpaidBalance] = useState(3.65);
-    const [nextPayout, setNextPayout] = useState('3h 28m');
+const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMiningLog}) => {
+    const [isMining, setIsMining] = useState(false);
+    const [balance, setBalance] = [sealTokenBalance, setSealTokenBalance]
+    const [hashPower, setHashPower] = useState(492.44);
+
+    useEffect(() => {
+        let interval;
+        if (isMining) {
+            interval = setInterval(() => {
+                setBalance(prevBalance => prevBalance + (hashPower * 0.0001));
+                if (miningLog.length === 0 || miningLog[miningLog.length - 1].type === 'stop') {
+                    const startEntry = {
+                        type: 'start',
+                        timestamp: new Date().toLocaleString()
+                    };
+                    setMiningLog(prevLog => [...prevLog, startEntry]);
+                }
+            }, 1000);
+        } else {
+            clearInterval(interval);
+            if (miningLog.length !== 0 && miningLog[miningLog.length - 1].type === 'start') {
+                const stopEntry = {
+                    type: 'stop',
+                    timestamp: new Date().toLocaleString()
+                };
+                setMiningLog(prevLog => [...prevLog, stopEntry]);
+            }
+        }
+
+        return () => clearInterval(interval);
+    }, [isMining, hashPower, miningLog]);
+
+    const handleToggle = () => {
+        setIsMining(!isMining);
+    };
 
     return (
         <div className="mining-container">
             <div className="dashboard">
-                <div className="balance">
-                    <h2>Balance</h2>
-                    <p>{balance} ORC</p>
+                <div className="tile">
+                    <h2>Balance: {balance.toFixed(2)} ORC</h2>
+                    <h2>Hash Power: {hashPower} MH/s</h2>
                 </div>
-                <div className="hash-power">
-                    <h2>Hash Power</h2>
-                    <p>{hashPower} MH/s</p>
-                </div>
-                <div className="unpaid-balance">
-                    <h2>Unpaid Balance</h2>
-                    <p>{unpaidBalance} ORC</p>
-                    <small>Next Payout: {nextPayout}</small>
-                </div>
-                <div className="devices-mining">
-                    <h2>Devices Mining</h2>
-                    <p>{devices.filter(device => device.status !== 'Disabled').length}/{devices.length}</p>
+                <div className="mining-control">
+                    <label className="switch">
+                        <input type="checkbox" checked={isMining} onChange={handleToggle} />
+                        <span className="slider round"></span>
+                    </label>
+                    <span className="mining-status">
+                        {isMining ? 'Stop Mining' : 'Start Mining'}
+                    </span>
                 </div>
             </div>
-            <div className="device-list">
-                {devices.map((device, index) => (
-                    <div key={index} className="device">
-                        <h3>{device.name}</h3>
-                        <p>Hash Power: {device.hashPower}</p>
-                        <p>Status: {device.status} {device.powerUsage}</p>
-                        <p>Profitability: {device.profitability}</p>
-                    </div>
-                ))}
+            <div className="mining-log">
+                <h3>Mining Activity Log:</h3>
+                <ul>
+                    {miningLog.map((entry, index) => (
+                        <li key={index}>{entry.type === 'start' ? 'Started' : 'Stopped'} Mining at {entry.timestamp}</li>
+                    ))}
+                </ul>
             </div>
         </div>
     );
