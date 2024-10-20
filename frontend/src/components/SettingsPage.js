@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../stylesheets/SettingsPage.css';
 
-const SettingsPage = ({ handleLogout }) => {
+const SettingsPage = ({ handleLogout, toggleDarkMode}) => {
     const [activeTab, setActiveTab] = useState('Configuration');
     const [showLogoutModal, setShowLogoutModal] = useState(false); // For showing logout confirmation modal
     const [notificationMessage, setNotificationMessage] = useState('');
@@ -36,7 +36,7 @@ const SettingsPage = ({ handleLogout }) => {
                     <div className="section">
                         <h2>Appearance</h2>
                         <p>Customize the appearance of the app. Automatically switch between day and night themes.</p>
-                        <div className="theme-selection">
+                        {/*<div className="theme-selection">
                             <div className="theme-option">
                                 <input type="radio" name="theme" id="light" value="light" />
                                 <label htmlFor="light">Light</label>
@@ -46,7 +46,10 @@ const SettingsPage = ({ handleLogout }) => {
                                 <label htmlFor="dark">Dark</label>
                             </div>
                         </div>
-                        <button className="primary-button">Update preferences</button>
+                        <button className="primary-button">Update preferences</button>*/}
+                        <button className="toggle-button" onClick={toggleDarkMode}>
+                            Toggle Dark Mode
+                        </button>
                     </div>
                 );
             case 'Notifications':

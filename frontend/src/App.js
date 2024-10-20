@@ -87,6 +87,9 @@ function App() {
     setIsLoggedIn(false); // Log the user out and navigate back to the login page
   };
 
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
   // Function to render content based on activePage
   const renderContent = () => 
@@ -113,7 +116,7 @@ function App() {
       case 'Mining':
         return <MiningPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} miningLog={miningLog} setMiningLog={setMiningLog}/>;
       case 'Settings':
-        return <SettingsPage handleLogout={handleLogout}/>;
+        return <SettingsPage handleLogout={handleLogout} toggleDarkMode={toggleDarkMode}/>;
       default:
         return <h1>Connected to Seal Share</h1>;
     }

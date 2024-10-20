@@ -87,7 +87,7 @@ h2 {
 }
 
 /* Buttons */
-.primary-button, .secondary-button, .logout-button {
+.primary-button, .secondary-button, .logout-button, .toggle-button{
     font-size: 16px;
     padding: 12px 24px;
     border-radius: 8px;
@@ -100,7 +100,7 @@ h2 {
     font-weight: 600;
 }
 
-.primary-button {
+.primary-button, .toggle-button{
     background-color: #4A90E2;
     color: white;
 }
