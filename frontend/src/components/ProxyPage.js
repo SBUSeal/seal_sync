@@ -305,7 +305,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                 date: new Date().toLocaleString(),
                 to: proxy.host,
                 sealTokens: proxy.price,
-                reason: proxy.name,
+                reason: 'Proxy Purchase',
             },] )
         } else {
             alert('Insufficient balance.');
