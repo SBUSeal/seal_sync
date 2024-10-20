@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share1Icon, UploadIcon } from '@radix-ui/react-icons';
 import '../stylesheets/FilesPage.css';
 import FileViewer from './FileViewer';  
-
+import dummyTextFile from '../dummydata/dummyTestFile.txt'
 
 const FilesPage = (props) => {
 
@@ -106,12 +106,34 @@ const FilesPage = (props) => {
     setIsProvidersModalOpen(true)
   }
 
+    // fetch('./')
+  //   .then((response) => response.text())
+  //   .then((fileContent) => {
+  //     const dummyFile = {
+  //       name: "dummyTestFile.txt",
+  //       size: fileContent.length, 
+  //       status: 'unlocked',
+  //       source: 'local',
+  //       price: '599',
+  //       fileObject: new Blob([fileContent], { type: "text/plain" }),
+  //       description: 'Dummy description',
+  //       isFolder: false,
+  //       type: "text/plain"
+  //     };
+  //     const updatedFiles = [...files, dummyFile];
+  //     setFiles(updatedFiles);
+  //     setFilteredFiles(updatedFiles);
+  //   setIsProvidersModalOpen(false);
+  //   setSelectedProvider(null);
+  // });
+
   function dummyDownload() {
     const dummyFile = {
       name: `Dummy File ${files.length }`, 
       size: 100,
       status: 'unlocked',
       source: 'downloaded',
+      fileObject: new Blob([dummyTextFile], {type: "text/plain"}),
       price: selectedProvider.price, 
       description: 'Dummy description', 
       isFolder: false,
@@ -150,26 +172,6 @@ const FilesPage = (props) => {
     
   }
 
-  //   fetch('./dummydata/dummyTestFile.txt')
-  //   .then((response) => response.text())
-  //   .then((fileContent) => {
-  //     const dummyFile = {
-  //       name: "dummyTestFile.txt",
-  //       size: fileContent.length, 
-  //       status: 'unlocked',
-  //       source: 'local',
-  //       price: '599',
-  //       fileObject: new Blob([fileContent], { type: "text/plain" }),
-  //       description: 'Dummy description',
-  //       isFolder: false,
-  //       type: "text/plain"
-  //     };
-  //     const updatedFiles = [...files, dummyFile];
-  //     setFiles(updatedFiles);
-  //     setFilteredFiles(updatedFiles);
-  //   setIsProvidersModalOpen(false);
-  //   setSelectedProvider(null);
-  // });
 
   
 
