@@ -56,6 +56,18 @@ html, body {
   transition: width 0.3s ease, height 0.3s ease; /* Smooth transition */
 }
 
+.minimize-btn {
+  height: 40px; /* Set a fixed height */
+  width: 100%; /* Full width of the sidebar */
+  background-color: #f0f0f0; /* Optional: Customize button background color */
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the icon */
+  cursor: pointer;
+  transition: height 0.3s ease, background-color 0.3s ease; /* Smooth transition */
+}
+
 .sidebar-minimized .logo h2 {
   display: none; /* Hide text when sidebar is minimized */
 }
