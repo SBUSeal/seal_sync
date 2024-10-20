@@ -158,6 +158,7 @@ h2 {
 
 .primary-button:hover {
     background-color: var(--button-background-hover);
+}
 
 /* Logout Button */
 .logout-button {
