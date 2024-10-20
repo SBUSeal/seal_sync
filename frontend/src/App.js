@@ -58,6 +58,10 @@ function App() {
     setIsSigningUp(true);
   };
 
+  const handleLogout = () => {
+    setIsLoggedIn(false); // Log the user out and navigate back to the login page
+  };
+
   // Function to render content based on activePage
   const renderContent = () => 
     {
@@ -82,7 +86,7 @@ function App() {
       case 'Mining':
         return <MiningPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} miningLog={miningLog} setMiningLog={setMiningLog}/>;
       case 'Settings':
-        return <SettingsPage />;
+        return <SettingsPage handleLogout={handleLogout}/>;
       default:
         return <h1>Connected to Seal Share</h1>;
     }
