@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import '../stylesheets/WalletPage.css'; // Assuming this exists
+import '../stylesheets/WalletPage.css';  // Assuming this exists
 
-const WalletPage = ({ sealTokenBalance, setSealTokenBalance}) => { // extract balance from props
+
+const WalletPage = (props) => {
     const [filter, setFilter] = useState('All');
     const [receiverId, setReceiverId] = useState('');
     const [amount, setAmount] = useState('');
@@ -23,6 +24,10 @@ const WalletPage = ({ sealTokenBalance, setSealTokenBalance}) => { // extract ba
         },
     ]);
 
+    const [showModal, setShowModal] = useState(false);  // Modal visibility
+    const [pendingTransaction, setPendingTransaction] = useState(null);  // Pending transaction
+    const [notification, setNotification] = useState({ message: '', type: '' });
+
     const walletId = '13hgruwdGXvPyWFABDX6QBy';
   
 
@@ -34,45 +39,82 @@ const WalletPage = ({ sealTokenBalance, setSealTokenBalance}) => { // extract ba
     // Function to handle wallet ID copy
     const copyToClipboard = () => {
         navigator.clipboard.writeText(walletId);
-        alert("Wallet ID copied to clipboard!");
+        showNotification("Wallet ID copied to clipboard!", 'success');
     };
 
-    // Function to handle token transfer (you can implement the actual transfer logic here)
+    const showNotification = (message, type) => {
+        setNotification({ message, type });
+
+        setTimeout(() => {
+            setNotification({ message: '', type: '' });
+        }, 3000);  // 3 seconds
+    };
+
+    // Check if balance is sufficient and prevent negative balance
     const handleTransfer = () => {
-      if (!receiverId || !amount) {
-          alert("Please fill in the receiver ID and amount.");
-          return;
-      }
-  
-      // Add new transaction to the transaction list as "Sent"
-      const newTransaction = {
-          id: transactions.length + 1,
-          type: 'Sent',
-          date: new Date().toLocaleString(), // Current date and time
-          to: receiverId,
-          sealTokens: parseInt(amount),
-          reason: reason || 'No reason provided', // Add the reason here
-      };
-  
-      setTransactions([...transactions, newTransaction]);
-      setSealTokenBalance((prevBalance) => prevBalance - parseInt(amount)); // Update balance
-  
-      alert(`Transferred ${amount} SealTokens to ${receiverId} for ${reason || 'no reason provided'}.`);
-  
-      // Clear form fields
-      setReceiverId('');
-      setAmount('');
-      setReason('');
-  };
-  
+        const transferAmount = parseFloat(amount);
+
+        // Ensure input is valid
+        if (!receiverId || !amount || isNaN(transferAmount)) {
+            showNotification("Please fill in the receiver ID and valid amount.", 'error');
+            return;
+        }
+
+        // Ensure balance is sufficient
+        if (transferAmount > props.sealTokenBalance) {
+            showNotification("Insufficient balance for this transaction.", 'error');
+            return;
+        }
+
+        // Prepare the transaction to be confirmed
+        const transactionToConfirm = {
+            id: transactions.length + 1,
+            type: 'Sent',
+            date: new Date().toLocaleString(),
+            to: receiverId,
+            sealTokens: transferAmount,
+            reason: reason || 'No reason provided',
+        };
+
+        setPendingTransaction(transactionToConfirm);  // Set the pending transaction
+        setShowModal(true);  // Show the modal
+    };
+
+    const confirmTransfer = () => {
+        const transferAmount = pendingTransaction?.sealTokens;
+
+        // Update transactions and balance
+        setTransactions([...transactions, pendingTransaction]);
+
+        // Update the balance, ensuring it doesn't go negative
+        props.setSealTokenBalance((prevBalance) => {
+            const updatedBalance = prevBalance - transferAmount;
+            return parseFloat(updatedBalance.toFixed(2));  // Round to 5 decimal places
+        });
+
+        // Clear form fields and close modal
+        setReceiverId('');
+        setAmount('');
+        setReason('');
+        setShowModal(false);
+        setPendingTransaction(null);
+        showNotification("Transaction successful!", 'success');
+    };
 
     return (
         <div className="wallet-page">
+            {/* Notification */}
+            {notification.message && (
+                <div className={`notification ${notification.type}`}>
+                    {notification.message}
+                </div>
+            )}
+
             {/* Top Section with Balance, Wallet ID, Earning/Spending */}
             <div className="top-section">
                 <div className="card balance-card">
                     <h3>Current Balance</h3>
-                    <p className="balance-amount">{sealTokenBalance} STK</p>
+                    <p className="balance-amount">{props.sealTokenBalance.toFixed(5)} STK</p>  {/* Round displayed balance to 5 decimals */}
                 </div>
                 <div className="card wallet-id-card">
                     <h3>Wallet ID</h3>
@@ -80,14 +122,6 @@ const WalletPage = ({ sealTokenBalance, setSealTokenBalance}) => { // extract ba
                         {walletId} 
                         <button onClick={copyToClipboard} className="copy-btn">Copy</button>
                     </p>
-                </div>
-                <div className="card earning-card">
-                    <h3>Monthly Earning</h3>
-                    <p className="earning">100.00 STK</p>
-                </div>
-                <div className="card spending-card">
-                    <h3>Monthly Spending</h3>
-                    <p className="spending">0.00 STK</p>
                 </div>
             </div>
 
@@ -170,6 +204,20 @@ const WalletPage = ({ sealTokenBalance, setSealTokenBalance}) => { // extract ba
                 ))}
             </div>
 
+            {/* Confirmation Modal */}
+            {showModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h3>Confirm Transaction</h3>
+                        <p>This action cannot be undone. Check the following transaction details:</p>
+                        <p><strong>Amount:</strong> {pendingTransaction?.sealTokens} STK</p>
+                        <p><strong>Receiver ID:</strong> {pendingTransaction?.to}</p>
+                        <p><strong>Reason:</strong> {pendingTransaction?.reason}</p>
+                        <button onClick={confirmTransfer} className="confirm-button">Send</button>
+                        <button onClick={() => setShowModal(false)} className="cancel-button">Cancel</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
