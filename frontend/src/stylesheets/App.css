@@ -49,9 +49,11 @@ html, body {
 
 /* When the sidebar is minimized */
 .sidebar-minimized .sidebar-logo-image {
-  width: 40px; /* Shrink the logo when minimized */
-  height: auto; /* Maintain aspect ratio */
+  width: 60px;
+  height: 60px;
   margin-bottom: 10px; /* Adjust spacing */
+  object-fit: contain; /* Ensure the logo scales properly within the fixed dimensions */
+  transition: width 0.3s ease, height 0.3s ease; /* Smooth transition */
 }
 
 .sidebar-minimized .logo h2 {
@@ -60,8 +62,12 @@ html, body {
 
 /* Ensure logo remains visible when minimized */
 .sidebar-minimized .logo {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the logo */
   opacity: 1; /* Ensure logo is fully visible */
-  height: auto;
+  height: 40px;
+  transform: scale(1); /* Keep icon size normal */
   overflow: visible; /* Show the logo */
 }
 
