@@ -3,8 +3,11 @@ import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, 
 import '../stylesheets/FilesPage.css';
 import FileViewer from './FileViewer';  
 
-const FilesPage = () => {
-  const [files, setFiles] = useState([]);
+
+const FilesPage = (props) => {
+
+  const files = props.files
+  const setFiles = props.setFiles
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [isFileModalOpen, setIsFileModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -19,6 +22,7 @@ const FilesPage = () => {
   const [dummyLink, setDummyLink] = useState('');
   const [isProvidersModalOpen, setIsProvidersModalOpen] = useState(false)
   const [selectedProvider, setSelectedProvider] = useState(null)
+  const [filter, setFilter] = useState("All")
 
   
   function openFile(file) {
@@ -40,8 +44,9 @@ const FilesPage = () => {
     {ip: "132.145.0.1", price: 8},
   ]
 
+  const dummyCid = "baguqeerasorqs4njcts6vs7qvdjfcvgnume4hqohf65zsfguprqphs3icwea"
+
   const handleSelectProvider = (provider) => {
-    console.log("Selected provider is: ", provider)
     setSelectedProvider(provider);
   };
 
@@ -106,36 +111,88 @@ const FilesPage = () => {
       name: `Dummy File ${files.length }`, 
       size: 100,
       status: 'unlocked',
-      source: 'local',
-      price: '1', 
+      source: 'downloaded',
+      price: selectedProvider.price, 
       description: 'Dummy description', 
       isFolder: false,
+      downloading: true, 
     };
-
+    const newBalance = props.sealTokenBalance - dummyFile.price;
+    if (newBalance < 0) {
+      alert("Insufficient funds, cannot download file")
+      return
+    }
+   
     const updatedFiles = [...files, dummyFile];
     setFiles(updatedFiles);
-    setFilteredFiles(updatedFiles);
+ 
+    const filtered = updatedFiles.filter(file => {
+      return (file.source === filter || filter === "All") && file.name.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+
+    setFilteredFiles(filtered);    
     setIsProvidersModalOpen(false)
     setSelectedProvider(null)
+
+    props.setSealTokenBalance(props.sealTokenBalance - dummyFile.price)
+    alert(`Successfully bought file for ${dummyFile.price} STK!`)
+
+    setTimeout(() => {
+      setFiles(prevFiles => {
+        return prevFiles.map(f => {
+          if (f.name === dummyFile.name) {
+            return { ...f, downloading: false }; 
+          }
+          return f;
+        });
+      });
+    }, 3000);
     
   }
 
+  //   fetch('./dummydata/dummyTestFile.txt')
+  //   .then((response) => response.text())
+  //   .then((fileContent) => {
+  //     const dummyFile = {
+  //       name: "dummyTestFile.txt",
+  //       size: fileContent.length, 
+  //       status: 'unlocked',
+  //       source: 'local',
+  //       price: '599',
+  //       fileObject: new Blob([fileContent], { type: "text/plain" }),
+  //       description: 'Dummy description',
+  //       isFolder: false,
+  //       type: "text/plain"
+  //     };
+  //     const updatedFiles = [...files, dummyFile];
+  //     setFiles(updatedFiles);
+  //     setFilteredFiles(updatedFiles);
+  //   setIsProvidersModalOpen(false);
+  //   setSelectedProvider(null);
+  // });
+
+  
 
   function handleModalSubmit() {
-    console.log(tempFiles)
+
     const newFiles = tempFiles.map(file => ({
       name: file.name,
       size: file.size,
       status: 'unlocked',
-      source: 'local',
+      source: 'uploaded',
+      description: newFileDetails.description,
       fileObject: file,  
       isFolder: false,
-      type: file.type
+      type: file.type,
+      downloading: file.downloading
     }));
-  
     const updatedFiles = [...files, ...newFiles];
     setFiles(updatedFiles);
-    setFilteredFiles(updatedFiles); 
+    const filtered = updatedFiles.filter(file => {
+      return (file.source === filter || filter === "All") && file.name.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+
+    setFilteredFiles(filtered);   
 
     setTempFiles([]); 
     setNewFileDetails({ price: '', description: '' }); 
@@ -148,36 +205,42 @@ const FilesPage = () => {
     setIsModalOpen(false); 
   }
 
-  function createFolder() {
-    const folderName = prompt('Enter Folder Name');
-    if (folderName) {
-      const updatedFiles = [...files, { name: folderName, size: 0, status: 'unlocked', source: 'local', isFolder: true }];
-      setFiles(updatedFiles);
-      setFilteredFiles(updatedFiles); 
-    }
-  }
 
-  // Handle file click to open file details modal
   function openFileDetails(file) {
-    setCurrentFile(file); // Set the clicked file details
-    setIsFileModalOpen(true); // Open the file details modal
+    setCurrentFile(file); 
+    setIsFileModalOpen(true); 
   }
 
-  // Close file modal
   function closeFileModal() {
-    setIsFileModalOpen(false); // Close the file details modal
+    setIsFileModalOpen(false); 
   }
 
 
-  // Handle search query input
   function handleSearchInput(e) {
     const query = e.target.value;
     setSearchQuery(query);
 
-    const filtered = files.filter(file =>
-      file.name.toLowerCase().includes(query.toLowerCase())
-    );
+    const filtered = files.filter(file => {
+      return (file.source === filter || filter === "All") && file.name.toLowerCase().includes(query.toLowerCase())      
+    }
+    );    
     setFilteredFiles(filtered);
+  }
+
+  function FilterByAll() {
+    setFilter("All")
+    setFilteredFiles(files)
+  }
+  function FilterByDownloaded() {
+    setFilter("downloaded")
+    const downloadedFiles = files.filter((file) => file.source === "downloaded")
+    setFilteredFiles(downloadedFiles)
+
+  }  
+  function FilterByUploaded() {
+    setFilter("uploaded")
+    const uploadedFiles = files.filter((file) => file.source === "uploaded")
+    setFilteredFiles(uploadedFiles)
   }
 
   return (
@@ -189,7 +252,6 @@ const FilesPage = () => {
           placeholder="Search"
           value={searchQuery}
           onChange={handleSearchInput}
-          // onKeyPress={handle} // Handle Enter key press
         />
         <div className="action-buttons">
           <button onClick={handleDownloadFile} className="action-btn">
@@ -203,7 +265,11 @@ const FilesPage = () => {
         </div>
       </div>
 
-      <>Filter</>
+      <div className='filter-section'>
+        <button className={`filter-button ${filter === "All" ? "active" : ""}`} onClick={FilterByAll}> All </button>
+        <button className={`filter-button ${filter === "downloaded" ? "active" : ""}`} onClick={FilterByDownloaded}> Downloaded </button>
+        <button className={`filter-button ${filter === "uploaded" ? "active" : ""}`} onClick={FilterByUploaded}> Uploaded </button>
+      </div>
 
       <div className="file-section">
         <table className="file-table">
@@ -212,6 +278,7 @@ const FilesPage = () => {
               <th>name</th>
               <th>type</th>
               <th>size</th>
+              <th>source</th>
               <th>date added</th>
               <th></th>
             </tr>
@@ -224,30 +291,36 @@ const FilesPage = () => {
             </tbody>
           ) : (
             <tbody>
-              {filteredFiles.map((file, index) => (
-                <tr key={index}>
+              {filteredFiles.map((file, index) => ( 
+                 <tr key={index} style={{ color: 'red' }}>
                   <td>
                     {file.isFolder ? <LayersIcon /> : <FileIcon />} {file.name}
                   </td>
                   <td>{file.isFolder ? 'Folder' : 'File'}</td>
                   <td>{formatFileSize(file.size)}</td>
+                  <td> {file.source == 'uploaded'? 'local': 'seal-network'} </td>
                   <td>{new Date().toLocaleDateString()}</td>
-                  <td>
-                    <button onClick={() => handleDownload(file)}>
+                  {file.downloading ? (
+                    <td className='icon-cell' >
+                        <div className="spinner"></div> Downloading...
+                    </td>
+                    ) :
+                  <td className='icon-cell'>
+                    <button onClick={() => handleDownload(file)} disabled={file.downloading}>
                       <DownloadIcon />
                     </button>
                     <button onClick={() => {
-                                        console.log(file);
-                                        return openFile(file)}}>
+                                        return openFile(file)}} disabled={file.downloading}>
                       Open
                     </button>
-                    <button onClick={() => openShareModal(file)}>
+                    <button onClick={() => openShareModal(file)} disabled={file.downloading}>
                       <Share1Icon />
                     </button>
-                    <button onClick={() => file.isFolder ? 'OPENFOLDER' : openFileDetails(file)}>
+                    <button onClick={() => file.isFolder ? 'OPENFOLDER' : openFileDetails(file)} disabled={file.downloading}>
                       <DotsVerticalIcon />
                     </button>
                   </td>
+                }
                 </tr>
               ))}
             </tbody>
@@ -272,12 +345,12 @@ const FilesPage = () => {
                   onChange={(e) => setNewFileDetails({ ...newFileDetails, price: e.target.value })}
                   onKeyDown={(e) => {
                     if (e.key === '-' || e.key === 'e') {
-                      e.preventDefault();  // Prevent typing "-" or "e"
+                      e.preventDefault();
                     }
                   }}
                   style={{marginRight: "10px", fontSize: "18px"}}
                 />
-                SealTokens
+                STK
             </div>
 
             <textarea
@@ -301,7 +374,7 @@ const FilesPage = () => {
             <h2>File Details</h2>
             <p><strong>Name:</strong> {currentFile.name}</p>
             <p><strong>Size:</strong> {formatFileSize(currentFile.size)}</p>
-            <p><strong>Price:</strong> {currentFile.price + " Seal Token"}</p>
+            <p><strong>Price:</strong> {currentFile.price + " STK"}</p>
             <p><strong>Description:</strong> {currentFile.description}</p>
             <div className="modal-actions" style={{marginTop: "30px"}}>
               <button onClick={closeFileModal}>Close</button>
@@ -336,7 +409,7 @@ const FilesPage = () => {
                       <button onClick={closeDownloadModal} style={{fontSize: '20px'}}>Close</button>
                     </div>
                     <div className='modal-actions'>
-                      <button onClick={showProvidersModal} style={{fontSize: '20px'}} disabled={cid.trim() === ''}>Download</button>
+                      <button onClick={showProvidersModal} style={{fontSize: '20px'}} disabled={cid.trim() === ''}>Find Providers</button>
                     </div>
                   </div>
 
@@ -344,11 +417,11 @@ const FilesPage = () => {
                 </div>
               </div>
             )}
-             {isShareModalOpen && (
+      {isShareModalOpen && (
         <div className="modal">
           <div className="modal-content">
             <h2>Share File</h2>
-            <p>Copy the link below to share the file:</p>
+            <p style={{marginBottom: "10px"}}>Copy the link below to share the file:</p>
             <input
               type="text"
               value={dummyLink}
@@ -356,6 +429,18 @@ const FilesPage = () => {
               style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
             />
             <button onClick={copyToClipboard}>Copy Link</button>
+            <h2 style={{marginTop: "5px"}}> Or </h2>
+            <p style={{marginBottom: "10px"}}> Copy the file CID below </p>
+            <input
+              type="text"
+              value={dummyCid}
+              readOnly
+              style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+            />
+            <button onClick={() => {
+              navigator.clipboard.writeText(dummyCid);
+              alert('CID copied to clipboard!');
+            }}>Copy CID </button>
             <div className="modal-actions">
               <button onClick={closeShareModal}>Close</button>
             </div>
@@ -374,15 +459,16 @@ const FilesPage = () => {
                           onClick={() => handleSelectProvider(provider)}
                         >
                           <p>IP: {provider.ip}</p>
-                          <p>Price: {provider.price} SealTokens</p>
+                          <p>Price: {provider.price} STK </p>
                         </div>
                       ))}
 
+                    <h2> Your Balance: {props.sealTokenBalance} STK</h2>
                     <div style={{
                       display: 'flex',
                       justifyContent: 'space-between',  
                       alignItems: 'center',
-                      marginTop: '150px'
+                      marginTop: '50px'
                     }}>
                       <div className='modal-actions'>
                         <button onClick={closeProvidersModal} style={{fontSize: '20px'}}> Close </button>
@@ -398,12 +484,14 @@ const FilesPage = () => {
 
     </div>
   );
-};
+}
+
 
 function formatFileSize(size) {
   if (size === 0) return 'Folder';
   const i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
   return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
 }
+
 
 export default FilesPage;

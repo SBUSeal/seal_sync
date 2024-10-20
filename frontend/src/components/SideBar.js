@@ -12,15 +12,12 @@ function Sidebar(props) {
 
   const [isMinimized, setIsMinimized] = useState(false);
 
-  // Function to toggle sidebar size
   const toggleSidebar = () => {
     setIsMinimized(!isMinimized);
   };
 
   const setActivePage = props.setActivePage;
-  const activePage = props.activePage;
 
-  console.log(activePage);
   
   return (
     <div className={`sidebar ${isMinimized ? 'sidebar-minimized' : ''}`}>
@@ -32,25 +29,29 @@ function Sidebar(props) {
         {isMinimized ? '>' : '<'}
       </button>
       <ul>
-      <li onClick={() => setActivePage('Status')}>
+        <li onClick={() => setActivePage('Status')}>
           <img src={statusIcon} alt="Status Icon" className="sidebar-icon" />
-          {!isMinimized && <button>Status</button>}
+          {!isMinimized && <span>Status</span>}
         </li>
         <li onClick={() => setActivePage('Files')}>
           <img src={filesIcon} alt="Files Icon" className="sidebar-icon" />
-          {!isMinimized && <button>Files</button>}
+          {!isMinimized && <span>Files</span>}
         </li>
         <li onClick={() => setActivePage('Wallet')}>
           <img src={walletIcon} alt="Wallet Icon" className="sidebar-icon" />
-          {!isMinimized && <button>Wallet</button>}
+          {!isMinimized && <span>Wallet</span>}
         </li>
         <li onClick={() => setActivePage('Proxy')}>
           <img src={proxyIcon} alt="Proxy Icon" className="sidebar-icon" />
-          {!isMinimized && <button>Proxy</button>}
+          {!isMinimized && <span>Proxy</span>}
+        </li>
+        <li onClick={() => setActivePage('Mining')}>
+          <img src={settingsIcon} alt="Mining Icon" className="sidebar-icon" />
+          {!isMinimized && <span>Mining</span>}
         </li>
         <li onClick={() => setActivePage('Settings')}>
           <img src={settingsIcon} alt="Settings Icon" className="sidebar-icon" />
-          {!isMinimized && <button>Settings</button>}
+          {!isMinimized && <span>Settings</span>}
         </li>
       </ul>
     </div>

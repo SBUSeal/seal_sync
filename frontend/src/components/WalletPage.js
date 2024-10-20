@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import '../stylesheets/WalletPage.css';  // Assuming this exists
 
+
 const WalletPage = (props) => {
     const [filter, setFilter] = useState('All');
     const [receiverId, setReceiverId] = useState('');
@@ -28,6 +29,7 @@ const WalletPage = (props) => {
     const [notification, setNotification] = useState({ message: '', type: '' });
 
     const walletId = '13hgruwdGXvPyWFABDX6QBy';
+  
 
     const filteredTransactions = transactions.filter((transaction) => {
         if (filter === 'All') return true;

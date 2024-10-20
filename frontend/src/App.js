@@ -10,9 +10,8 @@ import SettingsPage from './components/SettingsPage';
 import ProxyPage from './components/ProxyPage';
 import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
+import MiningPage from './components/MiningPage';
 
-
-  
 //import './Contributes/NavigationBar';
 //import './Contributes/TopBar.js';
 
@@ -27,6 +26,8 @@ function App() {
   const [sealTokenBalance, setSealTokenBalance] = useState(100); //Change constant to reflect total wallet balance of dummy data
   const [currentProxy, setcurrentProxy] = useState(null); // State of current proxy being used
 
+  // State to manage Files
+  const [files, setFiles] = useState([]);
 
 
   //Handle login
@@ -56,13 +57,15 @@ function App() {
       case 'Status':
         return <StatusPage />;
       case 'Files':
-        return <Files />;
+        return <Files sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} files = {files} setFiles = {setFiles}/>;
       case 'Wallet':
         return <WalletPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance}/>;
       case 'Proxy':
         return <ProxyPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} currentProxy = {currentProxy}
           setcurrentProxy = {setcurrentProxy}
         />;
+      case 'Mining':
+        return <MiningPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance}/>;
       case 'Settings':
         return <SettingsPage />;
       default:
@@ -76,12 +79,12 @@ function App() {
       {isLoggedIn && <Sidebar setActivePage={setActivePage} activePage={activePage} />}
       {/* Main Content */}
       <div className="content">
-        {/* Topbar */}
+        {/* Topbar
         {isLoggedIn && (
         <div className="topbar">
           <input type="text" placeholder="Search..." className="search-input" />
         </div>
-        )}
+        )} */}
         {/* Main Area */}
         <div className="main-content">
           {/* Display content based on the active page */}

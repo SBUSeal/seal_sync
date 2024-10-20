@@ -1,6 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const FileViewer = ({ file, closeViewer }) => {
+  const [fileContent, setFileContent] = useState('');
+
+  useEffect(() => {
+    if (file && file.fileObject && file.fileObject.type?.startsWith('text/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setFileContent(e.target.result); 
+      };
+      reader.readAsText(file.fileObject);
+    }
+  }, [file]);
+
   if (!file || !file.fileObject) {
     return (
       <div className="modal">
@@ -15,16 +27,15 @@ const FileViewer = ({ file, closeViewer }) => {
     );
   }
 
-  // Check if the file is an image or text
   const isImageFile = file.fileObject.type?.startsWith('image/');
   const isTextFile = file.fileObject.type?.startsWith('text/');
+  const isPdfFile = file.fileObject.type === 'application/pdf';
 
   return (
     <div className="modal">
       <div className="modal-content">
         <h2>Viewing: {file.name}</h2>
 
-        {/* Image file preview */}
         {isImageFile && (
           <img
             src={URL.createObjectURL(file.fileObject)}
@@ -33,17 +44,33 @@ const FileViewer = ({ file, closeViewer }) => {
           />
         )}
 
-        {/* Text file preview */}
         {isTextFile && (
           <textarea
             readOnly
-            value={file.content || ''}
-            style={{ width: '100%', height: '300px', padding: '10px', fontFamily: 'monospace' }}
+            value={fileContent || ''}
+            style={{ 
+              width: '100%', 
+              height: '300px', 
+              padding: '10px', 
+              fontFamily: 'monospace', 
+              color: 'black',  
+              backgroundColor: 'white' 
+            }}
           ></textarea>
         )}
 
-        {!isImageFile && !isTextFile && (
-          <p>File type not supported for viewing.</p>
+        {isPdfFile && (
+          <embed
+            src={URL.createObjectURL(file.fileObject)}
+            type="application/pdf"
+            width="100%"
+            height="500px"
+            style={{ marginBottom: '20px' }}
+          />
+        )}
+
+        {!isImageFile && !isTextFile && !isPdfFile && (
+          <p>This File type is currently not supported for viewing.</p>
         )}
 
         <div className="modal-actions">
