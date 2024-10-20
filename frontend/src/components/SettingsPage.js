@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import '../stylesheets/SettingsPage.css';
 
-const SettingsPage = ({ handleLogout, toggleDarkMode}) => {
+const SettingsPage = ({ handleLogout, toggleDarkMode, isDarkMode}) => {
     const [activeTab, setActiveTab] = useState('Configuration');
     const [showLogoutModal, setShowLogoutModal] = useState(false); // For showing logout confirmation modal
     const [notificationMessage, setNotificationMessage] = useState('');
     const [notificationChoice, setNotificationChoice] = useState('All new activity or messages');
     const [showPopup, setShowPopup] = useState(false); // For showing notification pop-up
+
+    const containerClass = isDarkMode ? 'settings-container dark-mode' : 'settings-container';
+    const buttonClass = isDarkMode ? 'nav-item dark-mode' : 'nav-item';
 
     const renderContent = () => {
         switch (activeTab) {
@@ -141,6 +144,7 @@ const SettingsPage = ({ handleLogout, toggleDarkMode}) => {
     );
 
     return (
+        <div className={containerClass}>
         <div className="settings-container">
             <div className="side">
                 <button className={`nav-item ${activeTab === 'Configuration' ? 'active' : ''}`} onClick={() => setActiveTab('Configuration')}>Transfer</button>
@@ -161,6 +165,7 @@ const SettingsPage = ({ handleLogout, toggleDarkMode}) => {
                     {notificationMessage}
                 </div>
             )}
+        </div>
         </div>
     );
 };

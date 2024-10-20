@@ -116,7 +116,7 @@ function App() {
       case 'Mining':
         return <MiningPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} miningLog={miningLog} setMiningLog={setMiningLog}/>;
       case 'Settings':
-        return <SettingsPage handleLogout={handleLogout} toggleDarkMode={toggleDarkMode}/>;
+        return <SettingsPage handleLogout={handleLogout} toggleDarkMode={toggleDarkMode} isDarkMode={isDarkMode}/>;
       default:
         return <h1>Connected to Seal Share</h1>;
     }
