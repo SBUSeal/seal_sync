@@ -5,6 +5,7 @@ import filesIcon from '../images/File_Icon.png';
 import walletIcon from '../images/Wallet_Icon.png';
 import proxyIcon from '../images/Peers_Icon.png';
 import settingsIcon from '../images/Settings_Icon.png';
+import miningIcon from '../images/pickaxe-white-removebg-preview.png';
 import '../stylesheets/App.css';
 
 
@@ -45,7 +46,7 @@ function Sidebar(props) {
           {!isMinimized && <span>Proxy</span>}
         </li>
         <li onClick={() => setActivePage('Mining')}>
-          <img src={settingsIcon} alt="Mining Icon" className="sidebar-icon" />
+          <img src={miningIcon} alt="Mining Icon" className="sidebar-icon" />
           {!isMinimized && <span>Mining</span>}
         </li>
         <li onClick={() => setActivePage('Settings')}>
