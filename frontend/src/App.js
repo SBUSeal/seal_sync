@@ -13,9 +13,8 @@ import SignUpPage from './components/SignUpPage';
 import MiningPage from './components/MiningPage';
 
 function App() {
-  const [activePage, setActivePage] = useState('Files');
-  // const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [activePage, setActivePage] = useState('Status');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [isSigningUp, setIsSigningUp] = useState(false); 
 

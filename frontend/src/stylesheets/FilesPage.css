@@ -241,6 +241,14 @@ margin: 0;
 }
 
 
+.icon-cell{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.icon-cell button {
+  margin-right: 0;
+}
 
 .icon-cell button:disabled {
   display: flex;
@@ -315,7 +323,7 @@ input:checked + .slider:before {
   
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   gap: 10px;
   

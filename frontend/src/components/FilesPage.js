@@ -226,7 +226,7 @@ const FilesPage = (props) => {
     },] )
 
 
-    const randomDelay = Math.floor(Math.random() * (20000 - 10000 + 1)) + 10000;
+    const randomDelay = Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000;
 
     setTimeout(() => {
       setFiles(prevFiles => {
@@ -377,7 +377,7 @@ const FilesPage = (props) => {
           {filteredFiles.length === 0 ? (
             <tbody>
               <tr>
-                <td colSpan="5" className="no-files-message">No files match your search</td>
+                <td colSpan="7" className="no-files-message">No files match your search</td>
               </tr>
             </tbody>
           ) : (
@@ -393,17 +393,18 @@ const FilesPage = (props) => {
                   <td>{new Date().toLocaleDateString()}</td>
                   
                   {((!file.downloading) && (file.source == 'uploaded'))?
-                  <td>
-                    <label className="switch">
-                        <input
-                          type="checkbox" 
-                          checked={file.published}
-                          onChange={(e) => handleToggle(e, file)} 
-                        />
-                        <span className="slider round"></span>
-                    </label>
-                  </td>:
-                  <td> {file.paused ? 'Paused':'Downloading'}</td>
+                                <td>
+                                  <label className="switch">
+                                      <input
+                                        type="checkbox" 
+                                        checked={file.published}
+                                        onChange={(e) => handleToggle(e, file)} 
+                                      />
+                                      <span className="slider round"></span>
+                                  </label>
+                                </td>
+                    :
+                            <td>{file.downloading ? (file.paused ? 'Paused' : 'Downloading') : ''}</td>
                   }
 
                   {file.downloading ? (
@@ -424,8 +425,6 @@ const FilesPage = (props) => {
                     ) :
                     
                   <td className='icon-cell'>
-
-                    
                     <button onClick={() => handleDownload(file)} disabled={file.downloading}>
                       <DownloadIcon />
                     </button>
