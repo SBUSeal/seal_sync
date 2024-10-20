@@ -225,7 +225,8 @@ const FilesPage = (props) => {
       fileObject: file,  
       isFolder: false,
       type: file.type,
-      downloading: file.downloading
+      downloading: file.downloading,
+      published: true
     }));
     const updatedFiles = [...files, ...newFiles];
     setFiles(updatedFiles);
@@ -283,6 +284,15 @@ const FilesPage = (props) => {
     const uploadedFiles = files.filter((file) => file.source === "uploaded")
     setFilteredFiles(uploadedFiles)
   }
+  function handleToggle(event, file) {
+    const isChecked = event.target.checked;
+    const updatedFiles = files.map(f => 
+      f.name === file.name ? { ...f, published: isChecked } : f
+    );
+    setFiles(updatedFiles);
+    setFilteredFiles(updatedFiles);
+  }
+
 
   return (
     <div className="file-manager-container">
@@ -294,6 +304,7 @@ const FilesPage = (props) => {
           value={searchQuery}
           onChange={handleSearchInput}
         />
+
         <div className="action-buttons">
           <button onClick={handleDownloadFile} className="action-btn">
             <DownloadIcon /> <div className='action-btn-text'> Download </div>
@@ -321,6 +332,7 @@ const FilesPage = (props) => {
               <th>size</th>
               <th>source</th>
               <th>date added</th>
+              <th>published</th>
               <th></th>
             </tr>
           </thead>
@@ -341,12 +353,30 @@ const FilesPage = (props) => {
                   <td>{formatFileSize(file.size)}</td>
                   <td> {file.source == 'uploaded'? 'local': 'seal-network'} </td>
                   <td>{new Date().toLocaleDateString()}</td>
+                  
+                  {((!file.downloading) && (file.source == 'uploaded'))?
+                  <td>
+                    <label className="switch">
+                        <input
+                          type="checkbox" 
+                          checked={file.published}
+                          onChange={(e) => handleToggle(e, file)} 
+                        />
+                        <span className="slider round"></span>
+                    </label>
+                  </td>:
+                  <td></td>
+                  }
+
                   {file.downloading ? (
                     <td className='icon-cell' >
                         <div className="spinner"></div> Downloading...
                     </td>
                     ) :
+                    
                   <td className='icon-cell'>
+
+                    
                     <button onClick={() => handleDownload(file)} disabled={file.downloading}>
                       <DownloadIcon />
                     </button>
