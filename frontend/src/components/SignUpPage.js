@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import '../stylesheets//SignUpPage.css';
+import SealLogo from '../images/Seal_Logo.png';
 
-const SignUpPage = () => {
+const SignUpPage = ({onSignUpSuccess}) => {
   const [publicKey, setPublicKey] = useState('');
   const [privateKey, setPrivateKey] = useState('');
 
@@ -34,10 +35,17 @@ const SignUpPage = () => {
         return;
     }
     console.log('Signing Up with:', { publicKey, privateKey });
+    //For now, will route back to the login page.
+    onSignUpSuccess();
   };
 
   return (
+    <div className="signup-page">
+        <div className="logo-container">
+                <img src={SealLogo} alt="Seal Logo" className="seal-logo" />
+        </div>
     <div className="signup-container">
+        <div className="signup-form">
       <h2>Sign Up</h2>
       <form onSubmit={handleSignUp}>
         <button type="button" onClick={generateKeys}>
@@ -55,8 +63,10 @@ const SignUpPage = () => {
             <textarea value={privateKey} readOnly />
           </div>
         )}
-        <button type="submit">Sign Up</button>
+        <button onClick={onSignUpSuccess} class-name="button">Sign Up</button>
       </form>
+      </div>
+    </div>
     </div>
   );
 };
