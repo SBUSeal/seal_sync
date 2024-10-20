@@ -139,6 +139,7 @@
   text-align: center;
 }
 
+
 .modal-content input[type="number"]::-webkit-outer-spin-button,
 .modal-content input[type="number"]::-webkit-inner-spin-button {
 -webkit-appearance: none;
@@ -146,7 +147,7 @@ margin: 0;
 }
 
 .modal-content input[type="number"] {
--moz-appearance: textfield; /* Firefox */
+-moz-appearance: textfield; 
 }
 .modal-content input[type="number"], .modal-content textarea {
   display: inline-block;
@@ -165,7 +166,6 @@ margin: 0;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
-
   resize: none;
 }
 
@@ -175,6 +175,8 @@ margin: 0;
 }
 
 .modal-actions button {
+  border: none;
+  border-radius: 10px;
   padding: 10px 20px;
   cursor: pointer;
 }
@@ -184,6 +186,16 @@ margin: 0;
   background-color: #ccc !important;
   color: #666 !important;
   cursor: not-allowed !important;
+}
+
+.submit-button {
+  padding: 12px 24px;  /* Increase padding for a more balanced look */
+  background-color: #4CAF50;  /* Elegant green color for the primary action button */
+  color: white;  /* White text */
+  border: none;  /* Remove border */
+  border-radius: 8px;  /* Soft rounded corners */
+  font-size: 16px;  /* Better font size for readability */
+  cursor: pointer;  /* Pointer cursor on hover */
 }
 
 .cid-input {
@@ -241,17 +253,28 @@ margin: 0;
 }
 
 
+.icon-cell{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.icon-cell button {
+  margin-right: 0;
+}
 
 .icon-cell button:disabled {
+  display: flex;
+  flex-direction: row;
   color: #aaa;          
+  justify-content: center;
   cursor: not-allowed;  
   opacity: 0.5;        
 }
 
 .spinner {
   border: 4px solid rgba(0,0,0,0.1);
-  width: 36px;
-  height: 36px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border-left-color: #09f;
   animation: spin 1s infinite linear;
@@ -261,3 +284,70 @@ margin: 0;
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 30px;  /* Reduced width */
+  height: 15px; /* Reduced height */
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 10px;
+  width: 10px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #4CAF50;
+}
+
+input:checked + .slider:before {
+  transform: translateX(14px);
+}
+
+
+.download-container{
+  
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  
+  
+}
+
+.pause-button {
+  border: none;
+  cursor: pointer;
+}
+.resume-button {
+  border: none;
+  cursor: pointer;
+}
+

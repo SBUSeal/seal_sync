@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
+
 import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share1Icon, UploadIcon } from '@radix-ui/react-icons';
 import '../stylesheets/FilesPage.css';
 import FileViewer from './FileViewer';  
-
+import dummyTextFile from '../dummydata/dummyTestFile.txt'
 
 const FilesPage = (props) => {
 
   const files = props.files
   const setFiles = props.setFiles
+  const setDownloadsInProgress = props.setDownloadsInProgress; 
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [isFileModalOpen, setIsFileModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -24,7 +27,27 @@ const FilesPage = (props) => {
   const [selectedProvider, setSelectedProvider] = useState(null)
   const [filter, setFilter] = useState("All")
 
-  
+
+
+  useEffect(() => {
+    const updateFilteredFiles = () => {
+      const filtered = files.filter(file => 
+        (file.source === filter || filter === "All") && file.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredFiles(filtered);
+    };
+    updateFilteredFiles();
+  }, [files, searchQuery, filter]);
+
+
+  useEffect(() => {
+    const uploadCount = files.filter(file => file.source === 'uploaded').length;
+    const downloadCount = files.filter(file => file.source === 'downloaded').length;
+
+    localStorage.setItem('uploadedFilesCount', uploadCount);
+    localStorage.setItem('downloadedFilesCount', downloadCount);
+  }, [files]); 
+
   function openFile(file) {
     if (file.isFolder) return; 
     setCurrentFile(file);
@@ -38,10 +61,10 @@ const FilesPage = (props) => {
   
 
   const dummyProviders = [
-    {ip: "127.0.0.1", price: 2},
-    {ip: "10.0.0.1", price: 9},
-    {ip: "192.168.0.1", price: 5},
-    {ip: "132.145.0.1", price: 8},
+    {ip: "127.0.0.1", address: "ahw8E13Np3Huh5F47IRxnpJey1rKJ7z", price: 2},
+    {ip: "10.0.0.1", address: "F5lcMyFdTjGrfHSxl5LKtZ8DVKiwgHR", price: 9},
+    {ip: "192.168.0.1", address: "2Z3ab5g4dEF4DMPGT1L9TThMv6dvpqr", price: 5},
+    {ip: "132.145.0.1", address: "lXIrppfBCwngQrpMnTyQv43THtyrrh3", price: 8},
   ]
 
   const dummyCid = "baguqeerasorqs4njcts6vs7qvdjfcvgnume4hqohf65zsfguprqphs3icwea"
@@ -72,6 +95,28 @@ const FilesPage = (props) => {
   function handleDownloadFile() {
     setIsDownloadModalOpen(true)
   }
+
+  function handlePause(file) {
+    setFiles(prevFiles =>
+      prevFiles.map(f =>
+        f.name === file.name ? { ...f, paused: true } : f
+      )
+    );
+    setDownloadsInProgress(prevFiles =>
+      prevFiles.map(f =>
+        f.name === file.name ? { ...f, paused: true } : f
+      )
+    );
+  }
+  
+  function handleResume(file) {
+    setFiles(prevFiles =>
+      prevFiles.map(f =>
+        f.name === file.name ? { ...f, paused: false } : f
+      )
+    );
+  }
+  
 
   function handleCidChange(e) {
     setCid(e.target.value);
@@ -106,51 +151,7 @@ const FilesPage = (props) => {
     setIsProvidersModalOpen(true)
   }
 
-  function dummyDownload() {
-    const dummyFile = {
-      name: `Dummy File ${files.length }`, 
-      size: 100,
-      status: 'unlocked',
-      source: 'downloaded',
-      price: selectedProvider.price, 
-      description: 'Dummy description', 
-      isFolder: false,
-      downloading: true, 
-    };
-    const newBalance = props.sealTokenBalance - dummyFile.price;
-    if (newBalance < 0) {
-      alert("Insufficient funds, cannot download file")
-      return
-    }
-   
-    const updatedFiles = [...files, dummyFile];
-    setFiles(updatedFiles);
- 
-    const filtered = updatedFiles.filter(file => {
-      return (file.source === filter || filter === "All") && file.name.toLowerCase().includes(searchQuery.toLowerCase());
-    });
-
-    setFilteredFiles(filtered);    
-    setIsProvidersModalOpen(false)
-    setSelectedProvider(null)
-
-    props.setSealTokenBalance(props.sealTokenBalance - dummyFile.price)
-    alert(`Successfully bought file for ${dummyFile.price} STK!`)
-
-    setTimeout(() => {
-      setFiles(prevFiles => {
-        return prevFiles.map(f => {
-          if (f.name === dummyFile.name) {
-            return { ...f, downloading: false }; 
-          }
-          return f;
-        });
-      });
-    }, 3000);
-    
-  }
-
-  //   fetch('./dummydata/dummyTestFile.txt')
+    // fetch('./')
   //   .then((response) => response.text())
   //   .then((fileContent) => {
   //     const dummyFile = {
@@ -171,6 +172,84 @@ const FilesPage = (props) => {
   //   setSelectedProvider(null);
   // });
 
+  function dummyDownload() {
+    const dummyFile = {
+      name: `Dummy File ${files.length + 1 }`, 
+      size: 100,
+      status: 'unlocked',
+      source: 'downloaded',
+      fileObject: new Blob([dummyTextFile], {type: "text/plain"}),
+      price: selectedProvider.price, 
+      description: 'Dummy description', 
+      isFolder: false,
+      downloading: true, 
+      paused: false
+      }
+    const newBalance = props.sealTokenBalance - dummyFile.price;
+    if (newBalance < 0) {
+      alert("Insufficient funds, cannot download file")
+      return
+    }
+   
+    const updatedFiles = [...files, dummyFile];
+    setFiles(updatedFiles);
+
+    props.setDownloadsInProgress(prevDownloads => {
+      const isAlreadyDownloading = prevDownloads.some(f => f.name === dummyFile.name);
+      if (!isAlreadyDownloading) {
+        return [...prevDownloads, dummyFile]; 
+      }
+      return prevDownloads;
+    });
+ 
+    const filtered = updatedFiles.filter(file => {
+      return (file.source === filter || filter === "All") && file.name.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+
+    setFilteredFiles(filtered);    
+    setIsProvidersModalOpen(false)
+    setSelectedProvider(null)
+
+    // setDownloadsInProgress(prevDownloads => [...prevDownloads, dummyFile]);
+
+    props.setSealTokenBalance(props.sealTokenBalance - dummyFile.price)
+    alert(`Successfully bought file for ${dummyFile.price} STK!`)
+
+    //add new transaction
+    props.setTransactions((prevTransactions) => [...prevTransactions, {
+      id: prevTransactions.length + 1,
+      type: 'Sent',
+      date: new Date().toLocaleString(),
+      to: selectedProvider.address,
+      sealTokens: dummyFile.price,
+      reason: dummyFile.name,
+    },] )
+
+
+    const randomDelay = Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000;
+
+    setTimeout(() => {
+      setFiles(prevFiles => {
+        return prevFiles.map(f => {
+          if (f.name === dummyFile.name && !f.paused) { 
+            return { ...f, downloading: false }; 
+          }
+          return f;
+        });
+      });
+    
+      setDownloadsInProgress(prevDownloads => 
+        prevDownloads.filter(f => f.name !== dummyFile.name)
+      );
+    
+    }, randomDelay);
+    
+
+    
+  }
+
+
+
   
 
   function handleModalSubmit() {
@@ -184,7 +263,8 @@ const FilesPage = (props) => {
       fileObject: file,  
       isFolder: false,
       type: file.type,
-      downloading: file.downloading
+      downloading: file.downloading,
+      published: true
     }));
     const updatedFiles = [...files, ...newFiles];
     setFiles(updatedFiles);
@@ -242,6 +322,15 @@ const FilesPage = (props) => {
     const uploadedFiles = files.filter((file) => file.source === "uploaded")
     setFilteredFiles(uploadedFiles)
   }
+  function handleToggle(event, file) {
+    const isChecked = event.target.checked;
+    const updatedFiles = files.map(f => 
+      f.name === file.name ? { ...f, published: isChecked } : f
+    );
+    setFiles(updatedFiles);
+    setFilteredFiles(updatedFiles);
+  }
+
 
   return (
     <div className="file-manager-container">
@@ -253,6 +342,7 @@ const FilesPage = (props) => {
           value={searchQuery}
           onChange={handleSearchInput}
         />
+
         <div className="action-buttons">
           <button onClick={handleDownloadFile} className="action-btn">
             <DownloadIcon /> <div className='action-btn-text'> Download </div>
@@ -280,13 +370,14 @@ const FilesPage = (props) => {
               <th>size</th>
               <th>source</th>
               <th>date added</th>
+              <th>published</th>
               <th></th>
             </tr>
           </thead>
           {filteredFiles.length === 0 ? (
             <tbody>
               <tr>
-                <td colSpan="5" className="no-files-message">No files match your search</td>
+                <td colSpan="7" className="no-files-message">No files match your search</td>
               </tr>
             </tbody>
           ) : (
@@ -300,11 +391,39 @@ const FilesPage = (props) => {
                   <td>{formatFileSize(file.size)}</td>
                   <td> {file.source == 'uploaded'? 'local': 'seal-network'} </td>
                   <td>{new Date().toLocaleDateString()}</td>
+                  
+                  {((!file.downloading) && (file.source == 'uploaded'))?
+                                <td>
+                                  <label className="switch">
+                                      <input
+                                        type="checkbox" 
+                                        checked={file.published}
+                                        onChange={(e) => handleToggle(e, file)} 
+                                      />
+                                      <span className="slider round"></span>
+                                  </label>
+                                </td>
+                    :
+                            <td>{file.downloading ? (file.paused ? 'Paused' : 'Downloading') : ''}</td>
+                  }
+
                   {file.downloading ? (
                     <td className='icon-cell' >
-                        <div className="spinner"></div> Downloading...
+                       {file.paused ? (
+                            <button className="resume-button" onClick={() => handleResume(file)}>
+                            Resume
+                            </button>
+                          ) : (
+                            <div className="download-container">
+                              <div className="spinner"></div> 
+                              <button className='pause-button' onClick={() => handlePause(file)}>
+                              Pause
+                              </button>
+                            </div>
+                          )}
                     </td>
                     ) :
+                    
                   <td className='icon-cell'>
                     <button onClick={() => handleDownload(file)} disabled={file.downloading}>
                       <DownloadIcon />
@@ -450,7 +569,7 @@ const FilesPage = (props) => {
 
       {isProvidersModalOpen && (
               <div className="modal">
-                <div className="modal-content" style={{maxWidth: "600px"}}>
+                <div className="modal-content" style={{width: "600px"}}>
                     <h2> Found Providers </h2>
                       {dummyProviders.map((provider, index) => (
                         <div
@@ -459,6 +578,7 @@ const FilesPage = (props) => {
                           onClick={() => handleSelectProvider(provider)}
                         >
                           <p>IP: {provider.ip}</p>
+                          <p>Wallet Address: {provider.address}</p>
                           <p>Price: {provider.price} STK </p>
                         </div>
                       ))}

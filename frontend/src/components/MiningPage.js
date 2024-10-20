@@ -3,14 +3,13 @@ import '../stylesheets/MiningPage.css';
 
 const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMiningLog}) => {
     const [isMining, setIsMining] = useState(false);
-    const [balance, setBalance] = [sealTokenBalance, setSealTokenBalance]
     const [hashPower, setHashPower] = useState(492.44);
 
     useEffect(() => {
         let interval;
         if (isMining) {
             interval = setInterval(() => {
-                setBalance(prevBalance => prevBalance + (hashPower * 0.0001));
+                setSealTokenBalance(prevBalance => prevBalance + (hashPower * 0.0001));
                 if (miningLog.length === 0 || miningLog[miningLog.length - 1].type === 'stop') {
                     const startEntry = {
                         type: 'start',
@@ -31,7 +30,7 @@ const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMining
         }
 
         return () => clearInterval(interval);
-    }, [isMining, hashPower, miningLog]);
+    }, [isMining, hashPower, miningLog, setSealTokenBalance, setMiningLog]);
 
     const handleToggle = () => {
         setIsMining(!isMining);
@@ -41,7 +40,7 @@ const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMining
         <div className="mining-container">
             <div className="dashboard">
                 <div className="tile">
-                    <h2>Balance: {balance.toFixed(2)} ORC</h2>
+                    <h2>Balance: {sealTokenBalance.toFixed(2)} SKT</h2>
                     <h2>Hash Power: {hashPower} MH/s</h2>
                 </div>
                 <div className="mining-control">
