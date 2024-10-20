@@ -1,7 +1,7 @@
 import React from 'react';
 import '../stylesheets/SettingsPage.css';
 
-const SettingsPage = () => {
+const SettingsPage = ({toggleDarkMode}) => {
     return (
         <div className="settings-container">
             <div className="section">
@@ -34,6 +34,14 @@ const SettingsPage = () => {
                     readOnly 
                 />
                 <button className="secondary-button">+ Generate Keys</button>
+            </div>
+
+
+            <div className="section">
+                <h2>Theme</h2>
+                <button className="toggle-button" onClick={toggleDarkMode}>
+                    Toggle Dark Mode
+                </button>
             </div>
         </div>
     );

@@ -29,7 +29,7 @@ function App() {
   const [files, setFiles] = useState([]);
   const [miningLog, setMiningLog] = useState([]);
 
-  
+  const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
 
 
   //Handle login
@@ -51,6 +51,10 @@ function App() {
     setIsSigningUp(false);// Optionally reset signing up state
     setActivePage('');// Reset active page (testing)
    }
+
+   const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode); // Toggle dark mode
+  };
   // Function to render content based on activePage
   const renderContent = () => 
     {
@@ -75,14 +79,14 @@ function App() {
       case 'Mining':
         return <MiningPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} miningLog={miningLog} setMiningLog={setMiningLog}/>;
       case 'Settings':
-        return <SettingsPage />;
+        return <SettingsPage toggleDarkMode={toggleDarkMode} />;
       default:
         return <h1>Connected to Seal Share</h1>;
     }
   };
 
   return (
-    <div className="App">
+    <div className={`App ${isDarkMode ? 'dark-mode' : ''}`}> {/* Apply dark mode class */}
       {/* Only show sidebar when logged in */}
       {isLoggedIn && <Sidebar setActivePage={setActivePage} activePage={activePage} onSignOut={handleSignOut}/>}
       {/* Main Content */}
