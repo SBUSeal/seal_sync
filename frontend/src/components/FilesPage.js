@@ -117,6 +117,11 @@ const FilesPage = (props) => {
       isFolder: false,
       downloading: true, 
     };
+    const newBalance = props.sealTokenBalance - dummyFile.price;
+    if (newBalance < 0) {
+      alert("Insufficient funds, cannot download file")
+      return
+    }
    
     const updatedFiles = [...files, dummyFile];
     setFiles(updatedFiles);
@@ -129,6 +134,7 @@ const FilesPage = (props) => {
     setIsProvidersModalOpen(false)
     setSelectedProvider(null)
 
+    props.setSealTokenBalance(props.sealTokenBalance - dummyFile.price)
     alert(`Successfully bought file for ${dummyFile.price} STK!`)
 
     setTimeout(() => {
@@ -457,11 +463,12 @@ const FilesPage = (props) => {
                         </div>
                       ))}
 
+                    <h2> Your Balance: {props.sealTokenBalance} STK</h2>
                     <div style={{
                       display: 'flex',
                       justifyContent: 'space-between',  
                       alignItems: 'center',
-                      marginTop: '150px'
+                      marginTop: '50px'
                     }}>
                       <div className='modal-actions'>
                         <button onClick={closeProvidersModal} style={{fontSize: '20px'}}> Close </button>
