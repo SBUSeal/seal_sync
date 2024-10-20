@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './stylesheets/App.css';
 import './stylesheets/SignUpPage.css';
 import Files from './components/FilesPage';
@@ -11,25 +11,52 @@ import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
 import MiningPage from './components/MiningPage';
 
-//import './Contributes/NavigationBar';
-//import './Contributes/TopBar.js';
-
-
 function App() {
-  // State to manage which page is active
   const [activePage, setActivePage] = useState('Status');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const [isSigningUp, setIsSigningUp] = useState(false); 
 
-  // State to manage Token Balance
-  const [sealTokenBalance, setSealTokenBalance] = useState(100); //Change constant to reflect total wallet balance of dummy data
-  const [currentProxy, setcurrentProxy] = useState(null); // State of current proxy being used
+  const [sealTokenBalance, setSealTokenBalance] = useState(100); 
+
+  const [currentProxy, setcurrentProxy] = useState(null); 
+  const [proxyHistory, setProxyHistory] = useState([]); // State to store proxy history
+  const [isOn, setIsOn] = useState(false); /* Proxy Toggle State */
+
+
 
   // State to manage Files
   const [files, setFiles] = useState([]);
+  const [downloadsInProgress, setDownloadsInProgress] = useState([]); // Tracks downloads in progress
   const [miningLog, setMiningLog] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState(0); // Uploaded files count
+  const [downloadedFiles, setDownloadedFiles] = useState(0); // Downloaded files count
 
-  const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
+
+  // Clear localStorage and reset the counters on page load
+  useEffect(() => {
+    // Reset counters to 0 when the page loads
+    setUploadedFiles(0);
+    setDownloadedFiles(0);
+  }, []); // This will run only once when the app first loads  
+
+  //State to manage transactions
+  const [transactions, setTransactions] = useState([
+    {
+        id: 1,
+        type: 'Received',
+        date: '8:27 on 18 Sep 2024',
+        from: '1B3qRz5g4dEF4DMPGT1L3TThzv6CvzNB',
+        sealTokens: 20,
+    },
+    {
+        id: 2,
+        type: 'Sent',
+        date: '2:14 on 15 Sep 2024',
+        to: '1A72tpP5QGeiF2DMPfTT1S5LLmv7DivFNa',
+        sealTokens: 15,
+    },
+  ]);
 
 
   //Handle login
@@ -52,9 +79,11 @@ function App() {
     setActivePage('');// Reset active page (testing)
    }
 
-   const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode); // Toggle dark mode
+  const handleLogout = () => {
+    setIsLoggedIn(false); // Log the user out and navigate back to the login page
   };
+
+
   // Function to render content based on activePage
   const renderContent = () => 
     {
@@ -67,19 +96,20 @@ function App() {
     }
     switch (activePage) {
       case 'Status':
-        return <StatusPage />;
+        return <StatusPage downloadsInProgress={downloadsInProgress} />;
       case 'Files':
-        return <Files sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} files = {files} setFiles = {setFiles}/>;
+        return <Files sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} files = {files} setFiles = {setFiles} transactions = {transactions} setTransactions = {setTransactions} setDownloadsInProgress={setDownloadsInProgress}/>;
       case 'Wallet':
-        return <WalletPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance}/>;
+        return <WalletPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} transactions = {transactions} setTransactions = {setTransactions}/>;
       case 'Proxy':
         return <ProxyPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} currentProxy = {currentProxy}
-          setcurrentProxy = {setcurrentProxy}
+          setcurrentProxy = {setcurrentProxy} proxyHistory = {proxyHistory} setProxyHistory = {setProxyHistory} isOn = {isOn}
+          setIsOn = {setIsOn} setTransactions = {setTransactions}
         />;
       case 'Mining':
         return <MiningPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} miningLog={miningLog} setMiningLog={setMiningLog}/>;
       case 'Settings':
-        return <SettingsPage toggleDarkMode={toggleDarkMode} />;
+        return <SettingsPage handleLogout={handleLogout}/>;
       default:
         return <h1>Connected to Seal Share</h1>;
     }
