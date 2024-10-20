@@ -1,3 +1,16 @@
+/* GLOBAL STYLES */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+/* For buttons, inputs, etc. */
+input, button {
+    background-color: var(--input-background);
+    color: var(--text-color);
+}
+
+/* Mining Container */
 .mining-container {
     display: flex;
     flex-direction: column;
@@ -11,18 +24,19 @@
     justify-content: space-around;
     flex-direction: row;
     margin-top: 20px;
-    gap:0px;
+    gap: 0px;
 }
 
 .tile {
-    background: #f0f0f0;
+    background: var(--tile-background);
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin: 10px;
     text-align: center;
 }
 
+/* Mining Control */
 .mining-control {
     display: flex;
     align-items: center;
@@ -49,7 +63,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: var(--slider-background);
     transition: .4s;
     border-radius: 34px;
 }
@@ -61,13 +75,13 @@
     width: 26px;
     left: 4px;
     bottom: 4px;
-    background-color: white;
+    background-color: var(--slider-handle-color);
     transition: .4s;
     border-radius: 50%;
 }
 
 input:checked + .slider {
-    background-color: #4CAF50;
+    background-color: var(--slider-checked-background);
 }
 
 input:checked + .slider:before {
@@ -78,11 +92,13 @@ input:focus + .slider {
     box-shadow: 0 0 1px #2196F3;
 }
 
+/* Mining Status */
 .mining-status {
     font-size: 16px;
     font-weight: bold;
 }
 
+/* Mining Log */
 .mining-log {
     margin-top: 20px;
 }
@@ -93,8 +109,32 @@ input:focus + .slider {
 }
 
 .mining-log li {
-    background: #e0e0e0;
+    background: var(--log-background);
     padding: 8px;
     margin-bottom: 5px;
     border-radius: 4px;
+}
+
+/* Light Mode Variables */
+:root {
+    --background-color: #f4f4f4;
+    --text-color: #000000;
+    --input-background: #ffffff;
+    --tile-background: #f0f0f0;
+    --slider-background: #ccc;
+    --slider-handle-color: #ffffff;
+    --slider-checked-background: #4CAF50;
+    --log-background: #e0e0e0;
+}
+
+/* Dark Mode Variables */
+[data-theme="dark"] {
+    --background-color: #121212;
+    --text-color: #e0e0e0;
+    --input-background: #333333;
+    --tile-background: #1f1f1f;
+    --slider-background: #555555;
+    --slider-handle-color: #1f1f1f;
+    --slider-checked-background: #4CAF50;
+    --log-background: #333333;
 }

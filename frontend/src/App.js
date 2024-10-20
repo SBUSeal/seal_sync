@@ -138,7 +138,7 @@ function App() {
           />
         );
       case 'Settings':
-        return <SettingsPage handleLogout={handleLogout} />;
+        return <SettingsPage handleLogout={handleLogout} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />;
       case 'Transactions': // Handle when the active page is Transactions
         return (
           <TransactionsPage

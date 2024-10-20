@@ -211,3 +211,95 @@ html, body {
 .dark-mode .secondary-button:hover {
   background-color: #357ABD;
 }
+
+
+:root {
+  /* Light Mode Variables */
+  --background-color: #ffffff;
+  --text-color: #2C3E50;
+  --sidebar-bg: #34495E;
+  --sidebar-text-color: white;
+  --button-bg: #007bff;
+  --button-hover-bg: #1ABC9C;
+  --input-bg: #ffffff;
+  --input-border: #ced4da;
+  --input-text-color: #2C3E50;
+}
+
+[data-theme="dark"] {
+  /* Dark Mode Variables */
+  --background-color: #121212;
+  --text-color: #ffffff;
+  --sidebar-bg: #2C3E50;
+  --sidebar-text-color: white;
+  --button-bg: #4A90E2;
+  --button-hover-bg: #357ABD;
+  --input-bg: #333;
+  --input-border: #555;
+  --input-text-color: #ffffff;
+}
+
+/* Apply variables globally */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.App {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* Sidebar Styles */
+.sidebar {
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text-color);
+}
+
+.sidebar ul li button {
+  background-color: var(--button-bg);
+  color: var(--sidebar-text-color);
+}
+
+.sidebar ul li button:hover {
+  background-color: var(--button-hover-bg);
+}
+
+/* Input Fields */
+.input-field {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--input-text-color);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Buttons */
+button {
+  background-color: var(--button-bg);
+  color: var(--sidebar-text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--button-hover-bg);
+}
+
+/* Topbar Styles */
+.topbar {
+  background-color: var(--sidebar-bg);
+}
+
+.search-input {
+  background-color: var(--input-bg);
+  color: var(--input-text-color);
+  border: 1px solid var(--input-border);
+}
+
+/* Dark Mode Specific */
+.dark-mode .settings-container,
+.dark-mode .section {
+  background-color: var(--background-color);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
+}
+
