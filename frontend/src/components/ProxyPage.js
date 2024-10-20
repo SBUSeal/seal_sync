@@ -115,7 +115,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                         </button>
                     </div>
                     <div>
-                        <h1>Proxy Price</h1>
+                        <h1>Proxy Price/Day</h1>
                         {/* Price Input Form */}
                         <form onSubmit={savePrice}>
                             <input
@@ -209,7 +209,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                 <p>{historyProxy.proxy.host}</p>
                 <p>{historyProxy.proxy.ip_addr}</p>
                 <p>{historyProxy.proxy.location}</p>
-                <p>{historyProxy.proxy.price} STK</p>
+                <p>{historyProxy.proxy.price} STK/Day</p>
                 <p>{historyProxy.proxy.bandwidth} Mbps</p>
                 <p>Used On: {historyProxy.timestamp}</p>
             </div>
@@ -218,6 +218,16 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
 
     // After purchasing a proxy this page shows
     const PurchasedProxyPage = ({setShowHistory, currentProxy, setcurrentProxy}) => {
+        const calculateDaysPassed = (timestamp) => {
+            const purchaseDate = new Date(timestamp);
+            const today = new Date();
+            const diffTime = Math.abs(today - purchaseDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+            return diffDays;
+          };
+        
+        const daysPassed = calculateDaysPassed(currentProxy.timestamp);
+        const totalCost = currentProxy.proxy.price * daysPassed;
         return (
             <div id="current-proxy-container">
                 <div className="available-proxy-container">
@@ -229,15 +239,15 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                     <p>IP Address</p>
                     <p>Location</p>
                     <p>Price</p>
-                    <p>Bandwidth</p>
+                    <p>Total</p>
                 </div>
                 <div className='proxy-list'>
                     <div className="current-proxy-details">
-                        <p>{currentProxy.host}</p>
-                        <p>{currentProxy.ip_addr}</p>
-                        <p>{currentProxy.location}</p>
-                        <p>{currentProxy.price} STK</p>
-                        <p>{currentProxy.bandwidth} Mbps</p>
+                        <p>{currentProxy.proxy.host}</p>
+                        <p>{currentProxy.proxy.ip_addr}</p>
+                        <p>{currentProxy.proxy.location}</p>
+                        <p>{currentProxy.proxy.price} STK/Day</p>
+                        <p>{totalCost} STK</p>
                         <button className="disconnect-button" onClick={() => setcurrentProxy(null)}>
                             Disconnect
                         </button>
@@ -289,13 +299,13 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
         if (sealTokenBalance >= price) {
             alert(`Purchase successful! You spent ${price} SealTokens.`);
             setSealTokenBalance((prevBalance) => prevBalance - price); // Update balance
-            setcurrentProxy(proxy);
 
             // Create a new proxy object with a timestamp
             const historyProxy = {
                 proxy,
                 timestamp: new Date().toLocaleString(), // Add a timestamp
             };
+            setcurrentProxy(historyProxy);
             setProxyHistory((prevHistory) => [...prevHistory, historyProxy]);
 
             //add new transaction
@@ -317,7 +327,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
             <p>{proxy.host}</p>
             <p>{proxy.ip_addr}</p>
             <p>{proxy.location}</p>
-            <p>{proxy.price} STK</p>
+            <p>{proxy.price} STK/Day</p>
             <p>{proxy.bandwidth} Mbps</p>
         <div className="proxy-join">
           <button className="purchase-button" onClick={() => handlePurchase(proxy.price)}>
