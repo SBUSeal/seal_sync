@@ -7,22 +7,24 @@ const WalletPage = (props) => {
     const [receiverId, setReceiverId] = useState('');
     const [amount, setAmount] = useState('');
     const [reason, setReason] = useState('');
-    const [transactions, setTransactions] = useState([
-        {
-            id: 1,
-            type: 'Received',
-            date: '8:27 on 18 Sep 2024',
-            from: '1B3qRz5g4dEF4DMPGT1L3TThzv6CvzNB',
-            sealTokens: 20,
-        },
-        {
-            id: 2,
-            type: 'Sent',
-            date: '2:14 on 15 Sep 2024',
-            to: '1A72tpP5QGeiF2DMPfTT1S5LLmv7DivFNa',
-            sealTokens: 15,
-        },
-    ]);
+    // const [transactions, setTransactions] = useState([
+    //     {
+    //         id: 1,
+    //         type: 'Received',
+    //         date: '8:27 on 18 Sep 2024',
+    //         from: '1B3qRz5g4dEF4DMPGT1L3TThzv6CvzNB',
+    //         sealTokens: 20,
+    //     },
+    //     {
+    //         id: 2,
+    //         type: 'Sent',
+    //         date: '2:14 on 15 Sep 2024',
+    //         to: '1A72tpP5QGeiF2DMPfTT1S5LLmv7DivFNa',
+    //         sealTokens: 15,
+    //     },
+    // ]);
+    const transactions = props.transactions
+    const setTransactions = props.setTransactions
 
     const [showModal, setShowModal] = useState(false);  // Modal visibility
     const [pendingTransaction, setPendingTransaction] = useState(null);  // Pending transaction

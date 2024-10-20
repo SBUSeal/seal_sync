@@ -30,6 +30,24 @@ function App() {
   const [files, setFiles] = useState([]);
   const [miningLog, setMiningLog] = useState([]);
 
+  //State to manage transactions
+  const [transactions, setTransactions] = useState([
+    {
+        id: 1,
+        type: 'Received',
+        date: '8:27 on 18 Sep 2024',
+        from: '1B3qRz5g4dEF4DMPGT1L3TThzv6CvzNB',
+        sealTokens: 20,
+    },
+    {
+        id: 2,
+        type: 'Sent',
+        date: '2:14 on 15 Sep 2024',
+        to: '1A72tpP5QGeiF2DMPfTT1S5LLmv7DivFNa',
+        sealTokens: 15,
+    },
+  ]);
+
   
 
 
@@ -60,9 +78,9 @@ function App() {
       case 'Status':
         return <StatusPage />;
       case 'Files':
-        return <Files sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} files = {files} setFiles = {setFiles}/>;
+        return <Files sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} files = {files} setFiles = {setFiles} transactions = {transactions} setTransactions = {setTransactions}/>;
       case 'Wallet':
-        return <WalletPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance}/>;
+        return <WalletPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} transactions = {transactions} setTransactions = {setTransactions}/>;
       case 'Proxy':
         return <ProxyPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} currentProxy = {currentProxy}
           setcurrentProxy = {setcurrentProxy}
