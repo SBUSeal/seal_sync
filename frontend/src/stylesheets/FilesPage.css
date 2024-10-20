@@ -139,6 +139,7 @@
   text-align: center;
 }
 
+
 .modal-content input[type="number"]::-webkit-outer-spin-button,
 .modal-content input[type="number"]::-webkit-inner-spin-button {
 -webkit-appearance: none;
@@ -146,7 +147,7 @@ margin: 0;
 }
 
 .modal-content input[type="number"] {
--moz-appearance: textfield; /* Firefox */
+-moz-appearance: textfield; 
 }
 .modal-content input[type="number"], .modal-content textarea {
   display: inline-block;
@@ -165,7 +166,6 @@ margin: 0;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
-
   resize: none;
 }
 
@@ -175,6 +175,8 @@ margin: 0;
 }
 
 .modal-actions button {
+  border: none;
+  border-radius: 10px;
   padding: 10px 20px;
   cursor: pointer;
 }
@@ -184,6 +186,16 @@ margin: 0;
   background-color: #ccc !important;
   color: #666 !important;
   cursor: not-allowed !important;
+}
+
+.submit-button {
+  padding: 12px 24px;  /* Increase padding for a more balanced look */
+  background-color: #4CAF50;  /* Elegant green color for the primary action button */
+  color: white;  /* White text */
+  border: none;  /* Remove border */
+  border-radius: 8px;  /* Soft rounded corners */
+  font-size: 16px;  /* Better font size for readability */
+  cursor: pointer;  /* Pointer cursor on hover */
 }
 
 .cid-input {
@@ -338,3 +350,4 @@ input:checked + .slider:before {
   border: none;
   cursor: pointer;
 }
+
