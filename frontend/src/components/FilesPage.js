@@ -161,27 +161,6 @@ const FilesPage = (props) => {
     setIsProvidersModalOpen(true)
   }
 
-    // fetch('./')
-  //   .then((response) => response.text())
-  //   .then((fileContent) => {
-  //     const dummyFile = {
-  //       name: "dummyTestFile.txt",
-  //       size: fileContent.length, 
-  //       status: 'unlocked',
-  //       source: 'local',
-  //       price: '599',
-  //       fileObject: new Blob([fileContent], { type: "text/plain" }),
-  //       description: 'Dummy description',
-  //       isFolder: false,
-  //       type: "text/plain"
-  //     };
-  //     const updatedFiles = [...files, dummyFile];
-  //     setFiles(updatedFiles);
-  //     setFilteredFiles(updatedFiles);
-  //   setIsProvidersModalOpen(false);
-  //   setSelectedProvider(null);
-  // });
-
   function dummyDownload() {
     const dummyFile = {
       name: `Dummy File ${files.length + 1 } purchased from Files`, 

@@ -96,7 +96,7 @@ input, button {
 }
 
 .upload-btn input[type="file"] {
-  display: none; /* Hide the default file input */
+  display: none; 
 }
 
 /* Adjustments for icons */
@@ -108,7 +108,7 @@ input, button {
 
 .upload-btn svg, .download-btn svg {
   margin-right: 8px;
-  fill: var(--button-text-color); /* Ensure the icon matches the button text color */
+  fill: var(--button-text-color);
 }
 
 .file-section {
