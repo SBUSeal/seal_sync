@@ -38,10 +38,10 @@ const FilesPage = (props) => {
   
 
   const dummyProviders = [
-    {ip: "127.0.0.1", price: 2},
-    {ip: "10.0.0.1", price: 9},
-    {ip: "192.168.0.1", price: 5},
-    {ip: "132.145.0.1", price: 8},
+    {ip: "127.0.0.1", address: "ahw8E13Np3Huh5F47IRxnpJey1rKJ7z", price: 2},
+    {ip: "10.0.0.1", address: "F5lcMyFdTjGrfHSxl5LKtZ8DVKiwgHR", price: 9},
+    {ip: "192.168.0.1", address: "2Z3ab5g4dEF4DMPGT1L9TThMv6dvpqr", price: 5},
+    {ip: "132.145.0.1", address: "lXIrppfBCwngQrpMnTyQv43THtyrrh3", price: 8},
   ]
 
   const dummyCid = "baguqeerasorqs4njcts6vs7qvdjfcvgnume4hqohf65zsfguprqphs3icwea"
@@ -158,6 +158,16 @@ const FilesPage = (props) => {
 
     props.setSealTokenBalance(props.sealTokenBalance - dummyFile.price)
     alert(`Successfully bought file for ${dummyFile.price} STK!`)
+
+    //add new transaction
+    props.setTransactions((prevTransactions) => [...prevTransactions, {
+      id: prevTransactions.length + 1,
+      type: 'Sent',
+      date: new Date().toLocaleString(),
+      to: selectedProvider.address,
+      sealTokens: dummyFile.price,
+      reason: dummyFile.name,
+    },] )
 
     setTimeout(() => {
       setFiles(prevFiles => {
@@ -452,7 +462,7 @@ const FilesPage = (props) => {
 
       {isProvidersModalOpen && (
               <div className="modal">
-                <div className="modal-content" style={{maxWidth: "600px"}}>
+                <div className="modal-content" style={{width: "600px"}}>
                     <h2> Found Providers </h2>
                       {dummyProviders.map((provider, index) => (
                         <div
@@ -461,6 +471,7 @@ const FilesPage = (props) => {
                           onClick={() => handleSelectProvider(provider)}
                         >
                           <p>IP: {provider.ip}</p>
+                          <p>Wallet Address: {provider.address}</p>
                           <p>Price: {provider.price} STK </p>
                         </div>
                       ))}
