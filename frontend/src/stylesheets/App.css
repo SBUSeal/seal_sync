@@ -104,15 +104,18 @@ html, body {
   height: 40px;
   margin: 0; /* Center the icons */
   transition: transform 0.3s ease; /* Smooth scaling for hover */
+  padding: 0px 5px;
+
 }
 
 /* Hide button text when sidebar is minimized */
 .sidebar-minimized ul li button {
   opacity: 0;
   width: 0;
-  padding: 0;
+  padding: 15px;
   overflow: hidden;
   transition: width 0.3s ease, opacity 0.3s ease;
+
 }
 
 /* Adjust icon position when minimized */
