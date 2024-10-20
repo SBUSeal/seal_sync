@@ -85,7 +85,7 @@ function App() {
       case 'Proxy':
         return <ProxyPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} currentProxy = {currentProxy}
           setcurrentProxy = {setcurrentProxy} proxyHistory = {proxyHistory} setProxyHistory = {setProxyHistory} isOn = {isOn}
-          setIsOn = {setIsOn}
+          setIsOn = {setIsOn} setTransactions = {setTransactions}
         />;
       case 'Mining':
         return <MiningPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} miningLog={miningLog} setMiningLog={setMiningLog}/>;

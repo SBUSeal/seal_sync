@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import '../stylesheets/ProxyPage.css';
 
 /* States */
-const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcurrentProxy, proxyHistory, setProxyHistory, isOn, setIsOn}) => { // Destruct Properties
+const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcurrentProxy, proxyHistory, 
+    setProxyHistory, isOn, setIsOn, setTransactions}) => { // Destruct Properties
     const proxies = [   /* Dummy Data */
         {
             id: 1,
@@ -204,7 +205,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                 ) : 
                 (<AvailableProxyPage searchQuery = {searchQuery} handleSearchInput = {handleSearchInput} proxyHistory = {proxyHistory} 
                     setProxyHistory = {setProxyHistory} setShowHistory = {setShowHistory} filteredProxies = {filteredProxies} sealTokenBalance = {sealTokenBalance} 
-                    setSealTokenBalance = {setSealTokenBalance} setcurrentProxy = {setcurrentProxy} />
+                    setSealTokenBalance = {setSealTokenBalance} setcurrentProxy = {setcurrentProxy} setTransactions={setTransactions} />
                 )}
                 </div>
             )}
@@ -225,7 +226,11 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
         return (
             <div id="current-proxy-container">
                 <div className="available-proxy-container">
-                    <h1 style={{ textAlign: 'center', fontSize: '30px' }}>Proxy History</h1>
+                    {proxyHistory.length === 0 ? 
+                    (<h1 style={{ textAlign: 'center', fontSize: '30px' }}>No Proxy History</h1>
+                    ):  
+                    (<h1 style={{ textAlign: 'center', fontSize: '30px' }}>Proxy History</h1>
+                    )}
                     <button className="history-button" onClick={() => setShowHistory(false)}>
                         Back
                     </button>
@@ -293,7 +298,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     }
 
     //didnt buy proxy shows list of proxies
-    const AvailableProxyPage = ({searchQuery, handleSearchInput, proxyHistory, setProxyHistory, setShowHistory, filteredProxies, sealTokenBalance, setSealTokenBalance, setcurrentProxy}) => {
+    const AvailableProxyPage = ({searchQuery, handleSearchInput, setTransactions, setProxyHistory, setShowHistory, filteredProxies, sealTokenBalance, setSealTokenBalance, setcurrentProxy}) => {
         return (
             <div> 
                 <div className="available-proxy-container">
@@ -317,7 +322,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                 <div className='proxy-list'>
                     {filteredProxies.map((proxy) => ( // Map each proxy to a ProxyItem component pass in proxy obj
                         <ProxyItem key={proxy.id} proxy={proxy} sealTokenBalance ={sealTokenBalance}  setSealTokenBalance = {setSealTokenBalance}
-                            setcurrentProxy = {setcurrentProxy} setProxyHistory = {setProxyHistory}
+                            setcurrentProxy = {setcurrentProxy} setProxyHistory = {setProxyHistory} setTransactions={setTransactions}
                         />
                     ))}
                 </div>
@@ -327,7 +332,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
 
 
     //   Indiviual Proxy Card
-    const ProxyItem = ({ proxy, sealTokenBalance, setSealTokenBalance, setcurrentProxy, setProxyHistory}) => {
+    const ProxyItem = ({ proxy, sealTokenBalance, setSealTokenBalance, setcurrentProxy, setProxyHistory, setTransactions}) => {
     
         // Handle purchase logic
         const handlePurchase = (price) => {
@@ -343,6 +348,15 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
             };
             setProxyHistory((prevHistory) => [...prevHistory, historyProxy]);
 
+            //add new transaction
+            setTransactions((prevTransactions) => [...prevTransactions, {
+                id: prevTransactions.length + 1,
+                type: 'Sent',
+                date: new Date().toLocaleString(),
+                to: proxy.host,
+                sealTokens: proxy.price,
+                reason: proxy.name,
+            },] )
         } else {
             alert('Insufficient balance.');
         }
