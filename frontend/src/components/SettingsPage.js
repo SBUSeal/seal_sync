@@ -16,7 +16,7 @@ const SettingsPage = ({ handleLogout, toggleDarkMode, isDarkMode}) => {
             case 'Configuration':
                 return (
                     <div className="section">
-                        <h2>Transfer</h2>
+                        <h2>Config</h2>
                         <div className="input-group">
                             <label>Save Folder</label>
                             <input type="text" placeholder="Enter new save directory" className="input-field" />

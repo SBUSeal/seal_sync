@@ -13,7 +13,7 @@ import MiningPage from './components/MiningPage';
 
 function App() {
   const [activePage, setActivePage] = useState('Status');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   const [isSigningUp, setIsSigningUp] = useState(false); 
 
