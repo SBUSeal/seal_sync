@@ -12,19 +12,13 @@ import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
 import MiningPage from './components/MiningPage';
 
-//import './Contributes/NavigationBar';
-//import './Contributes/TopBar.js';
-
-
 function App() {
-  // State to manage which page is active
   const [activePage, setActivePage] = useState('Status');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false); 
 
-  // State to manage Token Balance
-  const [sealTokenBalance, setSealTokenBalance] = useState(100); //Change constant to reflect total wallet balance of dummy data
-  const [currentProxy, setcurrentProxy] = useState(null); // State of current proxy being used
+  const [sealTokenBalance, setSealTokenBalance] = useState(100); 
+  const [currentProxy, setcurrentProxy] = useState(null); 
 
   // State to manage Files
   const [files, setFiles] = useState([]);
