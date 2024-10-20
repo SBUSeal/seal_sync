@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share1Icon, UploadIcon } from '@radix-ui/react-icons';
+import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share1Icon, UploadIcon , TrashIcon} from '@radix-ui/react-icons';
 import '../stylesheets/FilesPage.css';
 import FileViewer from './FileViewer';  
 import dummyTextFile from '../dummydata/dummyTestFile.txt'
@@ -63,7 +63,7 @@ const FilesPage = (props) => {
   const dummyProviders = [
     {ip: "127.0.0.1", address: "ahw8E13Np3Huh5F47IRxnpJey1rKJ7z", price: 2},
     {ip: "10.0.0.1", address: "F5lcMyFdTjGrfHSxl5LKtZ8DVKiwgHR", price: 9},
-    {ip: "192.168.0.1", address: "2Z3ab5g4dEF4DMPGT1L9TThMv6dvpqr", price: 5},
+    {ip: "192.168.0.1", address: "2Z3ab5g4dEF4DMPGT1L9TThMv6dvpqr", price: 500},
     {ip: "132.145.0.1", address: "lXIrppfBCwngQrpMnTyQv43THtyrrh3", price: 8},
   ]
 
@@ -74,6 +74,14 @@ const FilesPage = (props) => {
   };
 
 
+  function handleDeleteFile(file) {
+    const confirmed = window.confirm(`Are you sure you want to delete the file: ${file.name}?`);
+    if (confirmed) {
+      const updatedFiles = files.filter(f => f.name !== file.name);
+      setFiles(updatedFiles);
+      setFilteredFiles(updatedFiles);
+    }
+  }
   function handleFileUpload(event) {
     const selectedFiles = Array.from(event.target.files);
     setTempFiles(selectedFiles)
@@ -259,6 +267,7 @@ const FilesPage = (props) => {
       status: 'unlocked',
       source: 'uploaded',
       description: newFileDetails.description,
+      price: newFileDetails.price,
       fileObject: file,  
       isFolder: false,
       type: file.type,
@@ -434,9 +443,15 @@ const FilesPage = (props) => {
                     <button onClick={() => openShareModal(file)} disabled={file.downloading}>
                       <Share1Icon />
                     </button>
+                    {(!file.published || file.source === 'downloaded') && (
+                          <button onClick={() => handleDeleteFile(file)}>
+                            <TrashIcon />
+                          </button>
+                        )}
                     <button onClick={() => file.isFolder ? 'OPENFOLDER' : openFileDetails(file)} disabled={file.downloading}>
                       <DotsVerticalIcon />
                     </button>
+                   
                   </td>
                 }
                 </tr>
@@ -488,6 +503,7 @@ const FilesPage = (props) => {
 
       {isFileModalOpen && currentFile && (
         <div className="modal">
+          {console.log(currentFile)}
           <div className="modal-content"  style={{textAlign: "left"}}>
             <h2>File Details</h2>
             <p><strong>Name:</strong> {currentFile.name}</p>
