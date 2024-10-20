@@ -18,7 +18,12 @@ function App() {
   const [isSigningUp, setIsSigningUp] = useState(false); 
 
   const [sealTokenBalance, setSealTokenBalance] = useState(100); 
+
   const [currentProxy, setcurrentProxy] = useState(null); 
+  const [proxyHistory, setProxyHistory] = useState([]); // State to store proxy history
+  const [isOn, setIsOn] = useState(false); /* Proxy Toggle State */
+
+
 
   // State to manage Files
   const [files, setFiles] = useState([]);
@@ -52,8 +57,6 @@ function App() {
         sealTokens: 15,
     },
   ]);
-
-  
 
 
   //Handle login
@@ -92,7 +95,8 @@ function App() {
         return <WalletPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} transactions = {transactions} setTransactions = {setTransactions}/>;
       case 'Proxy':
         return <ProxyPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} currentProxy = {currentProxy}
-          setcurrentProxy = {setcurrentProxy}
+          setcurrentProxy = {setcurrentProxy} proxyHistory = {proxyHistory} setProxyHistory = {setProxyHistory} isOn = {isOn}
+          setIsOn = {setIsOn} setTransactions = {setTransactions}
         />;
       case 'Mining':
         return <MiningPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} miningLog={miningLog} setMiningLog={setMiningLog}/>;

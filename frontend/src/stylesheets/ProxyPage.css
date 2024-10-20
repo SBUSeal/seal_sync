@@ -17,29 +17,31 @@ div.container {
 
 }
 
-/* Main Head Divider */
 .proxy-head {
-    background-color: #d0e6f5;
-    padding: 40px;
-    border-radius: 10px;
-    text-align: center;
-    color: #2d4a6e!important; 
-    display: flex;
-    align-items: center;
-    gap: 70px;
-    justify-content: center;
-    margin-bottom: 20px;
+  background-color: #dde4e9;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 50px;
+
   }
 
-  div.proxy-head h1 {
-    font-size: 30px;
-   }
-  
-  .proxy-head div {
+  .proxy-form {
     display: flex;
+    justify-content: center;
+    gap: 70px;
+    padding: 10px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .proxy-form div {
+    display: flex;
+    justify-content: center;
     align-items: center;
     gap: 20px;
-}
+  }
+
 
 /* Proxy Toggle Button */
 .toggle-button {
@@ -89,18 +91,6 @@ div.container {
     background-color: #e0e0e0;
 }
 
-/* When proxy is on */
-.proxy-active {
-    background-color: rgb(255, 255, 255);
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    gap: 20px;    
-    padding: 20px 20px 20px 30px;
-    background-color: rgb(255, 255, 255);
-    border-radius: 10px;
-}
-
 /* Container of list of proxies */
 .proxy-list {
     display: flex;
@@ -128,31 +118,39 @@ div.container {
    .proxy-search-bar {
     position: absolute;
     left: 0;
-    width: 200px;
+    width: 300px;
+    font-size: 17px;
     padding: 5px;
    }
 
    .available-proxy-container h1 {
     margin: 0 auto;
     font-size: 30px;
-    transform: translateX(10px);
-   }
+  }
 
-   /* Per Proxy Card */
-   .proxy-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .categories {
+    display: grid;
+    grid-template-columns: 1fr 0.5fr 0.6fr 0.5fr 1fr;
+    gap: 20px;
+    padding-top: 50px;
+    padding-left: 30px;
+  }
+  
+  .categories p {
+    color: #2d4a6e!important; 
+}
+
+/* Per Proxy Card */
+.proxy-item {
+    display: grid;
+    grid-template-columns: 1fr .5fr 0.6fr 0.6fr 0.4fr 0fr;
+    gap: 20px;
     padding: 15px;
     border-bottom: 1px solid #e0e0e0;
   }
 
-  .proxy-details {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .proxy-details p {
+
+  .proxy-item p {
     font-size: 16px;
     color: #6c757d;
   }
@@ -189,33 +187,39 @@ div.container {
 
 /* Current Proxy */
 .current-proxy-details {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr .5fr 0.6fr 0.6fr 0.4fr 0fr;
+    gap: 20px;
+    padding: 15px;
     margin-top: 20px;
-    gap: 20px;    
-    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
     background-color: rgb(255, 255, 255);
     border-radius: 10px;
    }
 
+   .current-proxy-details p {
+    font-size: 16px;
+    color: #6c757d;
+  }
+
    .disconnect-button {
-    background-color: #c34646;
-    color: white;
-    font-weight: bold; 
+    background-color: #c55858;
+    border: 1px solid #ccc;
+    color: #d6e2ee;
+    font-weight: bold;
     font-size: 16px;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    width: 270px;
-    text-align: center;
-    margin: 20px auto;
-    display: block;
-    transition: background-color 0.3s ease;
-  }
+    transition: all 0.3s ease;
+
+    height: 75%;
+    width: 175px;
+  } 
   
   /* Hover effect */
   .disconnect-button:hover {
-    background-color: #c34646ce; /* Red background */
+    background-color: #c34646ce; 
 }
 
 /* Histoy Button */
@@ -225,7 +229,7 @@ div.container {
     color: white;
     font-weight: bold;
     font-size: 16px;
-    padding: 10px 20px;
+    margin-right: 40px;
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.3s ease;
