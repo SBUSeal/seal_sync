@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import sealImage from '../images/Seal_Logo.png';
-import statusIcon from '../images/Status_Icon.png';
-import filesIcon from '../images/File_Icon.png';
+import statusIcon from '../images/Status_Page_White.png';
+import filesIcon from '../images/File_Icon_White.png';
 import walletIcon from '../images/Wallet_Icon.png';
-import proxyIcon from '../images/Peers_Icon.png';
-import settingsIcon from '../images/Settings_Icon.png';
+import proxyIcon from '../images/Proxy_Icon_White.png';
+import settingsIcon from '../images/Settings_Icon_White.png';
 import miningIcon from '../images/pickaxe-white-removebg-preview.png';
 import '../stylesheets/App.css';
 
