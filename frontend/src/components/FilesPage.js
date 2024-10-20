@@ -1,4 +1,4 @@
-//import React, { useState } from 'react';
+
 import React, { useState, useEffect } from 'react';
 
 import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share1Icon, UploadIcon } from '@radix-ui/react-icons';
@@ -10,6 +10,7 @@ const FilesPage = (props) => {
 
   const files = props.files
   const setFiles = props.setFiles
+  const setDownloadsInProgress = props.setDownloadsInProgress; // Get prop to update downloads in progress
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [isFileModalOpen, setIsFileModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -118,7 +119,7 @@ const FilesPage = (props) => {
 
   function dummyDownload() {
     const dummyFile = {
-      name: `Dummy File ${files.length }`, 
+      name: `Dummy File ${files.length + 1 }`, 
       size: 100,
       status: 'unlocked',
       source: 'downloaded',
@@ -135,6 +136,15 @@ const FilesPage = (props) => {
    
     const updatedFiles = [...files, dummyFile];
     setFiles(updatedFiles);
+
+    //props.setDownloadsInProgress(prevDownloads => [...prevDownloads, dummyFile]);
+    props.setDownloadsInProgress(prevDownloads => {
+      const isAlreadyDownloading = prevDownloads.some(f => f.name === dummyFile.name);
+      if (!isAlreadyDownloading) {
+        return [...prevDownloads, dummyFile]; // Add to downloads if not already downloading
+      }
+      return prevDownloads; // If already downloading, do nothing
+    });
  
     const filtered = updatedFiles.filter(file => {
       return (file.source === filter || filter === "All") && file.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -143,6 +153,9 @@ const FilesPage = (props) => {
     setFilteredFiles(filtered);    
     setIsProvidersModalOpen(false)
     setSelectedProvider(null)
+
+    // Add file to downloads in progress
+    setDownloadsInProgress(prevDownloads => [...prevDownloads, dummyFile]);
 
     props.setSealTokenBalance(props.sealTokenBalance - dummyFile.price)
     alert(`Successfully bought file for ${dummyFile.price} STK!`)
@@ -156,9 +169,15 @@ const FilesPage = (props) => {
           return f;
         });
       });
-    }, 3000);
+
+      props.setDownloadsInProgress(prevDownloads => 
+        prevDownloads.filter(f => f.name !== dummyFile.name)
+      );
+
+    }, 7000);
     
   }
+
 
   //   fetch('./dummydata/dummyTestFile.txt')
   //   .then((response) => response.text())

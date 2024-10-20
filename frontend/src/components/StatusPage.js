@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../stylesheets/StatusPage.css'; // Ensure the CSS is updated for the new look
 
-const StatusPage = () => {
+const StatusPage = ({ downloadsInProgress = [] }) => { // Defaulting downloadsInProgress to an empty array  const [dataAmount, setDataAmount] = useState(100); // Example data amount
   const [dataAmount, setDataAmount] = useState(100); // Example data amount
   const [peers, setPeers] = useState(5); // Example peers
   const [incomingData, setIncomingData] = useState(1.2); // Incoming traffic
@@ -19,7 +19,7 @@ const StatusPage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch uploaded and downloaded file data from localStorage
+  //Fetch uploaded and downloaded file data from localStorage
   useEffect(() => {
     const uploadCount = localStorage.getItem('uploadedFilesCount') || 0;
     const downloadCount = localStorage.getItem('downloadedFilesCount') || 0;
@@ -78,6 +78,23 @@ const StatusPage = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Downloads In Progress Section */}
+        <div className="downloads-progress card">
+          <h3>Downloads In Progress</h3>
+          
+          {downloadsInProgress && downloadsInProgress.length === 0 ? (
+
+            <p>No downloads in progress.</p>
+          ) : (
+            downloadsInProgress.map((file, index) => (
+              <div key={index} className="download-item">
+                <p><strong>{file.name}</strong> - {file.size}</p>
+                <p>Downloading...</p>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Bandwidth Over Time Section */}

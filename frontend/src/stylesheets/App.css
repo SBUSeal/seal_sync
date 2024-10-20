@@ -25,7 +25,9 @@ html, body {
   flex-direction: column;
   padding: 20px;
   height: 100vh; /* Full viewport height */
+  
 }
+
 
 .logo {
   text-align: center;
@@ -51,6 +53,7 @@ html, body {
   display: flex;
   flex-direction: column;
   padding: 20px;
+  height: 100vh; /* Full viewport height */
   transition: width 0.3s ease; /* Smooth transition */
 }
 
