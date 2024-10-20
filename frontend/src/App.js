@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './stylesheets/App.css';
 import './stylesheets/LoginPage.css';
 import './stylesheets/SignUpPage.css';
@@ -22,7 +22,18 @@ function App() {
 
   // State to manage Files
   const [files, setFiles] = useState([]);
+  const [downloadsInProgress, setDownloadsInProgress] = useState([]); // Tracks downloads in progress
   const [miningLog, setMiningLog] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState(0); // Uploaded files count
+  const [downloadedFiles, setDownloadedFiles] = useState(0); // Downloaded files count
+
+
+  // Clear localStorage and reset the counters on page load
+  useEffect(() => {
+    // Reset counters to 0 when the page loads
+    setUploadedFiles(0);
+    setDownloadedFiles(0);
+  }, []); // This will run only once when the app first loads  
 
   //State to manage transactions
   const [transactions, setTransactions] = useState([
@@ -74,9 +85,11 @@ function App() {
     }
     switch (activePage) {
       case 'Status':
-        return <StatusPage />;
+        return <StatusPage downloadsInProgress={downloadsInProgress} />;
       case 'Files':
-        return <Files sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} files = {files} setFiles = {setFiles} transactions = {transactions} setTransactions = {setTransactions}/>;
+
+        return <Files sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} files = {files} setFiles = {setFiles} transactions = {transactions} setTransactions = {setTransactions} setDownloadsInProgress={setDownloadsInProgress}/>;
+
       case 'Wallet':
         return <WalletPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} transactions = {transactions} setTransactions = {setTransactions}/>;
       case 'Proxy':
