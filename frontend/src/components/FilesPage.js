@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+//import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share1Icon, UploadIcon } from '@radix-ui/react-icons';
 import '../stylesheets/FilesPage.css';
 import FileViewer from './FileViewer';  
@@ -24,7 +26,15 @@ const FilesPage = (props) => {
   const [selectedProvider, setSelectedProvider] = useState(null)
   const [filter, setFilter] = useState("All")
 
-  
+  useEffect(() => {
+    const uploadCount = files.filter(file => file.source === 'uploaded').length;
+    const downloadCount = files.filter(file => file.source === 'downloaded').length;
+
+    // Save counts to localStorage
+    localStorage.setItem('uploadedFilesCount', uploadCount);
+    localStorage.setItem('downloadedFilesCount', downloadCount);
+  }, [files]); // This runs every time files are updated
+
   function openFile(file) {
     if (file.isFolder) return; 
     setCurrentFile(file);
