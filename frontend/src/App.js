@@ -23,6 +23,7 @@ function App() {
   const [proxyHistory, setProxyHistory] = useState([]); // State to store proxy history
   const [isOn, setIsOn] = useState(false); /* Proxy Toggle State */
 
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
 
   // State to manage Files
@@ -88,7 +89,7 @@ function App() {
   const renderContent = () => 
     {
     if (isSigningUp) {
-        return <SignUpPage />; // Render Sign-Up page
+        return <SignUpPage setActivePage = {setActivePage} setIsSigningUp = {setIsSigningUp} setIsLoggedIn = {setIsLoggedIn}/>; // Render Sign-Up page
     }
     if(!isLoggedIn) {
       //return <LoginPage onLogin={handleLogin} />

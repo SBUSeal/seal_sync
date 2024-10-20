@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../stylesheets//SignUpPage.css';
 import SealLogo from '../images/Seal_Logo.png';
 
-const SignUpPage = ({onSignUpSuccess}) => {
+const SignUpPage = (props) => {
   const [publicKey, setPublicKey] = useState('');
   const [privateKey, setPrivateKey] = useState('');
 
@@ -30,13 +30,14 @@ const SignUpPage = ({onSignUpSuccess}) => {
     //Will probably be an async function
 
     // Validation: Check if keys are generated
+    console.log("Public: ", publicKey, "Private: ", privateKey)
     if (!publicKey || !privateKey) {
         alert('Please generate your keys before signing up.');
         return;
     }
     console.log('Signing Up with:', { publicKey, privateKey });
     //For now, will route back to the login page.
-    onSignUpSuccess();
+    //onSignUpSuccess();
   };
 
   const downloadPrivateKey = () => {
@@ -53,6 +54,12 @@ const SignUpPage = ({onSignUpSuccess}) => {
     link.click(); // Trigger download
     document.body.removeChild(link); // Clean up
   };
+
+  const SignUpSuccess = () => {
+    props.setActivePage("Status")
+    props.setIsSigningUp(false)
+    props.setIsLoggedIn(true)
+  }
 
   return (
     <div className="signup-page">
@@ -79,7 +86,7 @@ const SignUpPage = ({onSignUpSuccess}) => {
           </div>
         )}
         <button type="button" onClick={downloadPrivateKey} className="download-button">Download Private Key</button>
-        <button onClick={onSignUpSuccess} class-name="button">Sign Up</button>
+        <button onClick={SignUpSuccess} class-name="button" type='submit'>Sign Up</button>
       </form>
       </div>
     </div>
