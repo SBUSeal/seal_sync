@@ -11,6 +11,7 @@ function LoginPage({ onLogin }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Check if wallet address and private key are provided
+    setErrorMessage('');
     if(privateKey.length > maxPrivateKeyLength) {
         setErrorMessage(`Private key cannot exceed ${maxPrivateKeyLength} characters.`);
         return;
