@@ -226,7 +226,6 @@ const FilesPage = (props) => {
     },] )
 
 
-    const randomDelay = Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000;
 
     setTimeout(() => {
       setFiles(prevFiles => {
@@ -242,7 +241,7 @@ const FilesPage = (props) => {
         prevDownloads.filter(f => f.name !== dummyFile.name)
       );
     
-    }, randomDelay);
+    }, 40000);
     
 
     

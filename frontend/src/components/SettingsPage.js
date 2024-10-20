@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import '../stylesheets/SettingsPage.css';
 
-const SettingsPage = ({ handleLogout }) => {
+const SettingsPage = ({ handleLogout, toggleDarkMode, isDarkMode}) => {
     const [activeTab, setActiveTab] = useState('Configuration');
     const [showLogoutModal, setShowLogoutModal] = useState(false); // For showing logout confirmation modal
     const [notificationMessage, setNotificationMessage] = useState('');
     const [notificationChoice, setNotificationChoice] = useState('All new activity or messages');
     const [showPopup, setShowPopup] = useState(false); // For showing notification pop-up
+
+    const containerClass = isDarkMode ? 'settings-container dark-mode' : 'settings-container';
+    const buttonClass = isDarkMode ? 'nav-item dark-mode' : 'nav-item';
 
     const renderContent = () => {
         switch (activeTab) {
@@ -36,7 +39,7 @@ const SettingsPage = ({ handleLogout }) => {
                     <div className="section">
                         <h2>Appearance</h2>
                         <p>Customize the appearance of the app. Automatically switch between day and night themes.</p>
-                        <div className="theme-selection">
+                        {/*<div className="theme-selection">
                             <div className="theme-option">
                                 <input type="radio" name="theme" id="light" value="light" />
                                 <label htmlFor="light">Light</label>
@@ -46,7 +49,10 @@ const SettingsPage = ({ handleLogout }) => {
                                 <label htmlFor="dark">Dark</label>
                             </div>
                         </div>
-                        <button className="primary-button">Update preferences</button>
+                        <button className="primary-button">Update preferences</button>*/}
+                        <button className="toggle-button" onClick={toggleDarkMode}>
+                            Toggle Dark Mode
+                        </button>
                     </div>
                 );
             case 'Notifications':
@@ -138,6 +144,7 @@ const SettingsPage = ({ handleLogout }) => {
     );
 
     return (
+        <div className={containerClass}>
         <div className="settings-container">
             <div className="side">
                 <button className={`nav-item ${activeTab === 'Configuration' ? 'active' : ''}`} onClick={() => setActiveTab('Configuration')}>Transfer</button>
@@ -158,6 +165,7 @@ const SettingsPage = ({ handleLogout }) => {
                     {notificationMessage}
                 </div>
             )}
+        </div>
         </div>
     );
 };

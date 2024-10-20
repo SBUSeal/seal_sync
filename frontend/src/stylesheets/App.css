@@ -25,61 +25,44 @@ html, body {
   flex-direction: column;
   padding: 20px;
   height: 100vh; /* Full viewport height */
-  
-}
-
-
-.logo {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.logo h2 {
-  color: #ecf0f1;
-  margin-bottom: 10px;
-}
-
-.sidebar-logo-image {
-  width: 100px;
-  height: auto;
-  margin-bottom: 20px; /* Space between image and navigation */
-}
-
-/* Sidebar Styles */
-.sidebar {
-  width: 250px;
-  background-color: #2C3E50;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  height: 100vh; /* Full viewport height */
   transition: width 0.3s ease; /* Smooth transition */
 }
 
+/* Sidebar when minimized */
 .sidebar-minimized {
-  width: 60px; /* Shrink sidebar */
+  width: 80px; /* Adjust the width when sidebar is minimized */
 }
 
-/* Hide logo when minimized */
-.sidebar .logo {
+/* Sidebar logo container */
+.logo {
   text-align: center;
   margin-bottom: 30px;
-  transition: opacity 0.3s ease;
-  margin-bottom: 20px;
-}
-
-.sidebar-minimized .logo {
-  opacity: 0;
-  height: 0;
-  overflow: hidden; /* Hide logo */
+  transition: all 0.3s ease; /* Smooth transition for the logo */
 }
 
 /* Sidebar Logo Image */
 .sidebar-logo-image {
-  width: 100px;
+  width: 100px; /* Full-size logo for expanded sidebar */
   height: auto;
-  margin-bottom: 20px;
+  transition: width 0.3s ease, height 0.3s ease; /* Smooth resize transition */
+}
+
+/* When the sidebar is minimized */
+.sidebar-minimized .sidebar-logo-image {
+  width: 40px; /* Shrink the logo when minimized */
+  height: auto; /* Maintain aspect ratio */
+  margin-bottom: 10px; /* Adjust spacing */
+}
+
+.sidebar-minimized .logo h2 {
+  display: none; /* Hide text when sidebar is minimized */
+}
+
+/* Ensure logo remains visible when minimized */
+.sidebar-minimized .logo {
+  opacity: 1; /* Ensure logo is fully visible */
+  height: auto;
+  overflow: visible; /* Show the logo */
 }
 
 /* Sidebar navigation list */
@@ -92,30 +75,17 @@ html, body {
 .sidebar ul li {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
+  justify-content: center; /* Center the icon */
+  margin-bottom: 20px; /* Add some space between items */
   transition: opacity 0.3s ease;
 }
 
+/* Sidebar icons */
 .sidebar ul li img {
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
-}
-
-.sidebar ul li button {
-  width: 100%;
-  padding: 10px;
-  background-color: #34495E; /* Lighter blue for buttons */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-/* Hover state */
-.sidebar ul li button:hover {
-  background-color: #1ABC9C;
+  width: 40px; /* Increase the icon size */
+  height: 40px;
+  margin: 0; /* Center the icons */
+  transition: transform 0.3s ease; /* Smooth scaling for hover */
 }
 
 /* Hide button text when sidebar is minimized */
@@ -130,6 +100,30 @@ html, body {
 /* Adjust icon position when minimized */
 .sidebar-minimized ul li img {
   margin-right: 0;
+  transform: scale(1); /* Keep icon size normal */
+  display: block;
+}
+
+/* Improve hover state when minimized */
+.sidebar-minimized ul li:hover img {
+  transform: scale(1.2); /* Slightly enlarge icons when minimized */
+}
+
+/* Sidebar button styles */
+.sidebar ul li button {
+  width: 100%;
+  padding: 10px;
+  background-color: #34495E; /* Lighter blue for buttons */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover state */
+.sidebar ul li button:hover {
+  background-color: #1ABC9C;
 }
 
 /* Content Area Styles */
@@ -156,14 +150,6 @@ html, body {
   padding: 10px;
   border-radius: 5px;
   border: none;
-}
-
-/* Content Area Styles */
-.content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
 }
 
 /* Main Content Styles */
