@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share1Icon, UploadIcon } from '@radix-ui/react-icons';
 import '../stylesheets/FilesPage.css';
 import FileViewer from './FileViewer';  
-
+import dummyTextFile from '../dummydata/dummyTestFile.txt'
 
 const FilesPage = (props) => {
 
@@ -49,10 +49,10 @@ const FilesPage = (props) => {
   
 
   const dummyProviders = [
-    {ip: "127.0.0.1", price: 2},
-    {ip: "10.0.0.1", price: 9},
-    {ip: "192.168.0.1", price: 5},
-    {ip: "132.145.0.1", price: 8},
+    {ip: "127.0.0.1", address: "ahw8E13Np3Huh5F47IRxnpJey1rKJ7z", price: 2},
+    {ip: "10.0.0.1", address: "F5lcMyFdTjGrfHSxl5LKtZ8DVKiwgHR", price: 9},
+    {ip: "192.168.0.1", address: "2Z3ab5g4dEF4DMPGT1L9TThMv6dvpqr", price: 5},
+    {ip: "132.145.0.1", address: "lXIrppfBCwngQrpMnTyQv43THtyrrh3", price: 8},
   ]
 
   const dummyCid = "baguqeerasorqs4njcts6vs7qvdjfcvgnume4hqohf65zsfguprqphs3icwea"
@@ -117,12 +117,34 @@ const FilesPage = (props) => {
     setIsProvidersModalOpen(true)
   }
 
+    // fetch('./')
+  //   .then((response) => response.text())
+  //   .then((fileContent) => {
+  //     const dummyFile = {
+  //       name: "dummyTestFile.txt",
+  //       size: fileContent.length, 
+  //       status: 'unlocked',
+  //       source: 'local',
+  //       price: '599',
+  //       fileObject: new Blob([fileContent], { type: "text/plain" }),
+  //       description: 'Dummy description',
+  //       isFolder: false,
+  //       type: "text/plain"
+  //     };
+  //     const updatedFiles = [...files, dummyFile];
+  //     setFiles(updatedFiles);
+  //     setFilteredFiles(updatedFiles);
+  //   setIsProvidersModalOpen(false);
+  //   setSelectedProvider(null);
+  // });
+
   function dummyDownload() {
     const dummyFile = {
       name: `Dummy File ${files.length + 1 }`, 
       size: 100,
       status: 'unlocked',
       source: 'downloaded',
+      fileObject: new Blob([dummyTextFile], {type: "text/plain"}),
       price: selectedProvider.price, 
       description: 'Dummy description', 
       isFolder: false,
@@ -160,6 +182,16 @@ const FilesPage = (props) => {
     props.setSealTokenBalance(props.sealTokenBalance - dummyFile.price)
     alert(`Successfully bought file for ${dummyFile.price} STK!`)
 
+    //add new transaction
+    props.setTransactions((prevTransactions) => [...prevTransactions, {
+      id: prevTransactions.length + 1,
+      type: 'Sent',
+      date: new Date().toLocaleString(),
+      to: selectedProvider.address,
+      sealTokens: dummyFile.price,
+      reason: dummyFile.name,
+    },] )
+
     setTimeout(() => {
       setFiles(prevFiles => {
         return prevFiles.map(f => {
@@ -179,26 +211,6 @@ const FilesPage = (props) => {
   }
 
 
-  //   fetch('./dummydata/dummyTestFile.txt')
-  //   .then((response) => response.text())
-  //   .then((fileContent) => {
-  //     const dummyFile = {
-  //       name: "dummyTestFile.txt",
-  //       size: fileContent.length, 
-  //       status: 'unlocked',
-  //       source: 'local',
-  //       price: '599',
-  //       fileObject: new Blob([fileContent], { type: "text/plain" }),
-  //       description: 'Dummy description',
-  //       isFolder: false,
-  //       type: "text/plain"
-  //     };
-  //     const updatedFiles = [...files, dummyFile];
-  //     setFiles(updatedFiles);
-  //     setFilteredFiles(updatedFiles);
-  //   setIsProvidersModalOpen(false);
-  //   setSelectedProvider(null);
-  // });
 
   
 
@@ -479,7 +491,7 @@ const FilesPage = (props) => {
 
       {isProvidersModalOpen && (
               <div className="modal">
-                <div className="modal-content" style={{maxWidth: "600px"}}>
+                <div className="modal-content" style={{width: "600px"}}>
                     <h2> Found Providers </h2>
                       {dummyProviders.map((provider, index) => (
                         <div
@@ -488,6 +500,7 @@ const FilesPage = (props) => {
                           onClick={() => handleSelectProvider(provider)}
                         >
                           <p>IP: {provider.ip}</p>
+                          <p>Wallet Address: {provider.address}</p>
                           <p>Price: {provider.price} STK </p>
                         </div>
                       ))}

@@ -12,19 +12,13 @@ import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
 import MiningPage from './components/MiningPage';
 
-//import './Contributes/NavigationBar';
-//import './Contributes/TopBar.js';
-
-
 function App() {
-  // State to manage which page is active
   const [activePage, setActivePage] = useState('Status');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false); 
 
-  // State to manage Token Balance
-  const [sealTokenBalance, setSealTokenBalance] = useState(100); //Change constant to reflect total wallet balance of dummy data
-  const [currentProxy, setcurrentProxy] = useState(null); // State of current proxy being used
+  const [sealTokenBalance, setSealTokenBalance] = useState(100); 
+  const [currentProxy, setcurrentProxy] = useState(null); 
 
   // State to manage Files
   const [files, setFiles] = useState([]);
@@ -33,12 +27,33 @@ function App() {
   const [uploadedFiles, setUploadedFiles] = useState(0); // Uploaded files count
   const [downloadedFiles, setDownloadedFiles] = useState(0); // Downloaded files count
 
+
   // Clear localStorage and reset the counters on page load
   useEffect(() => {
     // Reset counters to 0 when the page loads
     setUploadedFiles(0);
     setDownloadedFiles(0);
   }, []); // This will run only once when the app first loads  
+
+  //State to manage transactions
+  const [transactions, setTransactions] = useState([
+    {
+        id: 1,
+        type: 'Received',
+        date: '8:27 on 18 Sep 2024',
+        from: '1B3qRz5g4dEF4DMPGT1L3TThzv6CvzNB',
+        sealTokens: 20,
+    },
+    {
+        id: 2,
+        type: 'Sent',
+        date: '2:14 on 15 Sep 2024',
+        to: '1A72tpP5QGeiF2DMPfTT1S5LLmv7DivFNa',
+        sealTokens: 15,
+    },
+  ]);
+
+  
 
 
   //Handle login
@@ -52,6 +67,10 @@ function App() {
   const handleSignUp = () => {
     // Navigate to Sign-Up page
     setIsSigningUp(true);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false); // Log the user out and navigate back to the login page
   };
 
   // Function to render content based on activePage
@@ -68,9 +87,11 @@ function App() {
       case 'Status':
         return <StatusPage downloadsInProgress={downloadsInProgress} />;
       case 'Files':
-        return <Files sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} files = {files} setFiles = {setFiles} setDownloadsInProgress={setDownloadsInProgress}/>;
+
+        return <Files sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} files = {files} setFiles = {setFiles} transactions = {transactions} setTransactions = {setTransactions} setDownloadsInProgress={setDownloadsInProgress}/>;
+
       case 'Wallet':
-        return <WalletPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance}/>;
+        return <WalletPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} transactions = {transactions} setTransactions = {setTransactions}/>;
       case 'Proxy':
         return <ProxyPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} currentProxy = {currentProxy}
           setcurrentProxy = {setcurrentProxy}
@@ -78,7 +99,7 @@ function App() {
       case 'Mining':
         return <MiningPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} miningLog={miningLog} setMiningLog={setMiningLog}/>;
       case 'Settings':
-        return <SettingsPage />;
+        return <SettingsPage handleLogout={handleLogout}/>;
       default:
         return <h1>Connected to Seal Share</h1>;
     }

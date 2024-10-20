@@ -7,22 +7,24 @@ const WalletPage = (props) => {
     const [receiverId, setReceiverId] = useState('');
     const [amount, setAmount] = useState('');
     const [reason, setReason] = useState('');
-    const [transactions, setTransactions] = useState([
-        {
-            id: 1,
-            type: 'Received',
-            date: '8:27 on 18 Sep 2024',
-            from: '1B3qRz5g4dEF4DMPGT1L3TThzv6CvzNB',
-            sealTokens: 20,
-        },
-        {
-            id: 2,
-            type: 'Sent',
-            date: '2:14 on 15 Sep 2024',
-            to: '1A72tpP5QGeiF2DMPfTT1S5LLmv7DivFNa',
-            sealTokens: 15,
-        },
-    ]);
+    // const [transactions, setTransactions] = useState([
+    //     {
+    //         id: 1,
+    //         type: 'Received',
+    //         date: '8:27 on 18 Sep 2024',
+    //         from: '1B3qRz5g4dEF4DMPGT1L3TThzv6CvzNB',
+    //         sealTokens: 20,
+    //     },
+    //     {
+    //         id: 2,
+    //         type: 'Sent',
+    //         date: '2:14 on 15 Sep 2024',
+    //         to: '1A72tpP5QGeiF2DMPfTT1S5LLmv7DivFNa',
+    //         sealTokens: 15,
+    //     },
+    // ]);
+    const transactions = props.transactions
+    const setTransactions = props.setTransactions
 
     const [showModal, setShowModal] = useState(false);  // Modal visibility
     const [pendingTransaction, setPendingTransaction] = useState(null);  // Pending transaction
@@ -89,7 +91,7 @@ const WalletPage = (props) => {
         // Update the balance, ensuring it doesn't go negative
         props.setSealTokenBalance((prevBalance) => {
             const updatedBalance = prevBalance - transferAmount;
-            return parseFloat(updatedBalance.toFixed(2));  // Round to 5 decimal places
+            return parseFloat(updatedBalance.toFixed(2));  // Round to 2 decimal places
         });
 
         // Clear form fields and close modal
@@ -114,10 +116,10 @@ const WalletPage = (props) => {
             <div className="top-section">
                 <div className="card balance-card">
                     <h3>Current Balance</h3>
-                    <p className="balance-amount">{props.sealTokenBalance.toFixed(5)} STK</p>  {/* Round displayed balance to 5 decimals */}
+                    <p className="balance-amount">{props.sealTokenBalance.toFixed(2)} STK</p>  {/* Round displayed balance to 5 decimals */}
                 </div>
                 <div className="card wallet-id-card">
-                    <h3>Wallet ID</h3>
+                    <h3>Wallet Address</h3>
                     <p className="wallet-id">
                         {walletId} 
                         <button onClick={copyToClipboard} className="copy-btn">Copy</button>
