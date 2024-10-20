@@ -12,8 +12,8 @@ import SignUpPage from './components/SignUpPage';
 import MiningPage from './components/MiningPage';
 
 function App() {
-  const [activePage, setActivePage] = useState('Status');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [activePage, setActivePage] = useState('Proxy');
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   const [isSigningUp, setIsSigningUp] = useState(false); 
 
