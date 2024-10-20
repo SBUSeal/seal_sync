@@ -32,6 +32,16 @@ const SignUpPage = (props) => {
     }
   };
 
+  const handleSignUp = (e) => {
+    e.preventDefault()
+
+    // if success
+    props.setActivePage("Status")
+    props.setIsSigningUp(false)
+    props.setIsLoggedIn(true)
+
+  }
+
   return (
     <div className="signup-page">
       <div className="logo-container">
@@ -40,18 +50,8 @@ const SignUpPage = (props) => {
       <div className="signup-container">
         <div className="signup-form">
           <h2> Generate Wallet </h2>
-          <form onSubmit={(e) => e.preventDefault()}>
-            <label htmlFor="walletPassword">Enter Wallet Password</label>
-            <input
-              type="password"
-              id="walletPassword"
-              name="walletPassword"
-              placeholder="Enter a secure password"
-              value={walletPassword}
-              onChange={(e) => setWalletPassword(e.target.value)}
-              required
-              style={{ display: "block" }}
-            />
+          <form onSubmit={handleSignUp} style={{width: "70%"}}>
+            
             {walletAddress && (
               <div style={{ marginTop: '20px' }}>
                 <label htmlFor="walletAddress">Your Wallet Address:</label>
@@ -63,17 +63,33 @@ const SignUpPage = (props) => {
                     readOnly
                     style={{ flex: 1 }}
                   />
-                  <button
+
+                </div>
+                <button
                     type="button"
                     onClick={copyToClipboard}
-                    style={{ marginLeft: '10px', padding: '5px 10px' }}
+                    style={{marginBottom: "10px", padding: '5px 10px' }}
                   >
                     Copy
                   </button>
-                </div>
-                {copySuccess && <span style={{ marginLeft: '10px' }}>{copySuccess}</span>}
+                {copySuccess && <span style={{marginLeft: "30px"}}>{copySuccess}</span>}
               </div>
             )}
+
+        <label htmlFor="walletPassword">Enter Wallet Password</label>
+            <input
+              type="password"
+              id="walletPassword"
+              name="walletPassword"
+              placeholder="Enter a secure password"
+              value={walletPassword}
+              onChange={(e) => setWalletPassword(e.target.value)}
+              required
+              style={{ display: "block" }}
+            />
+            <div style={{textAlign: 'center'}}>
+              <button type='submit' style={{marginTop: "20px"}}> Sign Up </button>
+            </div>
           </form>
         </div>
       </div>
@@ -82,13 +98,3 @@ const SignUpPage = (props) => {
 };
 
 export default SignUpPage;
-
-
-
-
-
-
-
-    // props.setActivePage("Status")
-    // props.setIsSigningUp(false)
-    // props.setIsLoggedIn(true)

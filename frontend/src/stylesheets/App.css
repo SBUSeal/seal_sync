@@ -157,6 +157,7 @@ html, body {
   flex-grow: 1;
   padding: 20px;
   overflow-y: auto;
+  background-color: #f4f6f9;
 }
 
 .main-content h1 {
