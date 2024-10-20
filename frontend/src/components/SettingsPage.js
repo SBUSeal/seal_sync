@@ -13,15 +13,22 @@ const SettingsPage = ({ handleLogout }) => {
             case 'Configuration':
                 return (
                     <div className="section">
-                        <h2>Custom Configuration</h2>
-                        <input type="text" placeholder="/ip4/127.0.0.1/tcp/5001" className="input-field" />
-                        <button className="primary-button">Submit</button>
-                        <h2>Shareable Links</h2>
-                        <input type="text" value="https://ipfs.io" className="input-field" readOnly />
-                        <button className="primary-button">Share</button>
-                        <h2>Publishing Keys</h2>
-                        <input type="text" value="kuhyddhu727w9gvjcidcd" className="input-field" readOnly />
-                        <button className="secondary-button">+ Generate Keys</button>
+                        <h2>Transfer</h2>
+                        <div className="input-group">
+                            <label>Save Folder</label>
+                            <input type="text" placeholder="Enter new save directory" className="input-field" />
+                        </div>
+                        <div className="input-group">
+                            <label>Upload Limit</label>
+                            <input type="number" placeholder="0" className="input-field" />
+                            <span className="input-addon">Mbps</span>
+                        </div>
+                        <div className="input-group">
+                            <label>Download Limit</label>
+                            <input type="number" placeholder="0" className="input-field" />
+                            <span className="input-addon">Mbps</span>
+                        </div>
+                        <button className="primary-button">Save Changes</button>
                     </div>
                 );
             case 'Appearance':

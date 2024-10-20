@@ -41,7 +41,7 @@ const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMining
         <div className="mining-container">
             <div className="dashboard">
                 <div className="tile">
-                    <h2>Balance: {balance.toFixed(2)} ORC</h2>
+                    <h2>Balance: {balance.toFixed(2)} SKT</h2>
                     <h2>Hash Power: {hashPower} MH/s</h2>
                 </div>
                 <div className="mining-control">
