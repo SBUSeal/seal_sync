@@ -1,12 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../stylesheets/SettingsPage.css';
 
-const SettingsPage = ({ handleLogout, toggleDarkMode, isDarkMode}) => {
+const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
+
     const [activeTab, setActiveTab] = useState('Configuration');
-    const [showLogoutModal, setShowLogoutModal] = useState(false); // For showing logout confirmation modal
+    const [showLogoutModal, setShowLogoutModal] = useState(false); // Controls showing the modal
     const [notificationMessage, setNotificationMessage] = useState('');
     const [notificationChoice, setNotificationChoice] = useState('All new activity or messages');
-    const [showPopup, setShowPopup] = useState(false); // For showing notification pop-up
+    const [showPopup, setShowPopup] = useState(false);
+
+    // Apply theme based on isDarkMode prop
+    useEffect(() => {
+        const theme = isDarkMode ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+    }, [isDarkMode]); // The effect will run whenever isDarkMode changes
+
+    // Handle theme change
+    const handleThemeChange = () => {
+        setIsDarkMode(!isDarkMode); // Toggle the global dark mode state
+    };
 
     const containerClass = isDarkMode ? 'settings-container dark-mode' : 'settings-container';
     const buttonClass = isDarkMode ? 'nav-item dark-mode' : 'nav-item';
@@ -38,21 +50,12 @@ const SettingsPage = ({ handleLogout, toggleDarkMode, isDarkMode}) => {
                 return (
                     <div className="section">
                         <h2>Appearance</h2>
-                        <p>Customize the appearance of the app. Automatically switch between day and night themes.</p>
-                        {/*<div className="theme-selection">
-                            <div className="theme-option">
-                                <input type="radio" name="theme" id="light" value="light" />
-                                <label htmlFor="light">Light</label>
-                            </div>
-                            <div className="theme-option">
-                                <input type="radio" name="theme" id="dark" value="dark" />
-                                <label htmlFor="dark">Dark</label>
-                            </div>
+                        <p>Customize the appearance of the app. Switch between light and dark themes.</p>
+                        <div className="theme-selection">
+                            <button className="theme-toggle-button" onClick={handleThemeChange}>
+                                {isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+                            </button>
                         </div>
-                        <button className="primary-button">Update preferences</button>*/}
-                        <button className="toggle-button" onClick={toggleDarkMode}>
-                            Toggle Dark Mode
-                        </button>
                     </div>
                 );
             case 'Notifications':
@@ -97,12 +100,6 @@ const SettingsPage = ({ handleLogout, toggleDarkMode, isDarkMode}) => {
                         </button>
                     </div>
                 );
-            case 'Logout':
-                return (
-                    <div className="section">
-                        <button className="logout-button" onClick={() => setShowLogoutModal(true)}>Log Out</button>
-                    </div>
-                );
             default:
                 return null;
         }
@@ -137,6 +134,7 @@ const SettingsPage = ({ handleLogout, toggleDarkMode, isDarkMode}) => {
             <div className="modal-content">
                 <h3>Confirm Logout</h3>
                 <p>Are you sure you want to log out?</p>
+                {/* Confirm logout and trigger the logout function */}
                 <button className="confirm-button" onClick={handleLogout}>Yes, Log Out</button>
                 <button className="cancel-button" onClick={() => setShowLogoutModal(false)}>Cancel</button>
             </div>
@@ -150,7 +148,8 @@ const SettingsPage = ({ handleLogout, toggleDarkMode, isDarkMode}) => {
                 <button className={`nav-item ${activeTab === 'Configuration' ? 'active' : ''}`} onClick={() => setActiveTab('Configuration')}>Transfer</button>
                 <button className={`nav-item ${activeTab === 'Appearance' ? 'active' : ''}`} onClick={() => setActiveTab('Appearance')}>Appearance</button>
                 <button className={`nav-item ${activeTab === 'Notifications' ? 'active' : ''}`} onClick={() => setActiveTab('Notifications')}>Notifications</button>
-                <button className={`nav-item ${activeTab === 'Logout' ? 'active' : ''}`} onClick={() => setActiveTab('Logout')}>Log Out</button>
+                {/* Log Out button in the navbar directly triggers the modal */}
+                <button className="nav-item" onClick={() => setShowLogoutModal(true)}>Log Out</button>
             </div>
             <div className="content-area">
                 {renderContent()}

@@ -1,3 +1,15 @@
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* For buttons, inputs, etc. */
+input, button {
+  background-color: var(--input-background);
+  color: var(--text-color);
+}
+
+
 * {
     margin: 0;
     padding: 0;

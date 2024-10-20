@@ -1,49 +1,56 @@
 /* GLOBALS */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-  }
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
 
-  body {
-    background-color: #f4f4f4; /* Background color for the entire page */
-    height: 100vh; /* Full viewport height */
+/* For buttons, inputs, etc. */
+input, button {
+  background-color: var(--input-background);
+  color: var(--text-color);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: var(--background-color); /* Dynamic Background Color */
+  height: 100vh; /* Full viewport height */
 }
 
 div.container {
-    padding: 10px;
-    background-color: #f0f4f8; /* Light background for the page */
-
+  padding: 10px;
+  background-color: var(--container-background); /* Dynamic Background Color */
 }
 
-
 .proxy-head {
-  background-color: #dde4e9;
+  background-color: var(--proxy-head-background);
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 50px;
+}
 
-  }
+.proxy-form {
+  display: flex;
+  justify-content: center;
+  gap: 70px;
+  padding: 10px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
 
-  .proxy-form {
-    display: flex;
-    justify-content: center;
-    gap: 70px;
-    padding: 10px;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .proxy-form div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-  }
+.proxy-form div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
 
-  
 .toggle-button {
   font-size: 16px;
   padding: 12px 24px;
@@ -52,97 +59,122 @@ div.container {
   transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
   border: none;
   width: 160px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--button-box-shadow);
 }
 
 .toggle-button.off {
-  background-color: #34495E;
-  color: white;
+  background-color: var(--toggle-off-background);
+  color: var(--toggle-off-text-color);
 }
 
 .toggle-button.on {
-  background-color: #4CAF50;
-  color: white;
+  background-color: var(--toggle-on-background);
+  color: var(--toggle-on-text-color);
 }
 
 .toggle-button:hover {
   opacity: 0.9;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--button-hover-box-shadow);
 }
 
 .toggle-button:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--button-active-box-shadow);
 }
 
-
 /* Price Input Styles */
-
 .price-input::-webkit-outer-spin-button,
 .price-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .price-input[type="number"] {
-    -moz-appearance: textfield;
+  -moz-appearance: textfield;
 }
-
 
 /* Price input field */
 .price-input {
   padding: 10px 15px;
   font-size: 16px;
-  border: 2px solid #ccc;
+  border: 2px solid var(--input-border);
   border-radius: 5px;
   transition: all 0.3s ease;
   width: 150px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--input-box-shadow);
   text-align: left;
   margin-top: 10px;
-  color: black;
+  color: var(--text-color);
 }
 
 /* Editing state */
 .price-input.editing {
-  background-color: #eaffea;
+  background-color: var(--input-editing-background);
 }
 
 /* Saved state */
 .price-input.saved {
-  border-color: #ccc;
-  background-color: #f5f5f5;
+  border-color: var(--input-border);
+  background-color: var(--input-saved-background);
 }
 
 /* Disabled input */
 .price-input:disabled {
-  background-color: #e0e0e0;
+  background-color: var(--input-disabled-background);
   cursor: not-allowed;
 }
-
-/* .units{
-
-} */
 
 
 /* Container of list of proxies */
 .proxy-list {
-    display: flex;
-    flex-direction: column;
-    margin-top: 20px;
-    gap: 20px;    
-    padding: 20px;
-    background-color: rgb(255, 255, 255);
-    border-radius: 10px;
-  }
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  gap: 20px;
+  padding: 20px;
+  background-color: var(--proxy-list-background);
+  border-radius: 10px;
+}
 
-  div.proxy-list h1 {
-    text-align: center;
-    font-size: 30px;
-  }
+div.proxy-list h1 {
+  text-align: center;
+  font-size: 30px;
+}
 
 /* for the Available proxy and search Bar */
 .available-proxy-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 50px;
+}
+
+.proxy-search-bar {
+  position: absolute;
+  left: 0;
+  width: 300px;
+  font-size: 17px;
+  padding: 5px;
+  border: 1px solid var(--input-border);
+  background-color: var(--input-background);
+  color: var(--text-color);
+}
+
+.available-proxy-container h1 {
+  margin: 0 auto;
+  font-size: 30px;
+}
+
+.categories {
+  display: grid;
+  grid-template-columns: 1fr 0.5fr 0.6fr 0.5fr 1fr;
+  gap: 20px;
+  padding-top: 50px;
+  padding-left: 30px;
+}
+
+.categories p {
+  color: var(--primary-text-color);
     display: flex;
     align-items: center;
     position: relative;
@@ -176,115 +208,164 @@ div.container {
 
 /* Per Proxy Card */
 .proxy-item {
-    display: grid;
-    grid-template-columns: 1fr .5fr 0.6fr 0.6fr 0.4fr 0fr;
-    gap: 20px;
-    padding: 15px;
-    border-bottom: 1px solid #e0e0e0;
-    text-align: start;
-  }
+  display: grid;
+  grid-template-columns: 1fr 0.5fr 0.6fr 0.6fr 0.4fr 0fr;
+  gap: 20px;
+  padding: 15px;
+  border-bottom: 1px solid var(--input-border);
+  text-align: start;
+  background-color: var(--proxy-item-background);
+}
 
+.proxy-item p {
+  font-size: 16px;
+  color: var(--secondary-text-color);
+}
 
-  .proxy-item p {
-    font-size: 16px;
-    color: #6c757d;
-  }
+.proxy-price {
+  font-weight: bold;
+}
 
+/* Proxy Join Button Container */
+.proxy-join {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
 
-  .proxy-price{
-    font-weight: bold;
-  }
-  /* Proxy Join Button Container */
-  .proxy-join {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-  }
-
-  .purchase-button {
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    color: #285a8f;
-    font-weight: 600;
-    font-size: 16px;
-    padding: 12px 24px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-    text-align: center;
-    width: 100px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow for depth */
+.purchase-button {
+  background-color: var(--button-background-light);
+  border: 1px solid var(--input-border);
+  color: var(--button-text-color);
+  font-weight: 600;
+  font-size: 16px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  width: 100px;
+  box-shadow: var(--button-box-shadow);
 }
 
 .purchase-button:hover {
-    background-color: #285a8f;
-    color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adds a more prominent shadow on hover */
-    transform: translateY(-2px); /* Slight lift effect */
-    font-weight: 700; /* Slightly bolder on hover */
+  background-color: var(--button-background);
+  color: white;
+  box-shadow: var(--button-hover-box-shadow);
+  transform: translateY(-2px);
+  font-weight: 700;
 }
 
 .purchase-button:active {
-    transform: translateY(0); /* Reset the lift effect when clicked */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle pressed effect */
+  transform: translateY(0);
+  box-shadow: var(--button-active-box-shadow);
 }
-
 
 /* Current Proxy */
 .current-proxy-details {
-    display: grid;
-    grid-template-columns: 1fr .5fr 0.6fr 0.6fr 0.4fr 0fr;
-    gap: 20px;
-    padding: 15px;
-    margin-top: 20px;
-    border-bottom: 1px solid #e0e0e0;
-    background-color: rgb(255, 255, 255);
-    border-radius: 10px;
-   }
-
-   .current-proxy-details p {
-    font-size: 16px;
-    color: #6c757d;
-  }
-
-   .disconnect-button {
-    background-color: #c55858;
-    border: 1px solid #ccc;
-    color: #d6e2ee;
-    font-weight: bold;
-    font-size: 16px;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    width: 175px;
-    text-align: center;
-  } 
-  
-  /* Hover effect */
-  .disconnect-button:hover {
-    background-color: #c34646ce; 
+  display: grid;
+  grid-template-columns: 1fr 0.5fr 0.6fr 0.6fr 0.4fr 0fr;
+  gap: 20px;
+  padding: 15px;
+  margin-top: 20px;
+  border-bottom: 1px solid var(--input-border);
+  background-color: var(--proxy-item-background);
+  border-radius: 10px;
 }
 
-/* Histoy Button */
+.current-proxy-details p {
+  font-size: 16px;
+  color: var(--secondary-text-color);
+}
+
+.disconnect-button {
+  background-color: var(--disconnect-background);
+  border: 1px solid var(--input-border);
+  color: var(--disconnect-text-color);
+  font-weight: bold;
+  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 175px;
+  text-align: center;
+}
+
+/* Hover effect */
+.disconnect-button:hover {
+  background-color: var(--disconnect-hover-background);
+}
+
+/* History Button */
 .history-button {
-    background-color: #285a8f;
-    border: 1px solid #ccc;
-    color: white;
-    font-weight: bold;
-    font-size: 16px;
-    margin-right: 40px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    height: 75%;
-    width: 175px;
-  }
-  
-  .history-button:hover {
-    background-color: #285a8fd7;
-    font-weight: bold;
+  background-color: var(--button-background);
+  border: 1px solid var(--input-border);
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  margin-right: 40px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  height: 75%;
+  width: 175px;
 }
 
+.history-button:hover {
+  background-color: var(--button-hover-background);
+  font-weight: bold;
+}
 
+/* Light Mode Variables */
+:root {
+  --background-color: #f4f4f4;
+  --text-color: #000000;
+  --input-background: #ffffff;
+  --input-border: #cccccc;
+  --button-background: #4CAF50;
+  --button-text-color: #285a8f;
+  --button-background-light: #f9f9f9;
+  --button-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --button-hover-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  --button-active-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --proxy-head-background: #dde4e9;
+  --container-background: #f0f4f8;
+  --proxy-list-background: #ffffff;
+  --proxy-item-background: #ffffff;
+  --primary-text-color: #2d4a6e;
+  --secondary-text-color: #6c757d;
+  --input-editing-background: #eaffea;
+  --input-saved-background: #f5f5f5;
+  --input-disabled-background: #e0e0e0;
+  --disconnect-background: #c55858;
+  --disconnect-text-color: #d6e2ee;
+  --disconnect-hover-background: #c34646ce;
+}
+
+/* Dark Mode Variables */
+[data-theme="dark"] {
+  --background-color: #121212;
+  --text-color: #e0e0e0;
+  --input-background: #333333;
+  --input-border: #555555;
+  --button-background: #4CAF50;
+  --button-text-color: white;
+  --button-background-light: #4A4A4A;
+  --button-box-shadow: rgba(255, 255, 255, 0.1);
+  --button-hover-box-shadow: rgba(255, 255, 255, 0.2);
+  --button-active-box-shadow: rgba(255, 255, 255, 0.1);
+  --proxy-head-background: #2e2e2e;
+  --container-background: #1f1f1f;
+  --proxy-list-background: #1e1e1e;
+  --proxy-item-background: #1e1e1e;
+  --primary-text-color: #76c7c0;
+  --secondary-text-color: #cccccc;
+  --input-editing-background: #3b3b3b;
+  --input-saved-background: #2a2a2a;
+  --input-disabled-background: #333333;
+  --disconnect-background: #c55858;
+  --disconnect-text-color: #d6e2ee;
+  --disconnect-hover-background: #c34646ce;
+}

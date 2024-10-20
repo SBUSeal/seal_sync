@@ -1,8 +1,13 @@
 /* General Page Styling */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f7f8fc; /* Light gray background */
-    color: #333;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* For buttons, inputs, etc. */
+input, button {
+  background-color: var(--input-background);
+  color: var(--text-color);
 }
 
 /* Container for file table */

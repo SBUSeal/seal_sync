@@ -184,7 +184,7 @@ const FilesPage = (props) => {
 
   function dummyDownload() {
     const dummyFile = {
-      name: `Dummy File ${files.length + 1 }`, 
+      name: `Dummy File ${files.length + 1 } purchased from Files`, 
       size: 100,
       status: 'unlocked',
       source: 'downloaded',
