@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../stylesheets//SignUpPage.css';
+import SealLogo from '../images/Seal_Logo.png';
 
 const SignUpPage = ({onSignUpSuccess}) => {
   const [publicKey, setPublicKey] = useState('');
@@ -39,7 +40,12 @@ const SignUpPage = ({onSignUpSuccess}) => {
   };
 
   return (
+    <div className="signup-page">
+        <div className="logo-container">
+                <img src={SealLogo} alt="Seal Logo" className="seal-logo" />
+        </div>
     <div className="signup-container">
+        <div className="signup-form">
       <h2>Sign Up</h2>
       <form onSubmit={handleSignUp}>
         <button type="button" onClick={generateKeys}>
@@ -57,8 +63,10 @@ const SignUpPage = ({onSignUpSuccess}) => {
             <textarea value={privateKey} readOnly />
           </div>
         )}
-        <button onClick={onSignUpSuccess} class-name="signup-button">Sign Up</button>
+        <button onClick={onSignUpSuccess} class-name="button">Sign Up</button>
       </form>
+      </div>
+    </div>
     </div>
   );
 };
