@@ -200,6 +200,7 @@ input, button {
 }
 
 .modal-actions {
+  margin: 20px;
   display: flex;
   justify-content: space-between;
 }
