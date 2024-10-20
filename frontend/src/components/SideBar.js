@@ -53,6 +53,7 @@ function Sidebar(props) {
           {!isMinimized && <span>Settings</span>}
         </li>
       </ul>
+
     </div>
   );
 }
