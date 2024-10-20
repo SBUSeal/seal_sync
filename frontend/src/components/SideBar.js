@@ -18,11 +18,6 @@ function Sidebar(props) {
 
   const setActivePage = props.setActivePage;
 
-  const handleSignOut = () => {
-    // Logic for signing out (e.g., clearing user session, redirecting, etc.)
-    console.log("User signed out");
-  };
-
   return (
     <div className={`sidebar ${isMinimized ? 'sidebar-minimized' : ''}`}>
       <div className="logo">
@@ -58,7 +53,7 @@ function Sidebar(props) {
           {!isMinimized && <span>Settings</span>}
         </li>
       </ul>
-      
+
     </div>
   );
 }

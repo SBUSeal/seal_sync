@@ -12,8 +12,8 @@ import SignUpPage from './components/SignUpPage';
 import MiningPage from './components/MiningPage';
 
 function App() {
-  const [activePage, setActivePage] = useState('Proxy');
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [activePage, setActivePage] = useState('Status');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [isSigningUp, setIsSigningUp] = useState(false); 
 
@@ -87,6 +87,9 @@ function App() {
     setIsLoggedIn(false); // Log the user out and navigate back to the login page
   };
 
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
   // Function to render content based on activePage
   const renderContent = () => 
@@ -113,7 +116,7 @@ function App() {
       case 'Mining':
         return <MiningPage sealTokenBalance = {sealTokenBalance} setSealTokenBalance = {setSealTokenBalance} miningLog={miningLog} setMiningLog={setMiningLog}/>;
       case 'Settings':
-        return <SettingsPage handleLogout={handleLogout}/>;
+        return <SettingsPage handleLogout={handleLogout} toggleDarkMode={toggleDarkMode} isDarkMode={isDarkMode}/>;
       default:
         return <h1>Connected to Seal Share</h1>;
     }

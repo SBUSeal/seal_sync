@@ -120,9 +120,9 @@ div.container {
   cursor: not-allowed;
 }
 
-.units{
+/* .units{
 
-}
+} */
 
 
 /* Container of list of proxies */
@@ -152,7 +152,7 @@ div.container {
    .proxy-search-bar {
     position: absolute;
     left: 0;
-    width: 300px;
+    width: 250px;
     font-size: 17px;
     padding: 5px;
    }
