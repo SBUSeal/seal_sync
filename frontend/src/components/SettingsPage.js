@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../stylesheets/SettingsPage.css';
 
 const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
+
     const [activeTab, setActiveTab] = useState('Configuration');
     const [showLogoutModal, setShowLogoutModal] = useState(false); // Controls showing the modal
     const [notificationMessage, setNotificationMessage] = useState('');
@@ -19,12 +20,15 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
         setIsDarkMode(!isDarkMode); // Toggle the global dark mode state
     };
 
+    const containerClass = isDarkMode ? 'settings-container dark-mode' : 'settings-container';
+    const buttonClass = isDarkMode ? 'nav-item dark-mode' : 'nav-item';
+
     const renderContent = () => {
         switch (activeTab) {
             case 'Configuration':
                 return (
                     <div className="section">
-                        <h2>Transfer</h2>
+                        <h2>Config</h2>
                         <div className="input-group">
                             <label>Save Folder</label>
                             <input type="text" placeholder="Enter new save directory" className="input-field" />
@@ -138,6 +142,7 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
     );
 
     return (
+        <div className={containerClass}>
         <div className="settings-container">
             <div className="side">
                 <button className={`nav-item ${activeTab === 'Configuration' ? 'active' : ''}`} onClick={() => setActiveTab('Configuration')}>Transfer</button>
@@ -159,6 +164,7 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
                     {notificationMessage}
                 </div>
             )}
+        </div>
         </div>
     );
 };

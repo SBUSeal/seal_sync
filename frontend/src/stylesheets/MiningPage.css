@@ -101,11 +101,19 @@ input:focus + .slider {
 /* Mining Log */
 .mining-log {
     margin-top: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+    width: 100%;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    background-color: #f9f9f9;
 }
 
 .mining-log ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
 }
 
 .mining-log li {
@@ -113,6 +121,13 @@ input:focus + .slider {
     padding: 8px;
     margin-bottom: 5px;
     border-radius: 4px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mining-log li:hover {
+    background-color: #d3d3d3;  
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+    cursor: pointer; 
 }
 
 /* Light Mode Variables */

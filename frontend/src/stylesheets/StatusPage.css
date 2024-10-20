@@ -117,10 +117,11 @@ p {
   color: var(--text-color); /* Adjust color for dark mode */
   margin-top: 10px;
   font-weight: bold;
-  background: linear-gradient(135deg, #36a2eb, #ff6384);
+  background-color: black;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
 
 /* Adjustments for smaller screens */
 @media screen and (max-width: 768px) {
