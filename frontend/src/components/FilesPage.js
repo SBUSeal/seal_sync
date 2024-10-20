@@ -30,12 +30,15 @@ const FilesPage = (props) => {
 
 
   useEffect(() => {
-      refetchFiles();
-  }, [filteredFiles]);
+    const updateFilteredFiles = () => {
+      const filtered = files.filter(file => 
+        (file.source === filter || filter === "All") && file.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredFiles(filtered);
+    };
+    updateFilteredFiles();
+  }, [files, searchQuery, filter]);
 
-  const refetchFiles = () => {
-    setFilteredFiles([...files]);
-  };
 
   useEffect(() => {
     const uploadCount = files.filter(file => file.source === 'uploaded').length;
@@ -95,6 +98,11 @@ const FilesPage = (props) => {
 
   function handlePause(file) {
     setFiles(prevFiles =>
+      prevFiles.map(f =>
+        f.name === file.name ? { ...f, paused: true } : f
+      )
+    );
+    setDownloadsInProgress(prevFiles =>
       prevFiles.map(f =>
         f.name === file.name ? { ...f, paused: true } : f
       )
@@ -223,7 +231,7 @@ const FilesPage = (props) => {
     setTimeout(() => {
       setFiles(prevFiles => {
         return prevFiles.map(f => {
-          if (f.name === dummyFile.name && !f.paused) { // If not paused, mark as finished
+          if (f.name === dummyFile.name && !f.paused) { 
             return { ...f, downloading: false }; 
           }
           return f;
@@ -395,19 +403,19 @@ const FilesPage = (props) => {
                         <span className="slider round"></span>
                     </label>
                   </td>:
-                  <td></td>
+                  <td> {file.paused ? 'Paused':'Downloading'}</td>
                   }
 
                   {file.downloading ? (
                     <td className='icon-cell' >
                        {file.paused ? (
-                            <button onClick={() => handleResume(file)}>
+                            <button className="resume-button" onClick={() => handleResume(file)}>
                             Resume
                             </button>
                           ) : (
                             <div className="download-container">
                               <div className="spinner"></div> 
-                              <button onClick={() => handlePause(file)}>
+                              <button className='pause-button' onClick={() => handlePause(file)}>
                               Pause
                               </button>
                             </div>

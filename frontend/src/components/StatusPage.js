@@ -89,8 +89,9 @@ const StatusPage = ({downloadsInProgress}) => {
           ) : (
             downloadsInProgress.map((file, index) => (
               <div key={index} className="download-item">
+                {console.log(file)}
                 <p><strong>{file.name}</strong> - {file.size}</p>
-                <p>Downloading...</p>
+                <p>{file.paused ? 'Paused': 'Downloading...'}</p>
               </div>
             ))
           )}
