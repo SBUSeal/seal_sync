@@ -130,7 +130,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                                 onClick={isOn ? null : editPrice}
                             />
                         </form>
-                        <div className='units'>                        STK / MB                       </div>
+                        {/* <div className='units'>                        STK / MB                       </div> */}
                     </div>
                 </div>
 
