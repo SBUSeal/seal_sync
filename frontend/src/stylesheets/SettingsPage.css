@@ -3,14 +3,14 @@
     --text-color: #f9f9f9;
     --input-background: #333333;
     --input-border: #555555;
-    --button-background: #001f3f; /* Navy Blue */
+    --button-background: #001f3f;
     --button-background-hover: #00102a;
     --button-text-color: white;
-    --logout-button-background: #c62828; /* Red for logout button */
+    --logout-button-background: #c62828;
     --logout-button-hover: #b71c1c;
-    --nav-item-background: #2c2c2c; /* Darker sidebar background for better readability */
-    --nav-item-hover: #444444; /* Hover effect for better visibility */
-    --nav-item-active: #4A90E2; /* Active state for sidebar items */
+    --nav-item-background: #2c2c2c; 
+    --nav-item-hover: #444444; 
+    --nav-item-active: #4A90E2; 
 }
 
 [data-theme="light"] {
@@ -18,10 +18,10 @@
     --text-color: #333333;
     --input-background: #ffffff;
     --input-border: #ccc;
-    --button-background: #001f3f; /* Navy Blue */
+    --button-background: #001f3f;
     --button-background-hover: #00102a;
     --button-text-color: white;
-    --logout-button-background: #c62828; /* Red for logout button */
+    --logout-button-background: #c62828; 
     --logout-button-hover: #b71c1c;
     --nav-item-background: #f0f0f0;
     --nav-item-hover: #e0e0e0;
