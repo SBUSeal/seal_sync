@@ -248,3 +248,8 @@ button:hover {
   right: 20px;
   transition: opacity 0.3s ease;
 }
+
+
+.logo-text{
+  color: white;
+}
