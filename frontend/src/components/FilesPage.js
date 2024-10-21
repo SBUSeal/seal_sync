@@ -163,7 +163,8 @@ const FilesPage = (props) => {
 
   function dummyDownload() {
     const dummyFile = {
-      name: `Dummy File ${files.length + 1 } purchased from Files`, 
+      // name: `Dummy File ${files.length + 1 } purchased from Files`, 
+      name: `Dummy File ${files.length + 1 }`, 
       size: 100,
       status: 'unlocked',
       source: 'downloaded',
@@ -211,7 +212,7 @@ const FilesPage = (props) => {
       date: new Date().toLocaleString(),
       to: selectedProvider.address,
       sealTokens: dummyFile.price,
-      reason: dummyFile.name,
+      reason: dummyFile.name + " purchased from files",
     },] )
 
 
@@ -386,6 +387,7 @@ const FilesPage = (props) => {
                                 <td>
                                   <label className="switch">
                                       <input
+                                        style={{outline: "none", boxShadow: "none"}}
                                         type="checkbox" 
                                         checked={file.published}
                                         onChange={(e) => handleToggle(e, file)} 
@@ -452,7 +454,7 @@ const FilesPage = (props) => {
           <div className="modal-content">
             <h2>Enter File Details</h2>
             <div style={{fontSize: "20px"}}> 
-              <label style={{marginRight: "10px"}}>Price:</label> 
+              <label style={{marginRight: "10px", marginBottom: "10px"}}>Price (STK):</label> 
                 <input
                   type='number'
                   min={0}
@@ -465,9 +467,9 @@ const FilesPage = (props) => {
                   }}
                   style={{marginRight: "10px", fontSize: "18px"}}
                 />
-                STK
             </div>
 
+            <label style={{marginRight: "10px", marginBottom: "10px", fontSize: 20}}> Description:</label> 
             <textarea
               value={newFileDetails.description}
               maxLength={150}
