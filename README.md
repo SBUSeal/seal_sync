@@ -3,8 +3,6 @@
 
 `npm install`
 
-`npm install axios @radix-ui/themes`
-
 *Start the frontend:*
 
 Navigate to the frontend directory and run:
