@@ -13,7 +13,7 @@ function LoginPage({ onLogin, onSignUp }) {
     // Check if wallet address and password are provided
     setErrorMessage('');
     if(walletPassword.length > maxwalletPasswordLength) {
-        setErrorMessage(`Private key cannot exceed ${maxwalletPasswordLength} characters.`);
+        setErrorMessage(`Wallet Password cannot exceed ${maxwalletPasswordLength} characters.`);
         return;
     }
     if (walletAddress && walletPassword) {
