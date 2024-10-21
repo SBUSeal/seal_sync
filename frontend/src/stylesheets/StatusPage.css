@@ -29,29 +29,6 @@ input, button {
   color: var(--text-color);
 }
 
-/* Dashboard Content */
-.dashboard-content {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  background-color: var(--background-color); /* Use the variable here */
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.header h1 {
-  font-size: 2.5em;
-  margin-bottom: 10px;
-  color: var(--text-color); /* Use variable for header text */
-}
-
-.status-info {
-  font-size: 1.2em;
-  color: var(--text-color); /* Adapted for dark mode */
-}
-
 /* Dashboard grid for cards */
 .dashboard-grid {
   display: grid;
@@ -61,7 +38,7 @@ input, button {
 
 /* Card Styles */
 .card {
-  background-color: var(--card-background); /* Use variable */
+  background-color: var(--card-background);
   padding: 20px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -71,12 +48,12 @@ input, button {
 h3 {
   font-size: 1.5em;
   margin-bottom: 20px;
-  color: var(--text-color); /* Adjust for dark mode */
+  color: var(--text-color);
 }
 
 p {
   font-size: 1.1em;
-  color: var(--text-color); /* Adjust for dark mode */
+  color: var(--text-color);
 }
 
 /* Network Traffic Section */
@@ -87,14 +64,14 @@ p {
 .bar {
   width: 100%;
   height: 10px;
-  background-color: var(--bar-background); /* Adapted for both modes */
+  background-color: var(--bar-background);
   border-radius: 5px;
   margin-top: 5px;
 }
 
 .bar-fill {
   height: 100%;
-  background-color: var(--bar-fill-color); /* Adapted for both modes */
+  background-color: var(--bar-fill-color);
   border-radius: 5px;
 }
 
@@ -105,7 +82,7 @@ p {
 }
 
 .stat-card {
-  background-color: var(--card-background); /* Adapt for dark mode */
+  background-color: var(--card-background);
   padding: 20px;
   border-radius: 15px;
   width: 45%;
@@ -114,7 +91,7 @@ p {
 
 .counter {
   font-size: 2.5em;
-  color: var(--text-color); /* Adjust color for dark mode */
+  color: var(--text-color);
   margin-top: 10px;
   font-weight: bold;
   background-color: black;
@@ -122,6 +99,63 @@ p {
   -webkit-text-fill-color: transparent;
 }
 
+/* Map Section */
+.map-container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.world-map {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 15px;
+}
+
+.peer-marker {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+.peer-marker .tooltip {
+  position: absolute;
+  background-color: black;
+  color: white;
+  padding: 2px 5px;
+  border-radius: 5px;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  display: none;
+}
+
+.peer-marker:hover .tooltip {
+  display: block;
+}
+
+/* Downloads Progress Section */
+.downloads-progress {
+  max-height: 250px;
+  overflow-y: auto; /* Ensure that the download list scrolls if it grows too large */
+}
+
+.download-item {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: var(--card-background);
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  font-size: 1.1em;
+  color: var(--text-color);
+}
 
 /* Adjustments for smaller screens */
 @media screen and (max-width: 768px) {
@@ -131,5 +165,9 @@ p {
 
   .stat-card {
     width: 100%;
+  }
+
+  .leaflet-container {
+    height: 250px; /* Adjust map height for smaller screens */
   }
 }
