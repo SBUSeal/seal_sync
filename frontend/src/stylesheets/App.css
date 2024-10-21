@@ -14,140 +14,112 @@ html, body {
 .App {
   display: flex;
   height: 100vh;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Force sidebar background to navy blue */
+/* Sidebar Styles */
 .sidebar {
   width: 250px;
-  background-color: #001f3f !important; /* Navy blue background */
-  color: white;
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text-color);
   display: flex;
   flex-direction: column;
   padding: 20px;
-  height: 100vh; /* Full viewport height */
-  transition: width 0.3s ease; /* Smooth transition */
+  height: 100vh;
+  transition: width 0.3s ease, background-color 0.3s ease;
 }
 
 /* Sidebar when minimized */
 .sidebar-minimized {
-  width: 80px; /* Adjust the width when sidebar is minimized */
+  width: 80px;
 }
 
-/* Sidebar logo container */
+/* Sidebar Logo Styles */
 .logo {
   text-align: center;
   margin-bottom: 30px;
-  transition: all 0.3s ease; /* Smooth transition for the logo */
+  transition: all 0.3s ease;
+  color: white;
 }
 
-/* Sidebar Logo Image */
 .sidebar-logo-image {
-  width: 100px; /* Full-size logo for expanded sidebar */
+  width: 100px;
   height: auto;
-  transition: width 0.3s ease, height 0.3s ease; /* Smooth resize transition */
+  transition: width 0.3s ease, height 0.3s ease;
 }
 
-/* When the sidebar is minimized */
 .sidebar-minimized .sidebar-logo-image {
   width: 60px;
   height: 60px;
-  margin-bottom: 10px; /* Adjust spacing */
-  object-fit: contain; /* Ensure the logo scales properly within the fixed dimensions */
-  transition: width 0.3s ease, height 0.3s ease; /* Smooth transition */
+  margin-bottom: 10px;
+  object-fit: contain;
+  transition: width 0.3s ease, height 0.3s ease;
 }
 
 .minimize-btn {
-  height: 40px; /* Set a fixed height */
-  width: 100%; /* Full width of the sidebar */
-  background-color: #f0f0f0; /* Optional: Customize button background color */
+  height: 40px;
+  width: 100%;
+  background-color: #f0f0f0;
   border: none;
   display: flex;
   align-items: center;
-  justify-content: center; /* Center the icon */
+  justify-content: center;
   cursor: pointer;
-  transition: height 0.3s ease, background-color 0.3s ease; /* Smooth transition */
+  transition: height 0.3s ease, background-color 0.3s ease;
 }
 
-.sidebar-minimized .logo h2 {
-  display: none; /* Hide text when sidebar is minimized */
-}
-
-/* Ensure logo remains visible when minimized */
-.sidebar-minimized .logo {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Center the logo */
-  opacity: 1; /* Ensure logo is fully visible */
-  height: 40px;
-  transform: scale(1); /* Keep icon size normal */
-  overflow: visible; /* Show the logo */
-}
-
-/* Sidebar navigation list */
 .sidebar ul {
   list-style: none;
   padding: 0;
 }
 
-/* Sidebar items */
 .sidebar ul li {
   display: flex;
   align-items: center;
-  justify-content: center; /* Center the icon */
-  margin-bottom: 20px; /* Add some space between items */
+  justify-content: center;
+  margin-bottom: 20px;
   transition: opacity 0.3s ease;
 }
 
-/* Sidebar icons */
 .sidebar ul li img {
-  width: 40px; /* Increase the icon size */
+  width: 40px;
   height: 40px;
-  margin: 0; /* Center the icons */
-  transition: transform 0.3s ease; /* Smooth scaling for hover */
-  padding: 0px 5px;
-
+  margin: 0;
+  padding: 0 5px;
+  transition: transform 0.3s ease;
 }
 
-/* Hide button text when sidebar is minimized */
 .sidebar-minimized ul li button {
   opacity: 0;
   width: 0;
   padding: 15px;
   overflow: hidden;
   transition: width 0.3s ease, opacity 0.3s ease;
-
 }
 
-/* Adjust icon position when minimized */
 .sidebar-minimized ul li img {
   margin-right: 0;
-  transform: scale(1); /* Keep icon size normal */
-  display: block;
+  transform: scale(1);
 }
 
-/* Improve hover state when minimized */
-.sidebar-minimized ul li:hover img {
-  transform: scale(1.2); /* Slightly enlarge icons when minimized */
-}
-
-/* Sidebar button styles */
 .sidebar ul li button {
   width: 100%;
   padding: 10px;
-  background-color: #34495E; /* Lighter blue for buttons */
-  color: white;
+  background-color: var(--button-bg);
+  color: var(--sidebar-text-color);
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-/* Hover state */
 .sidebar ul li button:hover {
-  background-color: #1ABC9C;
+  background-color: var(--button-hover-bg);
 }
 
-/* Content Area Styles */
+/* Content Area */
 .content {
   flex-grow: 1;
   display: flex;
@@ -155,11 +127,28 @@ html, body {
   height: 100vh;
 }
 
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: var(--background-color);
+}
+
+.main-content h1 {
+  font-size: 24px;
+  color: var(--text-color);
+}
+
+.main-content p {
+  margin-top: 10px;
+  color: var(--text-color-secondary);
+}
+
 /* Topbar Styles */
 .topbar {
   width: 100%;
   height: 50px;
-  background-color: #34495E;
+  background-color: var(--sidebar-bg);
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -171,61 +160,17 @@ html, body {
   padding: 10px;
   border-radius: 5px;
   border: none;
+  background-color: var(--input-bg);
+  color: var(--input-text-color);
+  border: 1px solid var(--input-border);
 }
 
-/* Main Content Styles */
-.main-content {
-  flex-grow: 1;
-  padding: 20px;
-  overflow-y: auto;
-  background-color: #f4f6f9;
-}
-
-.main-content h1 {
-  font-size: 24px;
-  color: #2C3E50;
-}
-
-.main-content p {
-  margin-top: 10px;
-  color: #7F8C8D;
-}
-
-/* Dark Mode Styles */
-.dark-mode {
-  background-color: #121212;
-  color: #ffffff;
-}
-
-.dark-mode .settings-container,
-.dark-mode .section {
-  background-color: #1e1e1e;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
-}
-
-.dark-mode .input-field {
-  background-color: #333;
-  border: 1px solid #555;
-  color: #fff;
-}
-
-.dark-mode .primary-button,
-.dark-mode .secondary-button {
-  background-color: #4A90E2;
-  color: #fff;
-}
-
-.dark-mode .primary-button:hover,
-.dark-mode .secondary-button:hover {
-  background-color: #357ABD;
-}
-
-
+/* Light and Dark Mode Variables */
 :root {
-  /* Light Mode Variables */
   --background-color: #ffffff;
-  --text-color: #2C3E50;
-  --sidebar-bg: #34495E;
+  --text-color: #ffffff;
+  --text-color-secondary: #7F8C8D;
+  --sidebar-bg: #001f3f;
   --sidebar-text-color: white;
   --button-bg: #007bff;
   --button-hover-bg: #1ABC9C;
@@ -235,19 +180,19 @@ html, body {
 }
 
 [data-theme="dark"] {
-  /* Dark Mode Variables */
   --background-color: #121212;
   --text-color: #ffffff;
-  --sidebar-bg: #2C3E50;
+  --text-color-secondary: #b0b0b0;
+  --sidebar-bg: #001f3f;
   --sidebar-text-color: white;
-  --button-bg: #4A90E2;
+  --button-bg: #001f3f;
   --button-hover-bg: #357ABD;
   --input-bg: #333;
   --input-border: #555;
   --input-text-color: #ffffff;
 }
 
-/* Apply variables globally */
+/* Transitions for Mode Changes */
 body {
   background-color: var(--background-color);
   color: var(--text-color);
@@ -259,7 +204,7 @@ body {
   color: var(--text-color);
 }
 
-/* Sidebar Styles */
+/* Sidebar Specific */
 .sidebar {
   background-color: var(--sidebar-bg);
   color: var(--sidebar-text-color);
@@ -267,7 +212,6 @@ body {
 
 .sidebar ul li button {
   background-color: var(--button-bg);
-  color: var(--sidebar-text-color);
 }
 
 .sidebar ul li button:hover {
@@ -293,21 +237,14 @@ button:hover {
   background-color: var(--button-hover-bg);
 }
 
-/* Topbar Styles */
-.topbar {
-  background-color: var(--sidebar-bg);
+/* Notification Pop-up */
+.notification-popup {
+  background-color: var(--button-bg);
+  color: var(--text-color);
+  border-radius: 5px;
+  padding: 10px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  transition: opacity 0.3s ease;
 }
-
-.search-input {
-  background-color: var(--input-bg);
-  color: var(--input-text-color);
-  border: 1px solid var(--input-border);
-}
-
-/* Dark Mode Specific */
-.dark-mode .settings-container,
-.dark-mode .section {
-  background-color: var(--background-color);
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
-}
-
