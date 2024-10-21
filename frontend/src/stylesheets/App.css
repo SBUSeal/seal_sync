@@ -56,6 +56,17 @@ html, body {
   transition: width 0.3s ease, height 0.3s ease;
 }
 
+.sidebar-minimized .logo {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the logo */
+  opacity: 1; /* Ensure logo is fully visible */
+  height: auto;
+  height: 40px;
+  transform: scale(1); /* Keep icon size normal */
+  overflow: visible; /* Show the logo */
+}
+
 .minimize-btn {
   height: 40px;
   width: 100%;
