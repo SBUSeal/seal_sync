@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "chart.js": "^4.4.4",
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^4.2.1",
     "react-scripts": "^3.0.1"
   }
 }

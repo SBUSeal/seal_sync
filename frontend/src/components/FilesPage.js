@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share1Icon, UploadIcon } from '@radix-ui/react-icons';
+import { DotsVerticalIcon, PlusCircledIcon, LayersIcon, FileIcon, DownloadIcon, Share1Icon, UploadIcon , TrashIcon} from '@radix-ui/react-icons';
 import '../stylesheets/FilesPage.css';
 import FileViewer from './FileViewer';  
 import dummyTextFile from '../dummydata/dummyTestFile.txt'
@@ -26,6 +26,7 @@ const FilesPage = (props) => {
   const [isProvidersModalOpen, setIsProvidersModalOpen] = useState(false)
   const [selectedProvider, setSelectedProvider] = useState(null)
   const [filter, setFilter] = useState("All")
+  const [hasGeneratedLink, setHasGeneratedLink] = useState(false)
 
 
 
@@ -63,7 +64,7 @@ const FilesPage = (props) => {
   const dummyProviders = [
     {ip: "127.0.0.1", address: "ahw8E13Np3Huh5F47IRxnpJey1rKJ7z", price: 2},
     {ip: "10.0.0.1", address: "F5lcMyFdTjGrfHSxl5LKtZ8DVKiwgHR", price: 9},
-    {ip: "192.168.0.1", address: "2Z3ab5g4dEF4DMPGT1L9TThMv6dvpqr", price: 5},
+    {ip: "192.168.0.1", address: "2Z3ab5g4dEF4DMPGT1L9TThMv6dvpqr", price: 500},
     {ip: "132.145.0.1", address: "lXIrppfBCwngQrpMnTyQv43THtyrrh3", price: 8},
   ]
 
@@ -74,6 +75,14 @@ const FilesPage = (props) => {
   };
 
 
+  function handleDeleteFile(file) {
+    const confirmed = window.confirm(`Are you sure you want to delete the file: ${file.name}?`);
+    if (confirmed) {
+      const updatedFiles = files.filter(f => f.name !== file.name);
+      setFiles(updatedFiles);
+      setFilteredFiles(updatedFiles);
+    }
+  }
   function handleFileUpload(event) {
     const selectedFiles = Array.from(event.target.files);
     setTempFiles(selectedFiles)
@@ -130,6 +139,7 @@ const FilesPage = (props) => {
 
   function closeShareModal() {
     setIsShareModalOpen(false);
+    setHasGeneratedLink(false);
   }
 
   function copyToClipboard() {
@@ -150,27 +160,6 @@ const FilesPage = (props) => {
     closeDownloadModal()
     setIsProvidersModalOpen(true)
   }
-
-    // fetch('./')
-  //   .then((response) => response.text())
-  //   .then((fileContent) => {
-  //     const dummyFile = {
-  //       name: "dummyTestFile.txt",
-  //       size: fileContent.length, 
-  //       status: 'unlocked',
-  //       source: 'local',
-  //       price: '599',
-  //       fileObject: new Blob([fileContent], { type: "text/plain" }),
-  //       description: 'Dummy description',
-  //       isFolder: false,
-  //       type: "text/plain"
-  //     };
-  //     const updatedFiles = [...files, dummyFile];
-  //     setFiles(updatedFiles);
-  //     setFilteredFiles(updatedFiles);
-  //   setIsProvidersModalOpen(false);
-  //   setSelectedProvider(null);
-  // });
 
   function dummyDownload() {
     const dummyFile = {
@@ -210,7 +199,6 @@ const FilesPage = (props) => {
     setIsProvidersModalOpen(false)
     setSelectedProvider(null)
 
-    // setDownloadsInProgress(prevDownloads => [...prevDownloads, dummyFile]);
 
     props.setSealTokenBalance(props.sealTokenBalance - dummyFile.price)
     alert(`Successfully bought file for ${dummyFile.price} STK!`)
@@ -222,7 +210,7 @@ const FilesPage = (props) => {
       date: new Date().toLocaleString(),
       to: selectedProvider.address,
       sealTokens: dummyFile.price,
-      reason: dummyFile.name,
+      reason: dummyFile.name + " purchased from files",
     },] )
 
 
@@ -259,10 +247,12 @@ const FilesPage = (props) => {
       status: 'unlocked',
       source: 'uploaded',
       description: newFileDetails.description,
+      price: newFileDetails.price,
       fileObject: file,  
       isFolder: false,
       type: file.type,
       downloading: file.downloading,
+      unpublishTime: file.unpublishTime,
       published: true
     }));
     const updatedFiles = [...files, ...newFiles];
@@ -395,6 +385,7 @@ const FilesPage = (props) => {
                                 <td>
                                   <label className="switch">
                                       <input
+                                        style={{outline: "none", boxShadow: "none"}}
                                         type="checkbox" 
                                         checked={file.published}
                                         onChange={(e) => handleToggle(e, file)} 
@@ -434,9 +425,15 @@ const FilesPage = (props) => {
                     <button onClick={() => openShareModal(file)} disabled={file.downloading}>
                       <Share1Icon />
                     </button>
+                    {(!file.published || file.source === 'downloaded') && (
+                          <button onClick={() => handleDeleteFile(file)}>
+                            <TrashIcon />
+                          </button>
+                        )}
                     <button onClick={() => file.isFolder ? 'OPENFOLDER' : openFileDetails(file)} disabled={file.downloading}>
                       <DotsVerticalIcon />
                     </button>
+                   
                   </td>
                 }
                 </tr>
@@ -455,7 +452,7 @@ const FilesPage = (props) => {
           <div className="modal-content">
             <h2>Enter File Details</h2>
             <div style={{fontSize: "20px"}}> 
-              <label style={{marginRight: "10px"}}>Price:</label> 
+              <label style={{marginRight: "10px", marginBottom: "10px"}}>Price (STK):</label> 
                 <input
                   type='number'
                   min={0}
@@ -468,9 +465,9 @@ const FilesPage = (props) => {
                   }}
                   style={{marginRight: "10px", fontSize: "18px"}}
                 />
-                STK
             </div>
 
+            <label style={{marginRight: "10px", marginBottom: "10px", fontSize: 20}}> Description:</label> 
             <textarea
               value={newFileDetails.description}
               maxLength={150}
@@ -478,6 +475,31 @@ const FilesPage = (props) => {
               placeholder="Enter description"
               style={{fontSize: "18px"}}
             ></textarea>
+
+
+              <div style={{marginTop: "10px"}}>
+                  <input 
+                    type="checkbox" 
+                    id="unpublishCheck" 
+                    checked={newFileDetails.timeLimited}
+                    onChange={(e) => setNewFileDetails({ ...newFileDetails, timeLimited: e.target.checked })}
+                  />
+                  <label htmlFor="unpublishCheck" style={{marginLeft: "10px"}}>Make this file accessible for a limited time</label>
+
+                  {newFileDetails.timeLimited && (
+                    <div style={{marginTop: "10px"}}>
+                      <label style={{marginRight: "10px"}}>Unpublish Time:</label>
+                      <input
+                        type="datetime-local"
+                        value={newFileDetails.unpublishTime}
+                        onChange={(e) => setNewFileDetails({ ...newFileDetails, unpublishTime: e.target.value })}
+                        style={{fontSize: "18px"}}
+                      />
+                    </div>
+                  )}
+                </div>
+
+
             <div className="modal-actions">
               <button onClick={handleModalClose}>Cancel</button>
               <button onClick={handleModalSubmit} disabled={newFileDetails.price.trim() === '' || newFileDetails.description.trim() === ''}>Submit</button>
@@ -488,12 +510,18 @@ const FilesPage = (props) => {
 
       {isFileModalOpen && currentFile && (
         <div className="modal">
+          {console.log(currentFile)}
           <div className="modal-content"  style={{textAlign: "left"}}>
             <h2>File Details</h2>
             <p><strong>Name:</strong> {currentFile.name}</p>
             <p><strong>Size:</strong> {formatFileSize(currentFile.size)}</p>
             <p><strong>Price:</strong> {currentFile.price + " STK"}</p>
             <p><strong>Description:</strong> {currentFile.description}</p>
+            {console.log(currentFile)}
+
+            {
+              currentFile.unpublishTime &&  <p><strong>Unpublish Time:</strong> {currentFile.unpublishTime}</p>
+              }
             <div className="modal-actions" style={{marginTop: "30px"}}>
               <button onClick={closeFileModal}>Close</button>
             </div>
@@ -537,25 +565,30 @@ const FilesPage = (props) => {
             )}
       {isShareModalOpen && (
         <div className="modal">
-          <div className="modal-content">
+          <div className="modal-content"  style={{width:'500px'}}>
             <h2>Share File</h2>
-            <p style={{marginBottom: "10px"}}>Copy the link below to share the file:</p>
-            <input
-              type="text"
-              value={dummyLink}
-              readOnly
-              style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
-            />
-            <button onClick={copyToClipboard}>Copy Link</button>
-            <h2 style={{marginTop: "5px"}}> Or </h2>
-            <p style={{marginBottom: "10px"}}> Copy the file CID below </p>
+            <button onClick={()=>setHasGeneratedLink(true)} className='modal-content' style={{marginBottom: "10px", border:'1px lightgrey solid'}}>Generate Share Link </button>
+            {hasGeneratedLink && <div> 
+              <input
+              className='modal-content'
+                type="text"
+                value={dummyLink}
+                readOnly
+                style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+              />
+              <button className='modal-content' style={{border:'1px lightgrey solid'}} onClick={copyToClipboard}> 
+                Copy Link
+              </button>
+            </div>}
+            <h2  style={{marginTop: "5px"}}> Or </h2>
+            <p  style={{marginBottom: "10px"}}> Copy the file CID below </p>
             <input
               type="text"
               value={dummyCid}
               readOnly
               style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
             />
-            <button onClick={() => {
+            <button className='modal-content' style={{border:'1px lightgrey solid'}}onClick={() => {
               navigator.clipboard.writeText(dummyCid);
               alert('CID copied to clipboard!');
             }}>Copy CID </button>
@@ -595,7 +628,6 @@ const FilesPage = (props) => {
                       <div className='modal-actions'>
                         <button onClick={dummyDownload} style={{fontSize: '20px'}}>Download</button>
                       </div>
-                    
                     </div>
                   </div>
                 </div>

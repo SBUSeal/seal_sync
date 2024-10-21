@@ -1,11 +1,14 @@
 import React, {useState} from 'react';
 import sealImage from '../images/Seal_Logo.png';
-import statusIcon from '../images/Status_Icon.png';
-import filesIcon from '../images/File_Icon.png';
+import statusIcon from '../images/Status_Page_White.png';
+import filesIcon from '../images/File_Icon_White.png';
 import walletIcon from '../images/Wallet_Icon.png';
-import proxyIcon from '../images/Peers_Icon.png';
-import settingsIcon from '../images/Settings_Icon.png';
+import proxyIcon from '../images/Proxy_Icon_White.png';
+import settingsIcon from '../images/Settings_Icon_White.png';
+import miningIcon from '../images/pickaxe-white-removebg-preview.png';
 import '../stylesheets/App.css';
+import { ArrowLeftIcon, ArrowRightIcon} from '@radix-ui/react-icons';
+
 
 
 function Sidebar(props) {
@@ -18,19 +21,14 @@ function Sidebar(props) {
 
   const setActivePage = props.setActivePage;
 
-  const handleSignOut = () => {
-    // Logic for signing out (e.g., clearing user session, redirecting, etc.)
-    console.log("User signed out");
-  };
-
   return (
     <div className={`sidebar ${isMinimized ? 'sidebar-minimized' : ''}`}>
       <div className="logo">
         <img src={sealImage} alt="Seal Share Logo" className="sidebar-logo-image" />
-        {!isMinimized && <h2>Seal Share</h2>}
+        {!isMinimized && <h2 className='logo-text'>Seal Share</h2>}
       </div>
-      <button onClick={toggleSidebar} className="minimize-btn">
-        {isMinimized ? '>' : '<'}
+      <button onClick={toggleSidebar} className="minimize-btn" style={{backgroundColor: "#34495E", height: 60, borderRadius: 5, marginBottom: 40}}>
+        {isMinimized ? <ArrowRightIcon color='white'> </ArrowRightIcon> : <ArrowLeftIcon color='white'> </ArrowLeftIcon>}
       </button>
       <ul>
         <li onClick={() => setActivePage('Status')}>
@@ -50,7 +48,7 @@ function Sidebar(props) {
           {!isMinimized && <span>Proxy</span>}
         </li>
         <li onClick={() => setActivePage('Mining')}>
-          <img src={settingsIcon} alt="Mining Icon" className="sidebar-icon" />
+          <img src={miningIcon} alt="Mining Icon" className="sidebar-icon" />
           {!isMinimized && <span>Mining</span>}
         </li>
         <li onClick={() => setActivePage('Settings')}>
@@ -58,9 +56,7 @@ function Sidebar(props) {
           {!isMinimized && <span>Settings</span>}
         </li>
       </ul>
-      <div className="sign-out-container">
-        <button onClick={handleSignOut} className="sign-out-button">Sign Out</button>
-      </div>
+
     </div>
   );
 }

@@ -1,4 +1,4 @@
-/* Global Styles */
+/*GLOBAL*/
 * {
   margin: 0;
   padding: 0;
@@ -14,125 +14,109 @@ html, body {
 .App {
   display: flex;
   height: 100vh;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Force sidebar background to navy blue */
+/*SIDEBAR*/
 .sidebar {
   width: 250px;
-  background-color: #001f3f !important; /* Navy blue background */
-  color: white;
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text-color);
   display: flex;
   flex-direction: column;
   padding: 20px;
-  height: 100vh; /* Full viewport height */
-  
+  height: 100vh;
+  transition: width 0.3s ease, background-color 0.3s ease;
 }
 
+.sidebar-minimized {
+  width: 80px;
+}
 
 .logo {
   text-align: center;
   margin-bottom: 30px;
-}
-
-.logo h2 {
-  color: #ecf0f1;
-  margin-bottom: 10px;
-}
-
-.sidebar-logo-image {
-  width: 100px;
-  height: auto;
-  margin-bottom: 20px; /* Space between image and navigation */
-}
-
-/* Sidebar Styles */
-.sidebar {
-  width: 250px;
-  background-color: #2C3E50;
+  transition: all 0.3s ease;
   color: white;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  height: 100vh; /* Full viewport height */
-  transition: width 0.3s ease; /* Smooth transition */
 }
 
-.sidebar-minimized {
-  width: 60px; /* Shrink sidebar */
-}
-
-/* Hide logo when minimized */
-.sidebar .logo {
-  text-align: center;
-  margin-bottom: 30px;
-  transition: opacity 0.3s ease;
-  margin-bottom: 20px;
-}
-
-.sidebar-minimized .logo {
-  opacity: 0;
-  height: 0;
-  overflow: hidden; /* Hide logo */
-}
-
-/* Sidebar Logo Image */
 .sidebar-logo-image {
   width: 100px;
   height: auto;
-  margin-bottom: 20px;
+  transition: width 0.3s ease, height 0.3s ease;
 }
 
-/* Sidebar navigation list */
+.sidebar-minimized .sidebar-logo-image {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 10px;
+  object-fit: contain;
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.minimize-btn {
+  height: 40px;
+  width: 100%;
+  background-color: #f0f0f0;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: height 0.3s ease, background-color 0.3s ease;
+}
+
 .sidebar ul {
   list-style: none;
   padding: 0;
 }
 
-/* Sidebar items */
 .sidebar ul li {
   display: flex;
   align-items: center;
-  margin-bottom: 15px;
+  justify-content: center;
+  margin-bottom: 20px;
   transition: opacity 0.3s ease;
 }
 
 .sidebar ul li img {
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
+  width: 40px;
+  height: 40px;
+  margin: 0;
+  padding: 0 5px;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-minimized ul li button {
+  opacity: 0;
+  width: 0;
+  padding: 15px;
+  overflow: hidden;
+  transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+.sidebar-minimized ul li img {
+  margin-right: 0;
+  transform: scale(1);
 }
 
 .sidebar ul li button {
   width: 100%;
   padding: 10px;
-  background-color: #34495E; /* Lighter blue for buttons */
-  color: white;
+  background-color: var(--button-bg);
+  color: var(--sidebar-text-color);
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-/* Hover state */
 .sidebar ul li button:hover {
-  background-color: #1ABC9C;
+  background-color: var(--button-hover-bg);
 }
 
-/* Hide button text when sidebar is minimized */
-.sidebar-minimized ul li button {
-  opacity: 0;
-  width: 0;
-  padding: 0;
-  overflow: hidden;
-  transition: width 0.3s ease, opacity 0.3s ease;
-}
-
-/* Adjust icon position when minimized */
-.sidebar-minimized ul li img {
-  margin-right: 0;
-}
-
-/* Content Area Styles */
 .content {
   flex-grow: 1;
   display: flex;
@@ -140,11 +124,27 @@ html, body {
   height: 100vh;
 }
 
-/* Topbar Styles */
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: var(--background-color);
+}
+
+.main-content h1 {
+  font-size: 24px;
+  color: var(--text-color);
+}
+
+.main-content p {
+  margin-top: 10px;
+  color: var(--text-color-secondary);
+}
+
 .topbar {
   width: 100%;
   height: 50px;
-  background-color: #34495E;
+  background-color: var(--sidebar-bg);
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -156,58 +156,92 @@ html, body {
   padding: 10px;
   border-radius: 5px;
   border: none;
+  background-color: var(--input-bg);
+  color: var(--input-text-color);
+  border: 1px solid var(--input-border);
 }
 
-/* Content Area Styles */
-.content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+/* Light and Dark Mode Variables */
+:root {
+  --background-color: #ffffff;
+  --text-color: #ffffff;
+  --text-color-secondary: #7F8C8D;
+  --sidebar-bg: #001f3f;
+  --sidebar-text-color: white;
+  --button-bg: #007bff;
+  --button-hover-bg: #1ABC9C;
+  --input-bg: #ffffff;
+  --input-border: #ced4da;
+  --input-text-color: #2C3E50;
 }
 
-/* Main Content Styles */
-.main-content {
-  flex-grow: 1;
-  padding: 20px;
-  overflow-y: auto;
+[data-theme="dark"] {
+  --background-color: #121212;
+  --text-color: #ffffff;
+  --text-color-secondary: #b0b0b0;
+  --sidebar-bg: #001f3f;
+  --sidebar-text-color: white;
+  --button-bg: #001f3f;
+  --button-hover-bg: #357ABD;
+  --input-bg: #333;
+  --input-border: #555;
+  --input-text-color: #ffffff;
 }
 
-.main-content h1 {
-  font-size: 24px;
-  color: #2C3E50;
+/* Transitions for Mode Changes */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.main-content p {
-  margin-top: 10px;
-  color: #7F8C8D;
+.App {
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
-/* Dark Mode Styles */
-.dark-mode {
-  background-color: #121212;
-  color: #ffffff;
+.sidebar {
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text-color);
 }
 
-.dark-mode .settings-container,
-.dark-mode .section {
-  background-color: #1e1e1e;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
+.sidebar ul li button {
+  background-color: var(--button-bg);
 }
 
-.dark-mode .input-field {
-  background-color: #333;
-  border: 1px solid #555;
-  color: #fff;
+.sidebar ul li button:hover {
+  background-color: var(--button-hover-bg);
 }
 
-.dark-mode .primary-button,
-.dark-mode .secondary-button {
-  background-color: #4A90E2;
-  color: #fff;
+.input-field {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--input-text-color);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-.dark-mode .primary-button:hover,
-.dark-mode .secondary-button:hover {
-  background-color: #357ABD;
+button {
+  background-color: var(--button-bg);
+  color: var(--sidebar-text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--button-hover-bg);
+}
+
+.notification-popup {
+  background-color: var(--button-bg);
+  color: var(--text-color);
+  border-radius: 5px;
+  padding: 10px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  transition: opacity 0.3s ease;
+}
+
+
+.logo-text{
+  color: white;
 }

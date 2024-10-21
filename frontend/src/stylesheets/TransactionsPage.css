@@ -1,0 +1,189 @@
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+input, button {
+    background-color: var(--input-background);
+    color: var(--text-color);
+    border: 1px solid var(--input-border);
+}
+
+.transactions-page {
+    background-color: var(--page-background);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px var(--box-shadow-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h3 {
+    color: var(--primary-text-color);
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.search-filter-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 20px;
+}
+
+.search-filter-section label {
+    font-weight: bold;
+    margin-right: 10px;
+    color: var(--secondary-text-color);
+}
+
+.input-field {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--input-border);
+    font-size: 16px;
+    width: 100%;
+    max-width: 400px;
+    transition: all 0.3s ease;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 5px var(--input-focus-shadow);
+}
+
+.transaction-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-transaction {
+    padding: 10px 20px;
+    border: 1px solid var(--input-border);
+    background-color: var(--button-background-light);
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--primary-text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-transaction:hover,
+.btn-transaction.active {
+    background-color: var(--button-background);
+    color: var(--button-text-color);
+    border-color: var(--button-background);
+}
+
+.transaction-history {
+    margin-top: 30px;
+}
+
+/*Transaction Item Box*/
+.transaction-item {
+    background-color: var(--card-background);
+    border: 1px solid var(--input-border);
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 20px;
+    align-items: center;
+    box-shadow: 0px 4px 10px var(--box-shadow-color);
+    transition: box-shadow 0.3s ease;
+}
+
+.transaction-item:hover {
+    box-shadow: 0px 6px 15px var(--box-shadow-hover-color);
+}
+
+.transaction-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.transaction-status,
+.transaction-id,
+.transaction-reason {
+    font-size: 1rem;
+    color: var(--secondary-text-color);
+    margin: 6px 0;
+    font-weight: 500;
+}
+
+.transaction-amount {
+    font-weight: bold;
+    font-size: 1.3rem;
+    text-align: right;
+}
+
+.transaction-amount.sent {
+    color: var(--transaction-sent-color); /*Red = sent*/
+}
+
+.transaction-amount.received {
+    color: var(--transaction-received-color); /*Green=received*/
+}
+
+.transaction-date {
+    font-size: 0.9rem;
+    color: var(--tertiary-text-color);
+    margin-top: 5px;
+}
+
+.btn-transaction:hover {
+    background-color: var(--button-background);
+    color: var(--button-text-color);
+}
+
+.input-field:focus {
+    border-color: var(--input-focus-border);
+    box-shadow: 0 0 5px var(--input-focus-shadow);
+}
+
+:root {
+    --background-color: #f4f6f8;
+    --text-color: #343a40;
+    --input-background: #ffffff;
+    --input-border: #ced4da;
+    --input-focus-border: #007bff;
+    --input-focus-shadow: rgba(0, 123, 255, 0.5);
+    --button-background: #007bff;
+    --button-text-color: white;
+    --button-background-light: #e9ecef;
+    --box-shadow-color: rgba(0, 0, 0, 0.05);
+    --box-shadow-hover-color: rgba(0, 0, 0, 0.1);
+    --card-background: #ffffff;
+    --page-background: #f4f6f8;
+    --primary-text-color: #343a40;
+    --secondary-text-color: #495057;
+    --tertiary-text-color: #6c757d;
+    --transaction-sent-color: #dc3545;
+    --transaction-received-color: #28a745;
+}
+
+
+[data-theme="dark"] {
+    --background-color: #121212;
+    --text-color: #e0e0e0;
+    --input-background: #333333;
+    --input-border: #555555;
+    --input-focus-border: #4CAF50;
+    --input-focus-shadow: rgba(76, 175, 80, 0.5);
+    --button-background: #4CAF50;
+    --button-text-color: white;
+    --button-background-light: #4A4A4A;
+    --box-shadow-color: rgba(255, 255, 255, 0.05);
+    --box-shadow-hover-color: rgba(255, 255, 255, 0.1);
+    --card-background: #1e1e1e;
+    --page-background: #1e1e1e;
+    --primary-text-color: #76c7c0;
+    --secondary-text-color: #cccccc;
+    --tertiary-text-color: #aaaaaa;
+    --transaction-sent-color: #ff6b6b;
+    --transaction-received-color: #6bff8f;
+}

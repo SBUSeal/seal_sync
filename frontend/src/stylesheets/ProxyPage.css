@@ -1,49 +1,76 @@
-/* GLOBALS */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-  }
+/* GLOBAL VARIABLES FOR LIGHT MODE */
+:root {
+  --background-color: #f4f4f4; /* Light mode background color */
+  --container-bg: #f0f4f8;
+  --proxy-head-bg: #dde4e9;
+  --toggle-button-off-bg: #34495E;
+  --toggle-button-on-bg: #4CAF50;
+  --price-input-bg: #ffffff;
+  --proxy-list-bg: rgb(255, 255, 255);
+  --proxy-item-text-color: #6c757d;
+  --purchase-button-bg: #f9f9f9;
+  --purchase-button-text-color: #285a8f;
+  --purchase-button-hover-bg: #285a8f;
+  --disconnect-button-bg: #c55858;
+  --history-button-bg: #285a8f;
+  --text-color: black;
+  --button-hover-color: white;
+}
 
-  body {
-    background-color: #f4f4f4; /* Background color for the entire page */
-    height: 100vh; /* Full viewport height */
+/* DARK MODE OVERRIDES */
+[data-theme="dark"] {
+  --background-color: #181818;
+  --container-bg: #232323;
+  --proxy-head-bg: #333;
+  --toggle-button-off-bg: #555;
+  --toggle-button-on-bg: #4CAF50;
+  --price-input-bg: #444;
+  --proxy-list-bg: #2a2a2a;
+  --proxy-item-text-color: #dddddd;
+  --purchase-button-bg: #444;
+  --purchase-button-text-color: #dddddd;
+  --purchase-button-hover-bg: #007bff;
+  --disconnect-button-bg: #a33a3a;
+  --history-button-bg: #005577;
+  --text-color: #dddddd;
+  --button-hover-color: #ffffff;
+}
+
+/* Apply the global variables */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  height: 100vh;
 }
 
 div.container {
-    padding: 10px;
-    background-color: #f0f4f8; /* Light background for the page */
-
+  padding: 10px;
+  background-color: var(--container-bg);
 }
 
-
 .proxy-head {
-  background-color: #dde4e9;
+  background-color: var(--proxy-head-bg);
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 50px;
+}
 
-  }
+.proxy-form {
+  display: flex;
+  justify-content: center;
+  gap: 70px;
+  padding: 10px;
+  text-align: center;
+  align-items: center;
+}
 
-  .proxy-form {
-    display: flex;
-    justify-content: center;
-    gap: 70px;
-    padding: 10px;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .proxy-form div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-  }
+.proxy-form div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
 
-  
 .toggle-button {
   font-size: 16px;
   padding: 12px 24px;
@@ -56,12 +83,12 @@ div.container {
 }
 
 .toggle-button.off {
-  background-color: #34495E;
-  color: white;
+  background-color: var(--toggle-button-off-bg);
+  color: var(--button-hover-color);
 }
 
 .toggle-button.on {
-  background-color: #4CAF50;
+  background-color: var(--toggle-button-on-bg);
   color: white;
 }
 
@@ -75,21 +102,17 @@ div.container {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-
-/* Price Input Styles */
-
+/* Price Input */
 .price-input::-webkit-outer-spin-button,
 .price-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .price-input[type="number"] {
-    -moz-appearance: textfield;
+  -moz-appearance: textfield;
 }
 
-
-/* Price input field */
 .price-input {
   padding: 10px 15px;
   font-size: 16px;
@@ -100,191 +123,166 @@ div.container {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: left;
   margin-top: 10px;
-  color: black;
+  color: var(--text-color);
+  background-color: var(--price-input-bg);
 }
-
-/* Editing state */
-.price-input.editing {
-  background-color: #eaffea;
-}
-
-/* Saved state */
-.price-input.saved {
-  border-color: #ccc;
-  background-color: #f5f5f5;
-}
-
-/* Disabled input */
-.price-input:disabled {
-  background-color: #e0e0e0;
-  cursor: not-allowed;
-}
-
-/* .units{
-
-} */
-
 
 /* Container of list of proxies */
 .proxy-list {
-    display: flex;
-    flex-direction: column;
-    margin-top: 20px;
-    gap: 20px;    
-    padding: 20px;
-    background-color: rgb(255, 255, 255);
-    border-radius: 10px;
-  }
-
-  div.proxy-list h1 {
-    text-align: center;
-    font-size: 30px;
-  }
-
-/* for the Available proxy and search Bar */
-.available-proxy-container {
-    display: flex;
-    align-items: center;
-    position: relative;
-    height: 50px;
-  }
-
-   .proxy-search-bar {
-    position: absolute;
-    left: 0;
-    width: 250px;
-    font-size: 17px;
-    padding: 5px;
-   }
-
-   .available-proxy-container h1 {
-    margin: 0 auto;
-    font-size: 30px;
-  }
-
-  .categories {
-    display: grid;
-    grid-template-columns: 1fr 0.5fr 0.6fr 0.5fr 1fr;
-    gap: 20px;
-    padding-top: 50px;
-    padding-left: 30px;
-  }
-  
-  .categories p {
-    color: #2d4a6e!important; 
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  gap: 20px;
+  padding: 20px;
+  background-color: var(--proxy-list-bg);
+  border-radius: 10px;
 }
 
-/* Per Proxy Card */
+div.proxy-list h1 {
+  text-align: center;
+  font-size: 30px;
+}
+
+/* Search Bar and Title */
+.available-proxy-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 50px;
+}
+
+.proxy-search-bar {
+  position: absolute;
+  left: 0;
+  width: 250px;
+  font-size: 17px;
+  padding: 5px;
+}
+
+.available-proxy-container h1 {
+  margin: 0 auto;
+  font-size: 30px;
+}
+
+.categories {
+  display: grid;
+  grid-template-columns: 1fr 0.5fr 0.6fr 0.5fr 1fr;
+  gap: 20px;
+  padding-top: 50px;
+  padding-left: 30px;
+}
+
+.categories p {
+  color: #2d4a6e !important;
+}
+
+/* Proxy Item (Details) */
 .proxy-item {
-    display: grid;
-    grid-template-columns: 1fr .5fr 0.6fr 0.6fr 0.4fr 0fr;
-    gap: 20px;
-    padding: 15px;
-    border-bottom: 1px solid #e0e0e0;
-    text-align: start;
-  }
+  display: grid;
+  grid-template-columns: 1fr .5fr 0.6fr 0.6fr 0.4fr 0fr;
+  gap: 20px;
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: start;
+  color: var(--proxy-item-text-color);
+}
 
+.proxy-item p {
+  font-size: 16px;
+  margin: 0;
+}
 
-  .proxy-item p {
-    font-size: 16px;
-    color: #6c757d;
-  }
+.proxy-price {
+  font-weight: bold;
+}
 
+/* Proxy Join Button */
+.proxy-join {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
 
-  .proxy-price{
-    font-weight: bold;
-  }
-  /* Proxy Join Button Container */
-  .proxy-join {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-  }
-
-  .purchase-button {
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    color: #285a8f;
-    font-weight: 600;
-    font-size: 16px;
-    padding: 12px 24px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-    text-align: center;
-    width: 100px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow for depth */
+.purchase-button {
+  background-color: var(--purchase-button-bg);
+  border: 1px solid #ccc;
+  color: var(--purchase-button-text-color);
+  font-weight: 600;
+  font-size: 16px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  width: 100px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .purchase-button:hover {
-    background-color: #285a8f;
-    color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adds a more prominent shadow on hover */
-    transform: translateY(-2px); /* Slight lift effect */
-    font-weight: 700; /* Slightly bolder on hover */
+  background-color: var(--purchase-button-hover-bg);
+  color: var(--button-hover-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+  font-weight: 700;
 }
 
 .purchase-button:active {
-    transform: translateY(0); /* Reset the lift effect when clicked */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle pressed effect */
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
 
 /* Current Proxy */
 .current-proxy-details {
-    display: grid;
-    grid-template-columns: 1fr .5fr 0.6fr 0.6fr 0.4fr 0fr;
-    gap: 20px;
-    padding: 15px;
-    margin-top: 20px;
-    border-bottom: 1px solid #e0e0e0;
-    background-color: rgb(255, 255, 255);
-    border-radius: 10px;
-   }
-
-   .current-proxy-details p {
-    font-size: 16px;
-    color: #6c757d;
-  }
-
-   .disconnect-button {
-    background-color: #c55858;
-    border: 1px solid #ccc;
-    color: #d6e2ee;
-    font-weight: bold;
-    font-size: 16px;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    width: 175px;
-    text-align: center;
-  } 
-  
-  /* Hover effect */
-  .disconnect-button:hover {
-    background-color: #c34646ce; 
+  display: grid;
+  grid-template-columns: 1fr .5fr 0.6fr 0.6fr 0.4fr 0fr;
+  gap: 20px;
+  padding: 15px;
+  margin-top: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: var(--proxy-list-bg);
+  border-radius: 10px;
 }
 
-/* Histoy Button */
+.current-proxy-details p {
+  font-size: 16px;
+  color: var(--proxy-item-text-color);
+}
+
+.disconnect-button {
+  background-color: var(--disconnect-button-bg);
+  border: 1px solid #ccc;
+  color: #d6e2ee;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 175px;
+  text-align: center;
+}
+
+.disconnect-button:hover {
+  background-color: #c34646ce;
+}
+
+/* History Button */
 .history-button {
-    background-color: #285a8f;
-    border: 1px solid #ccc;
-    color: white;
-    font-weight: bold;
-    font-size: 16px;
-    margin-right: 40px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    height: 75%;
-    width: 175px;
-  }
-  
-  .history-button:hover {
-    background-color: #285a8fd7;
-    font-weight: bold;
+  background-color: var(--history-button-bg);
+  border: 1px solid #ccc;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  margin-right: 40px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  height: 75%;
+  width: 175px;
 }
 
-
+.history-button:hover {
+  background-color: #285a8fd7;
+  font-weight: bold;
+}

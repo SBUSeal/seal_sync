@@ -1,19 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../stylesheets/SettingsPage.css';
 
-const SettingsPage = ({ handleLogout }) => {
+const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
+
     const [activeTab, setActiveTab] = useState('Configuration');
-    const [showLogoutModal, setShowLogoutModal] = useState(false); // For showing logout confirmation modal
+    const [showLogoutModal, setShowLogoutModal] = useState(false); 
     const [notificationMessage, setNotificationMessage] = useState('');
     const [notificationChoice, setNotificationChoice] = useState('All new activity or messages');
-    const [showPopup, setShowPopup] = useState(false); // For showing notification pop-up
+    const [showPopup, setShowPopup] = useState(false);
+
+  
+    useEffect(() => {
+        const theme = isDarkMode ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+    }, [isDarkMode]); 
+
+
+    const handleThemeChange = () => {
+        setIsDarkMode(!isDarkMode); 
+    };
+
+    const containerClass = isDarkMode ? 'settings-container dark-mode' : 'settings-container';
+    const buttonClass = isDarkMode ? 'nav-item dark-mode' : 'nav-item';
 
     const renderContent = () => {
         switch (activeTab) {
             case 'Configuration':
                 return (
                     <div className="section">
-                        <h2>Transfer</h2>
+                        <h2>Configuration</h2>
                         <div className="input-group">
                             <label>Save Folder</label>
                             <input type="text" placeholder="Enter new save directory" className="input-field" />
@@ -35,18 +50,12 @@ const SettingsPage = ({ handleLogout }) => {
                 return (
                     <div className="section">
                         <h2>Appearance</h2>
-                        <p>Customize the appearance of the app. Automatically switch between day and night themes.</p>
+                        <p>Customize the appearance of the app. Switch between light and dark themes.</p>
                         <div className="theme-selection">
-                            <div className="theme-option">
-                                <input type="radio" name="theme" id="light" value="light" />
-                                <label htmlFor="light">Light</label>
-                            </div>
-                            <div className="theme-option">
-                                <input type="radio" name="theme" id="dark" value="dark" />
-                                <label htmlFor="dark">Dark</label>
-                            </div>
+                            <button className="theme-toggle-button" onClick={handleThemeChange}>
+                                {isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+                            </button>
                         </div>
-                        <button className="primary-button">Update preferences</button>
                     </div>
                 );
             case 'Notifications':
@@ -91,18 +100,12 @@ const SettingsPage = ({ handleLogout }) => {
                         </button>
                     </div>
                 );
-            case 'Logout':
-                return (
-                    <div className="section">
-                        <button className="logout-button" onClick={() => setShowLogoutModal(true)}>Log Out</button>
-                    </div>
-                );
             default:
                 return null;
         }
     };
 
-    // Handle Notification Update
+
     const handleNotificationUpdate = () => {
         let message = '';
         if (notificationChoice === 'Nothing') {
@@ -114,23 +117,23 @@ const SettingsPage = ({ handleLogout }) => {
         showNotification(message, 'success');
     };
 
-    // Function to show notifications in the bottom-right corner
+   
     const showNotification = (message, type) => {
         setNotificationMessage(message);
-        setShowPopup(true); // Show the pop-up
+        setShowPopup(true); 
 
-        // Hide after 3 seconds
         setTimeout(() => {
             setShowPopup(false);
         }, 3000);
     };
 
-    // Confirm Logout Modal
+   
     const renderLogoutModal = () => (
         <div className="modal-overlay">
             <div className="modal-content">
                 <h3>Confirm Logout</h3>
                 <p>Are you sure you want to log out?</p>
+                {/* Confirm logout and trigger the logout function */}
                 <button className="confirm-button" onClick={handleLogout}>Yes, Log Out</button>
                 <button className="cancel-button" onClick={() => setShowLogoutModal(false)}>Cancel</button>
             </div>
@@ -138,26 +141,29 @@ const SettingsPage = ({ handleLogout }) => {
     );
 
     return (
+        <div className={containerClass}>
         <div className="settings-container">
             <div className="side">
-                <button className={`nav-item ${activeTab === 'Configuration' ? 'active' : ''}`} onClick={() => setActiveTab('Configuration')}>Transfer</button>
+                <button className={`nav-item ${activeTab === 'Configuration' ? 'active' : ''}`} onClick={() => setActiveTab('Configuration')}>Config</button>
                 <button className={`nav-item ${activeTab === 'Appearance' ? 'active' : ''}`} onClick={() => setActiveTab('Appearance')}>Appearance</button>
                 <button className={`nav-item ${activeTab === 'Notifications' ? 'active' : ''}`} onClick={() => setActiveTab('Notifications')}>Notifications</button>
-                <button className={`nav-item ${activeTab === 'Logout' ? 'active' : ''}`} onClick={() => setActiveTab('Logout')}>Log Out</button>
+        
+                <button className="nav-item" onClick={() => setShowLogoutModal(true)}>Log Out</button>
             </div>
             <div className="content-area">
                 {renderContent()}
             </div>
 
-            {/* Render Logout Modal */}
+           
             {showLogoutModal && renderLogoutModal()}
 
-            {/* Notification Pop-up */}
+           
             {showPopup && (
                 <div className="notification-popup">
                     {notificationMessage}
                 </div>
             )}
+        </div>
         </div>
     );
 };

@@ -1,10 +1,21 @@
-/* Wallet page styling */
+/* Light and Dark Mode Variables */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+input, button {
+  background-color: var(--input-background);
+  color: var(--text-color);
+  border: 1px solid var(--input-border);
+}
+
 .wallet-page {
-  background-color: #f0f4f8;
+  background-color: var(--page-background);
   padding: 20px;
 }
 
-/* Top section with Balance, Wallet ID, Earnings, and Spending */
+/*Top of Page*/
 .top-section {
   display: flex;
   justify-content: space-between;
@@ -12,12 +23,12 @@
 }
 
 .card {
-  background-color: white;
+  background-color: var(--card-background);
   border-radius: 10px;
   padding: 20px;
   flex: 1;
   margin-right: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px var(--box-shadow-color);
 }
 
 .card:last-child {
@@ -29,7 +40,7 @@
 .earning-card h3,
 .spending-card h3 {
   font-size: 16px;
-  color: #6c757d;
+  color: var(--secondary-text-color);
 }
 
 .balance-amount,
@@ -38,14 +49,13 @@
 .spending {
   font-size: 24px;
   font-weight: bold;
-  color: #285a8f;
+  color: var(--primary-text-color);
 }
 
-/* Copy button styling */
 .copy-btn {
   padding: 5px 10px;
-  background-color: #285a8f;
-  color: white;
+  background-color: var(--button-background);
+  color: var(--button-text-color);
   border: none;
   border-radius: 5px;
   margin-left: 10px;
@@ -53,21 +63,20 @@
 }
 
 .copy-btn:hover {
-  background-color: #357ABD;
+  background-color: var(--button-hover-background);
 }
 
-/* Transfer section styling */
 .transfer-section {
-  background-color: white;
+  background-color: var(--card-background);
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px var(--box-shadow-color);
   margin-bottom: 20px;
 }
 
 .transfer-section h3 {
   font-size: 20px;
-  color: #2d4a6e;
+  color: var(--primary-text-color);
   margin-bottom: 20px;
 }
 
@@ -77,17 +86,16 @@
   gap: 10px;
 }
 
-.input-field {
+.tranfer-field {
   padding: 12px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--input-border);
   font-size: 16px;
 }
 
-/* Button styling */
 .primary-button {
-  background-color: #4A90E2;
-  color: white;
+  background-color: var(--button-background);
+  color: var(--button-text-color);
   padding: 12px;
   border: none;
   border-radius: 6px;
@@ -95,10 +103,9 @@
 }
 
 .primary-button:hover {
-  background-color: #357ABD;
+  background-color: var(--button-hover-background);
 }
 
-/* Transaction Filters */
 .transaction-buttons {
   display: flex;
   gap: 10px;
@@ -107,36 +114,34 @@
 
 .btn-transaction {
   padding: 10px 20px;
-  border: 1px solid #ccc;
-  background-color: #f0f0f0;
+  border: 1px solid var(--button-border);
+  background-color: var(--button-background-light);
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
-  color: #333; 
+  color: var(--text-color); 
 }
 
 .btn-transaction.active {
-  background-color: #007bff;
-  color: white;
+  background-color: var(--button-background);
+  color: var(--button-text-color);
 }
 
-/* Transaction History Section */
 .transaction-history {
   margin-top: 20px;
 }
 
-/* Transaction Item Box */
 .transaction-item {
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
+  background-color: var(--card-background);
+  border: 1px solid var(--input-border);
   padding: 15px;
   margin-bottom: 15px;
   border-radius: 8px;
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr; /* 3 columns */
-  gap: 20px; /* Space between columns */
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 20px; 
   align-items: center;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 4px var(--box-shadow-color);
 }
 
 .transaction-column {
@@ -149,7 +154,7 @@
 .transaction-id,
 .transaction-reason {
   font-size: 1rem;
-  color: #333;
+  color: var(--text-color);
   margin: 5px 0;
 }
 
@@ -160,16 +165,16 @@
 }
 
 .transaction-amount.sent {
-  color: red;
+  color: var(--transaction-sent-color);
 }
 
 .transaction-amount.received {
-  color: green;
+  color: var(--transaction-received-color);
 }
 
 .transaction-date {
   font-size: 0.9rem;
-  color: #6c757d;
+  color: var(--secondary-text-color);
 }
 
 .modal-overlay {
@@ -186,18 +191,18 @@
 }
 
 .modal-content {
-  background-color: white;
+  background-color: var(--modal-background);
   padding: 20px;
   border-radius: 10px;
   width: 400px;
   text-align: center;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  color: black;
+  box-shadow: 0px 4px 8px var(--box-shadow-color);
+  color: var(--text-color);
 }
 
 .confirm-button {
-  background-color: #4A90E2;
-  color: white;
+  background-color: var(--button-background);
+  color: var(--button-text-color);
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -206,12 +211,12 @@
 }
 
 .confirm-button:hover {
-  background-color: #357ABD;
+  background-color: var(--button-hover-background);
 }
 
 .cancel-button {
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: var(--button-background-light);
+  color: var(--text-color);
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -219,10 +224,9 @@
 }
 
 .cancel-button:hover {
-  background-color: #ccc;
+  background-color: var(--button-hover-background);
 }
 
-/* Notification Styles */
 .notification {
   position: fixed;
   top: 20px;
@@ -237,17 +241,61 @@
 }
 
 .notification.success {
-  background-color: #4CAF50; /* Green for success */
+  background-color: var(--success-background);
 }
 
 .notification.error {
-  background-color: #f44336; /* Red for error */
+  background-color: var(--error-background);
 }
 
-/* Fade In and Out Animation */
 @keyframes fadeInOut {
   0% { opacity: 0; }
   10% { opacity: 1; }
   90% { opacity: 1; }
   100% { opacity: 0; }
+}
+
+:root {
+  --background-color: #f0f4f8;
+  --text-color: #000000;
+  --input-background: #ffffff;
+  --input-border: #cccccc;
+  --button-background: #4A90E2;
+  --button-text-color: white;
+  --button-hover-background: #357ABD;
+  --button-background-light: #f0f0f0;
+  --button-border: #ccc;
+  --page-background: #ffffff;
+  --primary-text-color: #285a8f;
+  --secondary-text-color: #6c757d;
+  --card-background: #ffffff;
+  --box-shadow-color: rgba(0, 0, 0, 0.1);
+  --transaction-sent-color: red;
+  --transaction-received-color: green;
+  --modal-background: #ffffff;
+  --success-background: #4CAF50;
+  --error-background: #f44336;
+}
+
+/*Dark Mode Legend Prattusha*/
+[data-theme="dark"] {
+  --background-color: #121212;
+  --text-color: #ffffff;
+  --input-background: #333333;
+  --input-border: #555555;
+  --button-background: #4CAF50;
+  --button-text-color: white;
+  --button-hover-background: #3e8e41;
+  --button-background-light: #4A4A4A;
+  --button-border: #888;
+  --page-background: #1e1e1e;
+  --primary-text-color: #76c7c0;
+  --secondary-text-color: #cccccc;
+  --card-background: #1e1e1e;
+  --box-shadow-color: rgba(255, 255, 255, 0.1);
+  --transaction-sent-color: #ff6b6b;
+  --transaction-received-color: #6bff8f;
+  --modal-background: #1e1e1e;
+  --success-background: #4CAF50;
+  --error-background: #f44336;
 }

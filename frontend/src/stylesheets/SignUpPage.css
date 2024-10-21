@@ -45,19 +45,7 @@
     align-items: center;
     flex-direction: column; /* Stack items vertically */
     height: 100vh;
-    background-color: #34495E; /* Match the lighter blue from the topbar */
-  }
-
-  .signup-container {
-    background-color: #001f3f; /* Navy blue background to match sidebar */
-    color: white;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 350px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    background-color: #f4f6f9; /* Match the lighter blue from the topbar */
   }
 
   .signup-container h1 {
@@ -84,20 +72,28 @@
 
   .signup-form label {
     width: 100%;
-    color: white; /* Label color to match the rest */
+    color: black; /* Label color to match the rest */
     margin-bottom: 5px; /* Space between label and textarea */
 }
 
   .signup-form {
-    background-color: #001f3f; /* Navy blue background to match sidebar */
+    background-color: #f4f6f9; /* Navy blue background to match sidebar */
     color: white;
     padding: 40px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 350px; /* Match width with LoginPage */
+    width: 600px; /* Match width with LoginPage */
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.signup-form h2 {
+  color: black;
+}
+
+.signup-form span {
+  color: black;
 }
 
 .signup-container button {
@@ -109,6 +105,16 @@
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+  }
+  .signup-container input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: solid;
+    border-color: black;
+    border-radius: 5px;
+    background-color: #f4f6f9;
+    color: black;
   }
   
   .signup-container button:hover {

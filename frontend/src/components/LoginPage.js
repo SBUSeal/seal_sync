@@ -4,22 +4,30 @@ import SealLogo from '../images/Seal_Logo.png';
 
 function LoginPage({ onLogin, onSignUp }) {
   const [walletAddress, setWalletAddress] = useState('');
-  const [privateKey, setPrivateKey] = useState('');
+  const [walletPassword, setwalletPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const maxPrivateKeyLength = 64;
+  const maxwalletPasswordLength = 64;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Check if wallet address and private key are provided
+    // Check if wallet address and password are provided
     setErrorMessage('');
-    if(privateKey.length > maxPrivateKeyLength) {
-        setErrorMessage(`Private key cannot exceed ${maxPrivateKeyLength} characters.`);
+    if(walletPassword.length > maxwalletPasswordLength) {
+        setErrorMessage(`Wallet Password cannot exceed ${maxwalletPasswordLength} characters.`);
         return;
     }
-    if (walletAddress && privateKey) {
-      onLogin(walletAddress, privateKey); // Callback to parent component
+    if (walletAddress && walletPassword) {
+      onLogin(walletAddress, walletPassword); // Callback to parent component
     } else {
-      setErrorMessage('Please enter both Wallet Address and Private Key.');
+      setErrorMessage('Please enter both Wallet Address and Wallet Password.');
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    const inputPassword = e.target.value;
+    // Ensure the password doesn't exceed the max length even if pasted
+    if (inputPassword.length <= maxwalletPasswordLength) {
+      setwalletPassword(inputPassword);
     }
   };
 
@@ -31,8 +39,8 @@ function LoginPage({ onLogin, onSignUp }) {
         </div>
     <div className="login-container">
       <h2>Login</h2>
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
-      <form onSubmit={handleSubmit}>
+      {errorMessage && <p className="error-message" style={{color: 'red'}}>{errorMessage}</p>}
+      <form onSubmit={handleSubmit} style={{width: "70%"}}>
         <div className="input-group">
           <label htmlFor="walletAddress">Wallet Address:</label>
           <input
@@ -44,20 +52,23 @@ function LoginPage({ onLogin, onSignUp }) {
           />
         </div>
         <div className="input-group">
-          <label htmlFor="privateKey">Private Key:</label>
+          <label htmlFor="walletPassword">Wallet Password:</label>
           <input
             type="password"// Will add more security later
-            id="privateKey"
-            value={privateKey}
-            maxLength={maxPrivateKeyLength}//Char limit for now
-            onChange={(e) => {setPrivateKey(e.target.value);  setErrorMessage('');}}
-            placeholder="Enter your private key"
+            id="walletPassword"
+            value={walletPassword}
+            maxLength={maxwalletPasswordLength}//Char limit for now
+            onChange={(e) => {setwalletPassword(e.target.value);  setErrorMessage('');}}
+            placeholder="Enter your wallet password"
           />
         </div>
-        <button type="submit">Login</button>
+        <div style={{textAlign: 'center'}}>
+          <button type="submit">Login</button>
+
+        </div>
       </form>
-      <p>Don't have a private key?
-      <button onClick={onSignUp} classname="signup-button">Sign Up</button>{/* UNCOMMENT THIS BUTTON LINE WHEN THE handleSignUP function in LoginPage.js is complete */}
+      <p style={{marginTop: 50, color: 'black'}}>Don't have a Wallet?
+      <button onClick={onSignUp} style={{marginLeft: 20}}className="signup-button"> Generate Wallet </button>{/* UNCOMMENT THIS BUTTON LINE WHEN THE handleSignUP function in LoginPage.js is complete */}
       </p>
     </div>
     </div>

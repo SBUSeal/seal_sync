@@ -1,24 +1,35 @@
-.dashboard-content {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  background-color: #f4f6f9;
+:root {
+  --background-color: #ffffff; /* Light mode background */
+  --text-color: #333333;       /* Light mode text */
+  --card-background: #f4f6f9;  /* Light mode card background */
+  --input-background: #ffffff; /* Light mode input background */
+  --bar-background: #e0e0e0;   /* Light mode bar background */
+  --bar-fill-color: #007bff;   /* Light mode bar fill color */
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 30px;
+[data-theme="dark"] {
+  --background-color: #121212; /* Dark mode background */
+  --text-color: #ffffff;       /* Dark mode text */
+  --card-background: #1e1e1e;  /* Dark mode card background */
+  --input-background: #333333; /* Dark mode input background */
+  --bar-background: #555555;   /* Dark mode bar background */
+  --bar-fill-color: #4A90E2;   /* Dark mode bar fill color */
 }
 
-.header h1 {
-  font-size: 2.5em;
-  margin-bottom: 10px;
+
+/* Body styling for both light and dark mode */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
-.status-info {
-  font-size: 1.2em;
-  color: #555;
+/* Button and Input fields */
+input, button {
+  background-color: var(--input-background);
+  color: var(--text-color);
 }
 
+/* Dashboard grid for cards */
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -27,7 +38,7 @@
 
 /* Card Styles */
 .card {
-  background-color: #fff;
+  background-color: var(--card-background);
   padding: 20px;
   border-radius: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -37,10 +48,12 @@
 h3 {
   font-size: 1.5em;
   margin-bottom: 20px;
+  color: var(--text-color);
 }
 
 p {
   font-size: 1.1em;
+  color: var(--text-color);
 }
 
 /* Network Traffic Section */
@@ -51,13 +64,14 @@ p {
 .bar {
   width: 100%;
   height: 10px;
-  background-color: #e0e0e0;
+  background-color: var(--bar-background);
   border-radius: 5px;
   margin-top: 5px;
 }
 
 .bar-fill {
   height: 100%;
+  background-color: var(--bar-fill-color);
   border-radius: 5px;
 }
 
@@ -68,7 +82,7 @@ p {
 }
 
 .stat-card {
-  background-color: #f4f4f9;
+  background-color: var(--card-background);
   padding: 20px;
   border-radius: 15px;
   width: 45%;
@@ -77,12 +91,70 @@ p {
 
 .counter {
   font-size: 2.5em;
-  color: #333;
+  color: var(--text-color);
   margin-top: 10px;
   font-weight: bold;
-  background: linear-gradient(135deg, #36a2eb, #ff6384);
+  background-color: black;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* Map Section */
+.map-container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.world-map {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 15px;
+}
+
+.peer-marker {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+.peer-marker .tooltip {
+  position: absolute;
+  background-color: black;
+  color: white;
+  padding: 2px 5px;
+  border-radius: 5px;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  display: none;
+}
+
+.peer-marker:hover .tooltip {
+  display: block;
+}
+
+/* Downloads Progress Section */
+.downloads-progress {
+  max-height: 250px;
+  overflow-y: auto; /* Ensure that the download list scrolls if it grows too large */
+}
+
+.download-item {
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: var(--card-background);
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  font-size: 1.1em;
+  color: var(--text-color);
 }
 
 /* Adjustments for smaller screens */
@@ -94,4 +166,27 @@ p {
   .stat-card {
     width: 100%;
   }
+
+  .leaflet-container {
+    height: 250px; /* Adjust map height for smaller screens */
+  }
+}
+
+
+.dashboard-content{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.header{
+  text-align: center;
+  padding: 10px 0px 30px 0px;
+}
+
+.header h1{
+  font-size: 40px;
+}
+.status-info{
+
 }
