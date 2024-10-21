@@ -23,6 +23,14 @@ function LoginPage({ onLogin, onSignUp }) {
     }
   };
 
+  const handlePasswordChange = (e) => {
+    const inputPassword = e.target.value;
+    // Ensure the password doesn't exceed the max length even if pasted
+    if (inputPassword.length <= maxwalletPasswordLength) {
+      setwalletPassword(inputPassword);
+    }
+  };
+
   return (
     <div className="login-page">
         <div className="login-content">
