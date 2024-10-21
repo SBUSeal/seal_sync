@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import '../stylesheets/ProxyPage.css';
 
-/* States */
 const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcurrentProxy, proxyHistory, 
-    setProxyHistory, isOn, setIsOn, setTransactions, price, setPrice}) => { // Destruct Properties
-    const proxies = [   /* Dummy Data */
+    setProxyHistory, isOn, setIsOn, setTransactions, price, setPrice}) => { 
+    const proxies = [ 
         {
             id: 1,
             ip_addr: '41.77.0.1',
@@ -43,12 +42,12 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
           },
     ];
 
-    const [isPriceEditing, setIsPriceEditing] = useState(price === '');   /* State of proxy price input */
-    const [searchQuery, setSearchQuery] = useState('');  /* State of the search query */
-    const [filteredProxies, setFilteredProxies] = useState(proxies);  /*State of filtered proxies*/
-    const [showHistory, setShowHistory] = useState(false); // State if history button is shown
+    const [isPriceEditing, setIsPriceEditing] = useState(price === '');  
+    const [searchQuery, setSearchQuery] = useState('');  
+    const [filteredProxies, setFilteredProxies] = useState(proxies);  
+    const [showHistory, setShowHistory] = useState(false); 
 
-    const host_data = { // Dummy Data
+    const host_data = { 
         ip_addr: '11.79.0.1',
         price: price,
         users: 5,
@@ -56,7 +55,6 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
         latency: 50,
     };
 
-    /* Proxy on/off handler */
     const handleToggle = () => {
         if (price === '') {
             alert('Proxy Price Can Not Be Empty')
@@ -67,7 +65,6 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
         }
     };
 
-    /* Proxy input price handler */
     const handlePriceChange = (e) => {
         const value = e.target.value;
         if (/^\d*\.?\d*$/.test(value)) {
@@ -75,24 +72,21 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
         }
     };
 
-    /* proxy price saving */
     const savePrice = (e) => {
         e.preventDefault();
         setPrice(price)
-        if (price !== '') { /* submitting price that is a valid number */
-            setIsPriceEditing(false);  /* after enter, save and set input into css save mode */
+        if (price !== '') {
+            setIsPriceEditing(false);  
         } 
-        else {  /* submitting empty field */
-            setIsPriceEditing(true);  /* after enter, save and set input into css save mode */
+        else {  
+            setIsPriceEditing(true);  
         }
      };
 
-    /* form on click = editing, changes css */
     const editPrice = () => {
         setIsPriceEditing(true);
     };
 
-    // Handle search query input
     function handleSearchInput(e) {
         const query = e.target.value;
         setSearchQuery(query);
@@ -106,7 +100,6 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
   
     return (
         <div className="container">
-            {/* Self Proxy Section */}
             <div className="proxy-head">
                 <div className='proxy-form'>
                     <div>
@@ -116,7 +109,6 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                     </div>
                     <div>
                         <h1>Set Proxy Price/Day</h1>
-                        {/* Price Input Form */}
                         <form onSubmit={savePrice}>
                             <input
                                 type="number"
@@ -130,11 +122,10 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                                 onClick={isOn ? null : editPrice}
                             />
                         </form>
-                        {/* <div className='units'>                        STK / MB                       </div> */}
                     </div>
                 </div>
 
-                {isOn && (  // If proxy on share metrics about the proxy
+                {isOn && (  
                 <div className="proxy-form">
                     <div>
                         <p>Active Proxy Details:</p>
@@ -148,11 +139,11 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
             </div>
             
             
-            {showHistory ? // if show history on
+            {showHistory ? 
             (<ProxyHistoryPage setShowHistory = {setShowHistory} proxyHistory = {proxyHistory}/>
             ) :
             (   <div>
-                {currentProxy ? //If you bought proxy then it shows
+                {currentProxy ?
                 (<PurchasedProxyPage proxyHistory = {proxyHistory} setShowHistory = {setShowHistory} currentProxy = {currentProxy} setcurrentProxy = {setcurrentProxy}/>
                 ) : 
                 (<AvailableProxyPage searchQuery = {searchQuery} handleSearchInput = {handleSearchInput} proxyHistory = {proxyHistory} 
@@ -221,7 +212,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
             const purchaseDate = new Date(timestamp);
             const today = new Date();
             const diffTime = Math.abs(today - purchaseDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Convert milliseconds to days
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
             return diffDays;
           };
         
@@ -256,7 +247,6 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
         );
     }
 
-    //didnt buy proxy shows list of proxies
     const AvailableProxyPage = ({searchQuery, handleSearchInput, setTransactions, setProxyHistory, setShowHistory, filteredProxies, sealTokenBalance, setSealTokenBalance, setcurrentProxy}) => {
         return (
             <div> 
@@ -279,7 +269,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                     <p>Bandwidth</p>
                 </div>
                 <div className='proxy-list'>
-                    {filteredProxies.map((proxy) => ( // Map each proxy to a ProxyItem component pass in proxy obj
+                    {filteredProxies.map((proxy) => ( 
                         <ProxyItem key={proxy.id} proxy={proxy} sealTokenBalance ={sealTokenBalance}  setSealTokenBalance = {setSealTokenBalance}
                             setcurrentProxy = {setcurrentProxy} setProxyHistory = {setProxyHistory} setTransactions={setTransactions}
                         />
@@ -290,24 +280,20 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     }
 
 
-    //   Indiviual Proxy Card
     const ProxyItem = ({ proxy, sealTokenBalance, setSealTokenBalance, setcurrentProxy, setProxyHistory, setTransactions}) => {
     
-        // Handle purchase logic
         const handlePurchase = (price) => {
         if (sealTokenBalance >= price) {
             alert(`Purchase successful! You spent ${price} SealTokens.`);
-            setSealTokenBalance((prevBalance) => prevBalance - price); // Update balance
+            setSealTokenBalance((prevBalance) => prevBalance - price);
 
-            // Create a new proxy object with a timestamp
             const historyProxy = {
                 proxy,
-                timestamp: new Date().toLocaleString(), // Add a timestamp
+                timestamp: new Date().toLocaleString(), 
             };
             setcurrentProxy(historyProxy);
             setProxyHistory((prevHistory) => [...prevHistory, historyProxy]);
 
-            //add new transaction
             setTransactions((prevTransactions) => [...prevTransactions, {
                 id: prevTransactions.length + 1,
                 type: 'Sent',
