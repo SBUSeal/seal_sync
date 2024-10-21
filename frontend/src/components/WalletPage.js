@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../stylesheets/WalletPage.css';  // Assuming this exists
+import '../stylesheets/WalletPage.css'; 
 
 const WalletPage = (props) => {
     const [receiverId, setReceiverId] = useState('');
@@ -8,28 +8,28 @@ const WalletPage = (props) => {
     const transactions = props.transactions;
     const setTransactions = props.setTransactions;
 
-    const [showModal, setShowModal] = useState(false);  // Modal visibility
-    const [pendingTransaction, setPendingTransaction] = useState(null);  // Pending transaction
+    const [showModal, setShowModal] = useState(false);  
+    const [pendingTransaction, setPendingTransaction] = useState(null);  
     const [notification, setNotification] = useState({ message: '', type: '' });
 
     const walletId = '13hgruwdGXvPyWFABDX6QBy';
 
-    // Sort transactions by date (newest first), keeping dummy transactions at the bottom
+   
     const sortedTransactions = [...transactions].sort((a, b) => {
-        if (a.id < 3 && b.id < 3) return 0; // Keep the dummy transactions at the bottom
-        return new Date(b.date) - new Date(a.date); // Sort others by date
+        if (a.id < 3 && b.id < 3) return 0;
+        return new Date(b.date) - new Date(a.date);
     });
 
-    // Display only the first 5 transactions (recent ones)
+
     const displayedTransactions = sortedTransactions.slice(0, 5);
 
-    // Function to format date
+
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
     };
 
-    // Function to handle wallet ID copy
+
     const copyToClipboard = () => {
         navigator.clipboard.writeText(walletId);
         showNotification("Wallet ID copied to clipboard!", 'success');
@@ -39,52 +39,52 @@ const WalletPage = (props) => {
         setNotification({ message, type });
         setTimeout(() => {
             setNotification({ message: '', type: '' });
-        }, 3000);  // 3 seconds
+        }, 3000);
     };
 
-    // Check if balance is sufficient and prevent negative balance
+  
     const handleTransfer = () => {
         const transferAmount = parseFloat(amount);
 
-        // Ensure input is valid
+       
         if (!receiverId || !amount || isNaN(transferAmount)) {
             showNotification("Please fill in the receiver ID and valid amount.", 'error');
             return;
         }
 
-        // Ensure balance is sufficient
+
         if (transferAmount > props.sealTokenBalance) {
             showNotification("Insufficient balance for this transaction.", 'error');
             return;
         }
 
-        // Prepare the transaction to be confirmed
+       
         const transactionToConfirm = {
             id: transactions.length + 1,
             type: 'Sent',
-            date: new Date().toISOString(),  // Save as ISO to easily parse
+            date: new Date().toISOString(),  
             to: receiverId,
             sealTokens: transferAmount,
             reason: reason || 'No reason provided',
         };
 
-        setPendingTransaction(transactionToConfirm);  // Set the pending transaction
-        setShowModal(true);  // Show the modal
+        setPendingTransaction(transactionToConfirm);  
+        setShowModal(true);
     };
 
     const confirmTransfer = () => {
         const transferAmount = pendingTransaction?.sealTokens;
 
-        // Update transactions and balance
+     
         setTransactions([...transactions, pendingTransaction]);
 
-        // Update the balance, ensuring it doesn't go negative
+      
         props.setSealTokenBalance((prevBalance) => {
             const updatedBalance = prevBalance - transferAmount;
-            return parseFloat(updatedBalance.toFixed(2));  // Round to 2 decimal places
+            return parseFloat(updatedBalance.toFixed(2)); 
         });
 
-        // Clear form fields and close modal
+ 
         setReceiverId('');
         setAmount('');
         setReason('');
