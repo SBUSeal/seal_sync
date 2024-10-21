@@ -1,34 +1,55 @@
-/* GLOBALS */
+/* GLOBAL VARIABLES FOR LIGHT MODE */
+:root {
+  --background-color: #f4f4f4; /* Light mode background color */
+  --container-bg: #f0f4f8;
+  --proxy-head-bg: #dde4e9;
+  --toggle-button-off-bg: #34495E;
+  --toggle-button-on-bg: #4CAF50;
+  --price-input-bg: #ffffff;
+  --proxy-list-bg: rgb(255, 255, 255);
+  --proxy-item-text-color: #6c757d;
+  --purchase-button-bg: #f9f9f9;
+  --purchase-button-text-color: #285a8f;
+  --purchase-button-hover-bg: #285a8f;
+  --disconnect-button-bg: #c55858;
+  --history-button-bg: #285a8f;
+  --text-color: black;
+  --button-hover-color: white;
+}
+
+/* DARK MODE OVERRIDES */
+[data-theme="dark"] {
+  --background-color: #181818;
+  --container-bg: #232323;
+  --proxy-head-bg: #333;
+  --toggle-button-off-bg: #555;
+  --toggle-button-on-bg: #4CAF50;
+  --price-input-bg: #444;
+  --proxy-list-bg: #2a2a2a;
+  --proxy-item-text-color: #dddddd;
+  --purchase-button-bg: #444;
+  --purchase-button-text-color: #dddddd;
+  --purchase-button-hover-bg: #007bff;
+  --disconnect-button-bg: #a33a3a;
+  --history-button-bg: #005577;
+  --text-color: #dddddd;
+  --button-hover-color: #ffffff;
+}
+
+/* Apply the global variables */
 body {
   background-color: var(--background-color);
   color: var(--text-color);
-}
-
-/* For buttons, inputs, etc. */
-input, button {
-  background-color: var(--input-background);
-  color: var(--text-color);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
-body {
-  background-color: var(--background-color); /* Dynamic Background Color */
-  height: 100vh; /* Full viewport height */
+  height: 100vh;
 }
 
 div.container {
   padding: 10px;
-  background-color: var(--container-background); /* Dynamic Background Color */
+  background-color: var(--container-bg);
 }
 
 .proxy-head {
-  background-color: var(--proxy-head-background);
+  background-color: var(--proxy-head-bg);
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 50px;
@@ -41,7 +62,6 @@ div.container {
   padding: 10px;
   text-align: center;
   align-items: center;
-  justify-content: center;
 }
 
 .proxy-form div {
@@ -59,30 +79,30 @@ div.container {
   transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
   border: none;
   width: 160px;
-  box-shadow: var(--button-box-shadow);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .toggle-button.off {
-  background-color: var(--toggle-off-background);
-  color: var(--toggle-off-text-color);
+  background-color: var(--toggle-button-off-bg);
+  color: var(--button-hover-color);
 }
 
 .toggle-button.on {
-  background-color: var(--toggle-on-background);
-  color: var(--toggle-on-text-color);
+  background-color: var(--toggle-button-on-bg);
+  color: white;
 }
 
 .toggle-button:hover {
   opacity: 0.9;
-  box-shadow: var(--button-hover-box-shadow);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .toggle-button:active {
   transform: translateY(0);
-  box-shadow: var(--button-active-box-shadow);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Price Input Styles */
+/* Price Input */
 .price-input::-webkit-outer-spin-button,
 .price-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -93,37 +113,19 @@ div.container {
   -moz-appearance: textfield;
 }
 
-/* Price input field */
 .price-input {
   padding: 10px 15px;
   font-size: 16px;
-  border: 2px solid var(--input-border);
+  border: 2px solid #ccc;
   border-radius: 5px;
   transition: all 0.3s ease;
   width: 150px;
-  box-shadow: var(--input-box-shadow);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: left;
   margin-top: 10px;
   color: var(--text-color);
+  background-color: var(--price-input-bg);
 }
-
-/* Editing state */
-.price-input.editing {
-  background-color: var(--input-editing-background);
-}
-
-/* Saved state */
-.price-input.saved {
-  border-color: var(--input-border);
-  background-color: var(--input-saved-background);
-}
-
-/* Disabled input */
-.price-input:disabled {
-  background-color: var(--input-disabled-background);
-  cursor: not-allowed;
-}
-
 
 /* Container of list of proxies */
 .proxy-list {
@@ -132,7 +134,7 @@ div.container {
   margin-top: 20px;
   gap: 20px;
   padding: 20px;
-  background-color: var(--proxy-list-background);
+  background-color: var(--proxy-list-bg);
   border-radius: 10px;
 }
 
@@ -141,7 +143,7 @@ div.proxy-list h1 {
   font-size: 30px;
 }
 
-/* for the Available proxy and search Bar */
+/* Search Bar and Title */
 .available-proxy-container {
   display: flex;
   align-items: center;
@@ -152,12 +154,9 @@ div.proxy-list h1 {
 .proxy-search-bar {
   position: absolute;
   left: 0;
-  width: 300px;
+  width: 250px;
   font-size: 17px;
   padding: 5px;
-  border: 1px solid var(--input-border);
-  background-color: var(--input-background);
-  color: var(--text-color);
 }
 
 .available-proxy-container h1 {
@@ -174,59 +173,30 @@ div.proxy-list h1 {
 }
 
 .categories p {
-  color: var(--primary-text-color);
-    display: flex;
-    align-items: center;
-    position: relative;
-    height: 50px;
-  }
-
-   .proxy-search-bar {
-    position: absolute;
-    left: 0;
-    width: 250px;
-    font-size: 17px;
-    padding: 5px;
-   }
-
-   .available-proxy-container h1 {
-    margin: 0 auto;
-    font-size: 30px;
-  }
-
-  .categories {
-    display: grid;
-    grid-template-columns: 1fr 0.5fr 0.6fr 0.5fr 1fr;
-    gap: 20px;
-    padding-top: 50px;
-    padding-left: 30px;
-  }
-  
-  .categories p {
-    color: #2d4a6e!important; 
+  color: #2d4a6e !important;
 }
 
-/* Per Proxy Card */
+/* Proxy Item (Details) */
 .proxy-item {
   display: grid;
-  grid-template-columns: 1fr 0.5fr 0.6fr 0.6fr 0.4fr 0fr;
+  grid-template-columns: 1fr .5fr 0.6fr 0.6fr 0.4fr 0fr;
   gap: 20px;
   padding: 15px;
-  border-bottom: 1px solid var(--input-border);
+  border-bottom: 1px solid #e0e0e0;
   text-align: start;
-  background-color: var(--proxy-item-background);
+  color: var(--proxy-item-text-color);
 }
 
 .proxy-item p {
   font-size: 16px;
-  color: var(--secondary-text-color);
+  margin: 0;
 }
 
 .proxy-price {
   font-weight: bold;
 }
 
-/* Proxy Join Button Container */
+/* Proxy Join Button */
 .proxy-join {
   display: flex;
   align-items: center;
@@ -235,9 +205,9 @@ div.proxy-list h1 {
 }
 
 .purchase-button {
-  background-color: var(--button-background-light);
-  border: 1px solid var(--input-border);
-  color: var(--button-text-color);
+  background-color: var(--purchase-button-bg);
+  border: 1px solid #ccc;
+  color: var(--purchase-button-text-color);
   font-weight: 600;
   font-size: 16px;
   padding: 12px 24px;
@@ -246,43 +216,43 @@ div.proxy-list h1 {
   transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
   text-align: center;
   width: 100px;
-  box-shadow: var(--button-box-shadow);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .purchase-button:hover {
-  background-color: var(--button-background);
-  color: white;
-  box-shadow: var(--button-hover-box-shadow);
+  background-color: var(--purchase-button-hover-bg);
+  color: var(--button-hover-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transform: translateY(-2px);
   font-weight: 700;
 }
 
 .purchase-button:active {
   transform: translateY(0);
-  box-shadow: var(--button-active-box-shadow);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Current Proxy */
 .current-proxy-details {
   display: grid;
-  grid-template-columns: 1fr 0.5fr 0.6fr 0.6fr 0.4fr 0fr;
+  grid-template-columns: 1fr .5fr 0.6fr 0.6fr 0.4fr 0fr;
   gap: 20px;
   padding: 15px;
   margin-top: 20px;
-  border-bottom: 1px solid var(--input-border);
-  background-color: var(--proxy-item-background);
+  border-bottom: 1px solid #e0e0e0;
+  background-color: var(--proxy-list-bg);
   border-radius: 10px;
 }
 
 .current-proxy-details p {
   font-size: 16px;
-  color: var(--secondary-text-color);
+  color: var(--proxy-item-text-color);
 }
 
 .disconnect-button {
-  background-color: var(--disconnect-background);
-  border: 1px solid var(--input-border);
-  color: var(--disconnect-text-color);
+  background-color: var(--disconnect-button-bg);
+  border: 1px solid #ccc;
+  color: #d6e2ee;
   font-weight: bold;
   font-size: 16px;
   padding: 10px 20px;
@@ -293,15 +263,14 @@ div.proxy-list h1 {
   text-align: center;
 }
 
-/* Hover effect */
 .disconnect-button:hover {
-  background-color: var(--disconnect-hover-background);
+  background-color: #c34646ce;
 }
 
 /* History Button */
 .history-button {
-  background-color: var(--button-background);
-  border: 1px solid var(--input-border);
+  background-color: var(--history-button-bg);
+  border: 1px solid #ccc;
   color: white;
   font-weight: bold;
   font-size: 16px;
@@ -314,58 +283,6 @@ div.proxy-list h1 {
 }
 
 .history-button:hover {
-  background-color: var(--button-hover-background);
+  background-color: #285a8fd7;
   font-weight: bold;
-}
-
-/* Light Mode Variables */
-:root {
-  --background-color: #f4f4f4;
-  --text-color: #000000;
-  --input-background: #ffffff;
-  --input-border: #cccccc;
-  --button-background: #4CAF50;
-  --button-text-color: #285a8f;
-  --button-background-light: #f9f9f9;
-  --button-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --button-hover-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  --button-active-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --proxy-head-background: #dde4e9;
-  --container-background: #f0f4f8;
-  --proxy-list-background: #ffffff;
-  --proxy-item-background: #ffffff;
-  --primary-text-color: #2d4a6e;
-  --secondary-text-color: #6c757d;
-  --input-editing-background: #eaffea;
-  --input-saved-background: #f5f5f5;
-  --input-disabled-background: #e0e0e0;
-  --disconnect-background: #c55858;
-  --disconnect-text-color: #d6e2ee;
-  --disconnect-hover-background: #c34646ce;
-}
-
-/* Dark Mode Variables */
-[data-theme="dark"] {
-  --background-color: #121212;
-  --text-color: #e0e0e0;
-  --input-background: #333333;
-  --input-border: #555555;
-  --button-background: #4CAF50;
-  --button-text-color: white;
-  --button-background-light: #4A4A4A;
-  --button-box-shadow: rgba(255, 255, 255, 0.1);
-  --button-hover-box-shadow: rgba(255, 255, 255, 0.2);
-  --button-active-box-shadow: rgba(255, 255, 255, 0.1);
-  --proxy-head-background: #2e2e2e;
-  --container-background: #1f1f1f;
-  --proxy-list-background: #1e1e1e;
-  --proxy-item-background: #1e1e1e;
-  --primary-text-color: #76c7c0;
-  --secondary-text-color: #cccccc;
-  --input-editing-background: #3b3b3b;
-  --input-saved-background: #2a2a2a;
-  --input-disabled-background: #333333;
-  --disconnect-background: #c55858;
-  --disconnect-text-color: #d6e2ee;
-  --disconnect-hover-background: #c34646ce;
 }
