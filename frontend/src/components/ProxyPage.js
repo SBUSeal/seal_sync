@@ -148,7 +148,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                 ) : 
                 (<AvailableProxyPage searchQuery = {searchQuery} handleSearchInput = {handleSearchInput} proxyHistory = {proxyHistory} 
                     setProxyHistory = {setProxyHistory} setShowHistory = {setShowHistory} filteredProxies = {filteredProxies} sealTokenBalance = {sealTokenBalance} 
-                    setSealTokenBalance = {setSealTokenBalance} setcurrentProxy = {setcurrentProxy} setTransactions={setTransactions} />
+                    setSealTokenBalance = {setSealTokenBalance} setcurrentProxy = {setcurrentProxy} setTransactions={setTransactions} proxies = {proxies}/>
                 )}
                 </div>
             )}
@@ -247,7 +247,9 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
         );
     }
 
-    const AvailableProxyPage = ({searchQuery, handleSearchInput, setTransactions, setProxyHistory, setShowHistory, filteredProxies, sealTokenBalance, setSealTokenBalance, setcurrentProxy}) => {
+    //didnt buy proxy shows list of proxies
+    const AvailableProxyPage = ({searchQuery, handleSearchInput, setTransactions, setProxyHistory, setShowHistory, 
+        filteredProxies, sealTokenBalance, setSealTokenBalance, setcurrentProxy, proxies}) => {
         return (
             <div> 
                 <div className="available-proxy-container">
@@ -258,7 +260,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                         value={searchQuery}
                         onChange={handleSearchInput}
                     />
-                    <h1>Available HTTP Proxies</h1>
+                    {proxies.length === 0 ?(<h1>No Available HTTP Proxies</h1>):(<h1>Available HTTP Proxies</h1>)}
                     <HistoryButton setShowHistory={setShowHistory}/>
                 </div>
                 <div className='categories'>
