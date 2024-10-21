@@ -1,28 +1,28 @@
 import React, { useState } from 'react';
-import '../stylesheets/TransactionsPage.css';  // Assuming this exists
+import '../stylesheets/TransactionsPage.css'; 
 
 const TransactionsPage = (props) => {
-    const [searchQuery, setSearchQuery] = useState(''); // Search query for transactions
-    const [selectedMonth, setSelectedMonth] = useState('All'); // Month filter
+    const [searchQuery, setSearchQuery] = useState(''); 
+    const [selectedMonth, setSelectedMonth] = useState('All'); 
     const transactions = props.transactions;
 
-    // Available months for filtering
+   
     const months = ['All', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    // Function to format the date as "Month day, year" (e.g., October 24, 2024)
+   
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
     };
 
-    // Filter transactions based on the search query and selected month
+   
     const filteredTransactions = transactions.filter((transaction) => {
         const transactionMonth = new Date(transaction.date).toLocaleString('default', { month: 'long' });
         const matchesMonth = selectedMonth === 'All' || transactionMonth === selectedMonth;
         const matchesSearch = (transaction.date?.toLowerCase().includes(searchQuery.toLowerCase()) || 
                               transaction.reason?.toLowerCase().includes(searchQuery.toLowerCase()));
         return matchesMonth && matchesSearch;
-    }).sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by newest on top
+    }).sort((a, b) => new Date(b.date) - new Date(a.date)); 
 
     return (
         <div className="transactions-page">

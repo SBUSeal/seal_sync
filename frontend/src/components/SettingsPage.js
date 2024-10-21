@@ -4,20 +4,20 @@ import '../stylesheets/SettingsPage.css';
 const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
 
     const [activeTab, setActiveTab] = useState('Configuration');
-    const [showLogoutModal, setShowLogoutModal] = useState(false); // Controls showing the modal
+    const [showLogoutModal, setShowLogoutModal] = useState(false); 
     const [notificationMessage, setNotificationMessage] = useState('');
     const [notificationChoice, setNotificationChoice] = useState('All new activity or messages');
     const [showPopup, setShowPopup] = useState(false);
 
-    // Apply theme based on isDarkMode prop
+  
     useEffect(() => {
         const theme = isDarkMode ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', theme);
-    }, [isDarkMode]); // The effect will run whenever isDarkMode changes
+    }, [isDarkMode]); 
 
-    // Handle theme change
+
     const handleThemeChange = () => {
-        setIsDarkMode(!isDarkMode); // Toggle the global dark mode state
+        setIsDarkMode(!isDarkMode); 
     };
 
     const containerClass = isDarkMode ? 'settings-container dark-mode' : 'settings-container';
@@ -105,7 +105,7 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
         }
     };
 
-    // Handle Notification Update
+
     const handleNotificationUpdate = () => {
         let message = '';
         if (notificationChoice === 'Nothing') {
@@ -117,18 +117,17 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
         showNotification(message, 'success');
     };
 
-    // Function to show notifications in the bottom-right corner
+   
     const showNotification = (message, type) => {
         setNotificationMessage(message);
-        setShowPopup(true); // Show the pop-up
+        setShowPopup(true); 
 
-        // Hide after 3 seconds
         setTimeout(() => {
             setShowPopup(false);
         }, 3000);
     };
 
-    // Confirm Logout Modal
+   
     const renderLogoutModal = () => (
         <div className="modal-overlay">
             <div className="modal-content">
@@ -148,17 +147,17 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
                 <button className={`nav-item ${activeTab === 'Configuration' ? 'active' : ''}`} onClick={() => setActiveTab('Configuration')}>Config</button>
                 <button className={`nav-item ${activeTab === 'Appearance' ? 'active' : ''}`} onClick={() => setActiveTab('Appearance')}>Appearance</button>
                 <button className={`nav-item ${activeTab === 'Notifications' ? 'active' : ''}`} onClick={() => setActiveTab('Notifications')}>Notifications</button>
-                {/* Log Out button in the navbar directly triggers the modal */}
+        
                 <button className="nav-item" onClick={() => setShowLogoutModal(true)}>Log Out</button>
             </div>
             <div className="content-area">
                 {renderContent()}
             </div>
 
-            {/* Render Logout Modal */}
+           
             {showLogoutModal && renderLogoutModal()}
 
-            {/* Notification Pop-up */}
+           
             {showPopup && (
                 <div className="notification-popup">
                     {notificationMessage}
