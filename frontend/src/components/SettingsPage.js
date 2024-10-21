@@ -28,7 +28,7 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
             case 'Configuration':
                 return (
                     <div className="section">
-                        <h2>Config</h2>
+                        <h2>Configuration</h2>
                         <div className="input-group">
                             <label>Save Folder</label>
                             <input type="text" placeholder="Enter new save directory" className="input-field" />
@@ -145,7 +145,7 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
         <div className={containerClass}>
         <div className="settings-container">
             <div className="side">
-                <button className={`nav-item ${activeTab === 'Configuration' ? 'active' : ''}`} onClick={() => setActiveTab('Configuration')}>Transfer</button>
+                <button className={`nav-item ${activeTab === 'Configuration' ? 'active' : ''}`} onClick={() => setActiveTab('Configuration')}>Config</button>
                 <button className={`nav-item ${activeTab === 'Appearance' ? 'active' : ''}`} onClick={() => setActiveTab('Appearance')}>Appearance</button>
                 <button className={`nav-item ${activeTab === 'Notifications' ? 'active' : ''}`} onClick={() => setActiveTab('Notifications')}>Notifications</button>
                 {/* Log Out button in the navbar directly triggers the modal */}

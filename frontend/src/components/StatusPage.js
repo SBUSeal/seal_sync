@@ -67,7 +67,7 @@ const StatusPage = ({downloadsInProgress}) => {
             <div className="stat-card">
               <h4>Uploaded Files</h4>
               <div className="counter">
-                <span>{uploadedFiles}</span>
+              <span >{uploadedFiles}</span>
               </div>
             </div>
             <div className="stat-card">

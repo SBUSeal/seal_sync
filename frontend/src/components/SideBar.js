@@ -23,7 +23,7 @@ function Sidebar(props) {
     <div className={`sidebar ${isMinimized ? 'sidebar-minimized' : ''}`}>
       <div className="logo">
         <img src={sealImage} alt="Seal Share Logo" className="sidebar-logo-image" />
-        {!isMinimized && <h2>Seal Share</h2>}
+        {!isMinimized && <h2 className='logo-text'>Seal Share</h2>}
       </div>
       <button onClick={toggleSidebar} className="minimize-btn">
         {isMinimized ? '>' : '<'}
