@@ -7,6 +7,8 @@ import proxyIcon from '../images/Proxy_Icon_White.png';
 import settingsIcon from '../images/Settings_Icon_White.png';
 import miningIcon from '../images/pickaxe-white-removebg-preview.png';
 import '../stylesheets/App.css';
+import { ArrowLeftIcon, ArrowRightIcon} from '@radix-ui/react-icons';
+
 
 
 function Sidebar(props) {
@@ -25,8 +27,8 @@ function Sidebar(props) {
         <img src={sealImage} alt="Seal Share Logo" className="sidebar-logo-image" />
         {!isMinimized && <h2>Seal Share</h2>}
       </div>
-      <button onClick={toggleSidebar} className="minimize-btn">
-        {isMinimized ? '>' : '<'}
+      <button onClick={toggleSidebar} className="minimize-btn" style={{backgroundColor: "#34495E", height: 60, borderRadius: 5, marginBottom: 40}}>
+        {isMinimized ? <ArrowLeftIcon color='white'> </ArrowLeftIcon> : <ArrowRightIcon color='white'> </ArrowRightIcon>}
       </button>
       <ul>
         <li onClick={() => setActivePage('Status')}>
