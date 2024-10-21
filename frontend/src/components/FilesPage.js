@@ -161,27 +161,6 @@ const FilesPage = (props) => {
     setIsProvidersModalOpen(true)
   }
 
-    // fetch('./')
-  //   .then((response) => response.text())
-  //   .then((fileContent) => {
-  //     const dummyFile = {
-  //       name: "dummyTestFile.txt",
-  //       size: fileContent.length, 
-  //       status: 'unlocked',
-  //       source: 'local',
-  //       price: '599',
-  //       fileObject: new Blob([fileContent], { type: "text/plain" }),
-  //       description: 'Dummy description',
-  //       isFolder: false,
-  //       type: "text/plain"
-  //     };
-  //     const updatedFiles = [...files, dummyFile];
-  //     setFiles(updatedFiles);
-  //     setFilteredFiles(updatedFiles);
-  //   setIsProvidersModalOpen(false);
-  //   setSelectedProvider(null);
-  // });
-
   function dummyDownload() {
     const dummyFile = {
       name: `Dummy File ${files.length + 1 } purchased from Files`, 
@@ -274,6 +253,7 @@ const FilesPage = (props) => {
       isFolder: false,
       type: file.type,
       downloading: file.downloading,
+      unpublishTime: file.unpublishTime,
       published: true
     }));
     const updatedFiles = [...files, ...newFiles];
@@ -495,6 +475,31 @@ const FilesPage = (props) => {
               placeholder="Enter description"
               style={{fontSize: "18px"}}
             ></textarea>
+
+
+              <div style={{marginTop: "10px"}}>
+                  <input 
+                    type="checkbox" 
+                    id="unpublishCheck" 
+                    checked={newFileDetails.timeLimited}
+                    onChange={(e) => setNewFileDetails({ ...newFileDetails, timeLimited: e.target.checked })}
+                  />
+                  <label htmlFor="unpublishCheck" style={{marginLeft: "10px"}}>Make this file accessible for a limited time</label>
+
+                  {newFileDetails.timeLimited && (
+                    <div style={{marginTop: "10px"}}>
+                      <label style={{marginRight: "10px"}}>Unpublish Time:</label>
+                      <input
+                        type="datetime-local"
+                        value={newFileDetails.unpublishTime}
+                        onChange={(e) => setNewFileDetails({ ...newFileDetails, unpublishTime: e.target.value })}
+                        style={{fontSize: "18px"}}
+                      />
+                    </div>
+                  )}
+                </div>
+
+
             <div className="modal-actions">
               <button onClick={handleModalClose}>Cancel</button>
               <button onClick={handleModalSubmit} disabled={newFileDetails.price.trim() === '' || newFileDetails.description.trim() === ''}>Submit</button>
@@ -512,6 +517,11 @@ const FilesPage = (props) => {
             <p><strong>Size:</strong> {formatFileSize(currentFile.size)}</p>
             <p><strong>Price:</strong> {currentFile.price + " STK"}</p>
             <p><strong>Description:</strong> {currentFile.description}</p>
+            {console.log(currentFile)}
+
+            {
+              currentFile.unpublishTime &&  <p><strong>Unpublish Time:</strong> {currentFile.unpublishTime}</p>
+              }
             <div className="modal-actions" style={{marginTop: "30px"}}>
               <button onClick={closeFileModal}>Close</button>
             </div>

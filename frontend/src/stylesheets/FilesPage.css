@@ -104,6 +104,39 @@ body {
   height: 100%;
 }
 
+
+.upload-btn, .download-btn {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: var(--button-background);
+  color: var(--button-text-color);
+  border-radius: 5px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.upload-btn:hover, .download-btn:hover {
+  background-color: var(--button-background-hover);
+}
+
+.upload-btn input[type="file"] {
+  display: none; 
+}
+
+/* Adjustments for icons */
+.action-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--button-background);
+}
+
+.upload-btn svg, .download-btn svg {
+  margin-right: 8px;
+  fill: var(--button-text-color);
+}
+
 .file-section {
   margin-top: 20px;
 }
@@ -234,6 +267,7 @@ body {
 }
 
 .modal-actions {
+  margin: 20px;
   display: flex;
   justify-content: center;
   gap: 20px;

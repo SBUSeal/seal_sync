@@ -165,7 +165,6 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     );
 };
 
-    // history button component
     const HistoryButton = ({ setShowHistory }) => {
         return (
             <button className="history-button" onClick={() => setShowHistory(true)}>
@@ -204,7 +203,6 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
         );
     }
 
-    // individual History item
     const ProxyHistoryItem = ({historyProxy}) => {
         return (
             <div className="proxy-item">
@@ -218,7 +216,6 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
         );
     }
 
-    // After purchasing a proxy this page shows
     const PurchasedProxyPage = ({setShowHistory, currentProxy, setcurrentProxy}) => {
         const calculateDaysPassed = (timestamp) => {
             const purchaseDate = new Date(timestamp);
