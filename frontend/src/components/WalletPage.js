@@ -173,7 +173,7 @@ const WalletPage = (props) => {
             </div>
 
             {/* Show More Button */}
-            {transactions.length > 5 && (
+            {transactions.length > 1 && (
                 <div className="show-more">
                     <button onClick={props.onShowMore} className="primary-button">
                         View All Transactions
