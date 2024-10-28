@@ -16,7 +16,7 @@ const FilesPage = (props) => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [currentFile, setCurrentFile] = useState(null); 
-  const [tempFiles, setTempFiles] = useState([]);
+  const [tempFile, setTempFile] = useState(null);
   const [newFileDetails, setNewFileDetails] = useState({ price: '', description: '' });
   const [searchQuery, setSearchQuery] = useState(''); 
   const [filteredFiles, setFilteredFiles] = useState(files); 
@@ -84,8 +84,8 @@ const FilesPage = (props) => {
     }
   }
   function handleFileUpload(event) {
-    const selectedFiles = Array.from(event.target.files);
-    setTempFiles(selectedFiles)
+    const selectedFile = Array.from(event.target.files)[0];
+    setTempFile(selectedFile)
     setIsModalOpen(true); 
   }
   
@@ -156,7 +156,22 @@ const FilesPage = (props) => {
     setIsProvidersModalOpen(false)
   }
 
-  function showProvidersModal() {
+  async function showProvidersModal() {
+    try {
+      const response = await fetch('http://localhost:8080/download/' + cid, {
+          method: 'GET',
+      });
+
+      if (response.ok) {
+          const result = await response.json();
+          console.log('Success:', result);
+      } else {
+          console.error('Download failed:', response.statusText);
+      }
+    } catch (error) {
+        console.error(error);
+    }
+
     closeDownloadModal()
     setIsProvidersModalOpen(true)
   }
@@ -231,45 +246,67 @@ const FilesPage = (props) => {
     
     }, 40000);
     
-
     
   }
 
 
+  async function uploadFile() {
+    const formData = new FormData();
+    formData.append('file', tempFile);
+    console.log("Form data: ", formData);
 
+    try {
+      const response = await fetch('http://localhost:8080/upload', {
+          method: 'POST',
+          body: formData,
+      });
+
+      if (response.ok) {
+          const result = await response.json();
+          console.log('Success:', result);
+      } else {
+          console.error('Upload failed:', response.statusText);
+      }
+    } catch (error) {
+        console.error('Error uploading file:', error);
+    }
+  }
   
 
-  function handleModalSubmit() {
+  async function handleModalSubmit() {
 
-    const newFiles = tempFiles.map(file => ({
-      name: file.name,
-      size: file.size,
+    const newFile = {
+      name: tempFile.name,
+      size: tempFile.size,
       status: 'unlocked',
       source: 'uploaded',
       description: newFileDetails.description,
       price: newFileDetails.price,
-      fileObject: file,  
+      fileObject: tempFile,  
       isFolder: false,
-      type: file.type,
-      downloading: file.downloading,
-      unpublishTime: file.unpublishTime,
+      type: tempFile.type,
+      downloading: tempFile.downloading,
+      unpublishTime: tempFile.unpublishTime,
       published: true
-    }));
-    const updatedFiles = [...files, ...newFiles];
+    };
+        
+    await uploadFile()
+
+    const updatedFiles = [...files];
+    updatedFiles.push(newFile)
     setFiles(updatedFiles);
     const filtered = updatedFiles.filter(file => {
       return (file.source === filter || filter === "All") && file.name.toLowerCase().includes(searchQuery.toLowerCase());
     });
 
     setFilteredFiles(filtered);   
-
-    setTempFiles([]); 
+    setTempFile(null); 
     setNewFileDetails({ price: '', description: '' }); 
     setIsModalOpen(false);
   }
 
   function handleModalClose() {
-    setTempFiles([]); 
+    setTempFile(null); 
     setNewFileDetails({ price: '', description: '' }); 
     setIsModalOpen(false); 
   }
@@ -339,7 +376,7 @@ const FilesPage = (props) => {
           <button className="action-btn">
             <UploadIcon /> 
             <div className='action-btn-text'>Upload</div>
-            <input type="file" multiple onChange={handleFileUpload} />
+            <input type="file" onChange={handleFileUpload} />
           </button>
         </div>
       </div>
