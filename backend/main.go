@@ -35,6 +35,9 @@ var (
 	globalCtx           context.Context
 )
 
+// maps cid -> file path, will be replaced by database
+var fileMap = make(map[string]string)
+
 func generatePrivateKeyFromSeed(seed []byte) (crypto.PrivKey, error) {
 	hash := sha256.Sum256(seed) // Generate deterministic key material
 	// Create an Ed25519 private key from the hash
@@ -266,6 +269,7 @@ func main() {
 	// go handleInput(ctx, dht)
 	// Start our http server
 	go startHttpServer(ctx, dht)
+	go startTransferServer()
 
 	// receiveDataFromPeer(node)
 	// sendDataToPeer(node, "12D3KooWKNWVMpDh5ZWpFf6757SngZfyobsTXA8WzAWqmAjgcdE6")

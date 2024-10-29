@@ -148,7 +148,7 @@ const FilesPage = (props) => {
   }
 
   function closeDownloadModal() {
-    setCid("")
+    // setCid("")
     setIsDownloadModalOpen(false)
   }
 
@@ -156,27 +156,41 @@ const FilesPage = (props) => {
     setIsProvidersModalOpen(false)
   }
 
-  async function showProvidersModal() {
-    try {
-      const response = await fetch('http://localhost:8080/download/' + cid, {
-          method: 'GET',
-      });
-
-      if (response.ok) {
-          const result = await response.json();
-          console.log('Success:', result);
-      } else {
-          console.error('Download failed:', response.statusText);
-      }
-    } catch (error) {
-        console.error(error);
-    }
-
+  function showProvidersModal() {
     closeDownloadModal()
     setIsProvidersModalOpen(true)
   }
 
-  function dummyDownload() {
+  async function getFileFromIp(ip, cid) {
+    try {
+      const res = await fetch(`http://${ip}:8081/file/${cid}`)
+      if (res.ok) {
+        const blob = await res.blob()
+        const disposition = res.headers.get("Content-Disposition");
+          console.log("Disposition: ", disposition);
+          
+          let filename = "download"; // Default filename
+          if (disposition && disposition.includes("filename=")) {
+              filename = disposition
+                  .split("filename=")[1]
+                  .replace(/"/g, ""); // Remove any quotes around filename
+          }
+        console.log("File name: ", filename);
+        
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);  
+        link.download = filename;      
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+      }
+    } catch (error) {
+      console.error("Next step failed:", error)
+    }
+  }
+
+  async function dummyDownload() {
     const dummyFile = {
       name: `Dummy File ${files.length + 1 }`, 
       size: 100,
@@ -193,6 +207,25 @@ const FilesPage = (props) => {
     if (newBalance < 0) {
       alert("Insufficient funds, cannot download file")
       return
+    }
+
+    try {
+      console.log("CID IS: ", cid)
+      const response = await fetch('http://localhost:8080/download/' + cid, {
+          method: 'GET',
+      });
+
+      if (response.ok) {
+          const ip = await response.text()
+          
+          console.log('Success, here the ip:', ip);
+          getFileFromIp(ip, cid)
+          
+      } else {
+          console.error('Download failed:', response.statusText);
+      }
+    } catch (error) {
+        console.error(error);
     }
    
     const updatedFiles = [...files, dummyFile];
@@ -213,6 +246,7 @@ const FilesPage = (props) => {
     setFilteredFiles(filtered);    
     setIsProvidersModalOpen(false)
     setSelectedProvider(null)
+    setCid("")
 
 
     props.setSealTokenBalance(props.sealTokenBalance - dummyFile.price)
@@ -262,7 +296,7 @@ const FilesPage = (props) => {
       });
 
       if (response.ok) {
-          const result = await response.json();
+          const result = await response;
           console.log('Success:', result);
       } else {
           console.error('Upload failed:', response.statusText);
