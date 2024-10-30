@@ -27,6 +27,7 @@ const FilesPage = (props) => {
   const [selectedProvider, setSelectedProvider] = useState(null)
   const [filter, setFilter] = useState("All")
   const [hasGeneratedLink, setHasGeneratedLink] = useState(false)
+  const [providers, setProviders] = useState([])
 
 
 
@@ -61,12 +62,12 @@ const FilesPage = (props) => {
   }
   
 
-  const dummyProviders = [
-    {ip: "127.0.0.1", address: "ahw8E13Np3Huh5F47IRxnpJey1rKJ7z", price: 2},
-    {ip: "10.0.0.1", address: "F5lcMyFdTjGrfHSxl5LKtZ8DVKiwgHR", price: 9},
-    {ip: "192.168.0.1", address: "2Z3ab5g4dEF4DMPGT1L9TThMv6dvpqr", price: 500},
-    {ip: "132.145.0.1", address: "lXIrppfBCwngQrpMnTyQv43THtyrrh3", price: 8},
-  ]
+  // const dummyProviders = [
+  //   {ip: "127.0.0.1", address: "ahw8E13Np3Huh5F47IRxnpJey1rKJ7z", price: 2},
+  //   {ip: "10.0.0.1", address: "F5lcMyFdTjGrfHSxl5LKtZ8DVKiwgHR", price: 9},
+  //   {ip: "192.168.0.1", address: "2Z3ab5g4dEF4DMPGT1L9TThMv6dvpqr", price: 500},
+  //   {ip: "132.145.0.1", address: "lXIrppfBCwngQrpMnTyQv43THtyrrh3", price: 8},
+  // ]
 
   const dummyCid = "baguqeerasorqs4njcts6vs7qvdjfcvgnume4hqohf65zsfguprqphs3icwea"
 
@@ -156,7 +157,28 @@ const FilesPage = (props) => {
     setIsProvidersModalOpen(false)
   }
 
-  function showProvidersModal() {
+  async function showProvidersModal() {
+    try {
+      const response = await fetch('http://localhost:8080/providers/' + cid, {
+          method: 'GET',
+      });
+
+      if (response.ok) {
+        try{
+          const providers = await response.json()
+          console.log('Success, heres the providers and prices:', providers);
+          setProviders(providers)
+
+        } catch (error) {
+          console.error(error);
+        }
+                    
+      } else {
+          console.error('Finding Providers failed:', response.statusText);
+      }
+    } catch (error) {
+        console.error(error);
+    }
     closeDownloadModal()
     setIsProvidersModalOpen(true)
   }
@@ -209,24 +231,6 @@ const FilesPage = (props) => {
       return
     }
 
-    try {
-      console.log("CID IS: ", cid)
-      const response = await fetch('http://localhost:8080/download/' + cid, {
-          method: 'GET',
-      });
-
-      if (response.ok) {
-          const ip = await response.text()
-          
-          console.log('Success, here the ip:', ip);
-          getFileFromIp(ip, cid)
-          
-      } else {
-          console.error('Download failed:', response.statusText);
-      }
-    } catch (error) {
-        console.error(error);
-    }
    
     const updatedFiles = [...files, dummyFile];
     setFiles(updatedFiles);
@@ -257,7 +261,7 @@ const FilesPage = (props) => {
       id: prevTransactions.length + 1,
       type: 'Sent',
       date: new Date().toLocaleString(),
-      to: selectedProvider.address,
+      to: "default address",
       sealTokens: dummyFile.price,
       reason: dummyFile.name + " purchased from files",
     },] )
@@ -287,6 +291,7 @@ const FilesPage = (props) => {
   async function uploadFile() {
     const formData = new FormData();
     formData.append('file', tempFile);
+    formData.append('price', newFileDetails.price)
     console.log("Form data: ", formData);
 
     try {
@@ -674,14 +679,14 @@ const FilesPage = (props) => {
               <div className="modal">
                 <div className="modal-content" style={{width: "600px"}}>
                     <h2> Found Providers </h2>
-                      {dummyProviders.map((provider, index) => (
+                      {providers.map((provider, index) => (
                         <div
                           key={index}
                           className={`provider-item ${ selectedProvider && selectedProvider.ip === provider.ip && selectedProvider.price === provider.price ? 'selected' : ''}`}
                           onClick={() => handleSelectProvider(provider)}
                         >
                           <p>IP: {provider.ip}</p>
-                          <p>Wallet Address: {provider.address}</p>
+                          <p>Wallet Address: default address </p>
                           <p>Price: {provider.price} STK </p>
                         </div>
                       ))}

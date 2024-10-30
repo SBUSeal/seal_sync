@@ -35,8 +35,13 @@ var (
 	globalCtx           context.Context
 )
 
-// maps cid -> file path, will be replaced by database
-var fileMap = make(map[string]string)
+type FileInfo struct {
+	FilePath string
+	Price    int
+}
+
+// Map from CID to FileInfo
+var cidMap = make(map[string]FileInfo)
 
 func generatePrivateKeyFromSeed(seed []byte) (crypto.PrivKey, error) {
 	hash := sha256.Sum256(seed) // Generate deterministic key material
@@ -267,8 +272,12 @@ func main() {
 	go handlePeerExchange(node)
 
 	// go handleInput(ctx, dht)
-	// Start our http server
+
+	// Start the http server to communicate between frontend and backend
 	go startHttpServer(ctx, dht)
+
+	// Start the http server that listens for connections from other users
+	// It will send the corresponding file as a response
 	go startTransferServer()
 
 	// receiveDataFromPeer(node)

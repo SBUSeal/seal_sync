@@ -4,11 +4,14 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/ipfs/go-cid"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
@@ -24,8 +27,10 @@ func enableCORS(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Expose-Headers", "Content-Disposition")
 }
 
-// Find the first private IP address in the list of multiaddresses
-func findFirstPrivateIP(multiaddrs []multiaddr.Multiaddr) (string, error) {
+// Find all private IP addresses in the list of multiaddresses
+func findAllPrivateIPs(multiaddrs []multiaddr.Multiaddr) ([]string, error) {
+	privateIPs := []string{} // Slice to store all private IPs found
+
 	for _, maddr := range multiaddrs {
 		// Extract the IP part from the multiaddress
 		addr, err := maddr.ValueForProtocol(multiaddr.P_IP4)
@@ -35,12 +40,17 @@ func findFirstPrivateIP(multiaddrs []multiaddr.Multiaddr) (string, error) {
 		}
 
 		if isPrivateIP(addr) {
-			return addr, nil // Return the first private IP found
+			privateIPs = append(privateIPs, addr) // Add the private IP to the slice
 		}
 	}
-	return "", fmt.Errorf("no private IP address found")
+
+	if len(privateIPs) == 0 {
+		return nil, fmt.Errorf("no private IP addresses found")
+	}
+	return privateIPs, nil // Return the list of private IPs
 }
 
+// Get all providers for a given cid
 func getProviderAddresses(ctx context.Context, dht *dht.IpfsDHT, cid cid.Cid) []multiaddr.Multiaddr {
 	var addresses []multiaddr.Multiaddr
 
@@ -51,42 +61,25 @@ func getProviderAddresses(ctx context.Context, dht *dht.IpfsDHT, cid cid.Cid) []
 			addresses = append(addresses, addr)
 		}
 	}
-
 	return addresses
 }
 
-// parse the form data to get the file, generate the cid, then Provide it on the dht
-func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r *http.Request) {
-	enableCORS(w, r)
-
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
+func getFileFromRequest(r *http.Request) (multipart.File, *multipart.FileHeader, error) {
 	err := r.ParseMultipartForm(50 << 20) // 50 MB limit
 	if err != nil {
-		http.Error(w, "Unable to parse form", http.StatusBadRequest)
-		return
+		return nil, nil, err
 	}
-
 	file, header, err := r.FormFile("file")
-	if err != nil {
-		http.Error(w, "Error retrieving file", http.StatusBadRequest)
-		return
-	}
-	defer file.Close()
+	return file, header, err
+}
 
-	fmt.Println("File size: ", header.Size)
-
+func saveFile(file multipart.File, header *multipart.FileHeader, w http.ResponseWriter) cid.Cid {
 	// Read the file into a buffer
 	var buf bytes.Buffer
-	_, err = io.Copy(&buf, file)
+	_, err := io.Copy(&buf, file)
 	if err != nil {
 		http.Error(w, "Error reading file", http.StatusInternalServerError)
-		return
 	}
-
 	// Create a new reader from the buffer for generating the CID
 	cid := generateCid(bytes.NewReader(buf.Bytes()))
 
@@ -94,7 +87,6 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 	outFile, err := os.Create("./uploads/" + header.Filename)
 	if err != nil {
 		http.Error(w, "Error creating file", http.StatusInternalServerError)
-		return
 	}
 	defer outFile.Close()
 
@@ -102,29 +94,47 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 	_, err = buf.WriteTo(outFile)
 	if err != nil {
 		http.Error(w, "Error saving file", http.StatusInternalServerError)
-		return
 	}
 
-	fmt.Fprintf(w, "File uploaded successfully: %s", header.Filename)
-	// add to filemap
-	fileMap[cid.String()] = "./uploads/" + header.Filename
+	return cid
+}
 
-	// Send the CID back in the response
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, `{"CID": "%s"}`, cid.String())
+// Get the provided file and price, save a copy to the ./uploads folder, and upload to DHT
+func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r *http.Request) {
+	enableCORS(w, r)
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	// Get provided price
+	price_s := r.FormValue("price")
+	price, err := strconv.Atoi(price_s)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Get provided file
+	file, header, err := getFileFromRequest(r)
+	if err != nil {
+		http.Error(w, "Error retrieving file", http.StatusBadRequest)
+	}
+	defer file.Close()
+
+	cid := saveFile(file, header, w)
+	// add to cidMap
+	fileInfo := FileInfo{FilePath: "./uploads/" + header.Filename, Price: price}
+	cidMap[cid.String()] = fileInfo
 
 	// Announce as a provider for the CID
 	err = dht.Provide(ctx, cid, true)
 	if err != nil {
 		log.Fatal(err)
 	}
+	w.WriteHeader(http.StatusOK)
 	fmt.Println("Successfully announced as provider of: ", cid)
-
 }
 
-// download a file from the DHT (not finished)
-func downloadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r *http.Request) {
+// get providers and their prices for a given cid
+func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r *http.Request) {
 	enableCORS(w, r)
 	// must be a GET request
 	if r.Method != http.MethodGet {
@@ -140,21 +150,34 @@ func downloadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, 
 	// Search for providers of this cid
 	fmt.Println("Finding providers for cid: ", cid)
 	providers := getProviderAddresses(ctx, dht, cid)
-	// For now just printing the providers to the terminal
 
-	ipAddress, err := findFirstPrivateIP(providers)
+	ipAddresses, err := findAllPrivateIPs(providers)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("ip to use: ", ipAddress)
+	// maps {ip: price}
+	var results []map[string]string
 
-	w.Header().Set("Content-Type", "text/plain")
+	for _, ip := range ipAddresses {
+		resp, err := http.Get("http://" + ip + ":8081" + "/price/" + cid.String())
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer resp.Body.Close()
 
-	// Write a response that includes the IP address
-	fmt.Fprintf(w, "%s", ipAddress)
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+		price := string(body)
+		results = append(results, map[string]string{"ip": ip, "price": price})
+	}
 
-	// request transfer server on client
-
+	// Set the response header to JSON
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(results); err != nil {
+		log.Fatal(err)
+	}
 }
 
 // Pass ctx and dht in
@@ -163,8 +186,8 @@ func startHttpServer(ctx context.Context, dht *dht.IpfsDHT) {
 	router.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
 		uploadFile(ctx, dht, w, r)
 	})
-	router.HandleFunc("/download/{cid}", func(w http.ResponseWriter, r *http.Request) {
-		downloadFile(ctx, dht, w, r)
+	router.HandleFunc("/providers/{cid}", func(w http.ResponseWriter, r *http.Request) {
+		getFileProviders(ctx, dht, w, r)
 	})
 
 	fmt.Println("Backend server is running on localhost port 8080")

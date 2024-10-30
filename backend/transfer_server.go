@@ -9,29 +9,58 @@ import (
 	"strings"
 )
 
+func sendFile(w http.ResponseWriter, r *http.Request) {
+	enableCORS(w, r)
+	// must be a GET request
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	cid := r.PathValue("cid")
+	fileInfo, exists := cidMap[cid]
+	if !exists {
+		http.Error(w, "File is not found", http.StatusNotFound)
+		return
+	}
+	// Set the correct headers to make it downloadable
+	w.Header().Set("Content-Disposition", "attachment; filename="+filepath.Base(fileInfo.FilePath))
+	w.Header().Set("Content-Type", "application/octet-stream")
+
+	// Serve the file
+	http.ServeFile(w, r, fileInfo.FilePath)
+
+}
+
+func sendFilePrice(w http.ResponseWriter, r *http.Request) {
+	enableCORS(w, r)
+	// must be a GET request
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	cid := r.PathValue("cid")
+	fileInfo, exists := cidMap[cid]
+	if !exists {
+		http.Error(w, "File is not found", http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain")
+
+	// Write plain text directly to response
+	fmt.Fprintln(w, fileInfo.Price)
+
+}
+
 func startTransferServer() {
 	transfer_router := http.NewServeMux()
 
-	transfer_router.HandleFunc("/file/{cid}", func(w http.ResponseWriter, r *http.Request) {
-		enableCORS(w, r)
-		cid := r.PathValue("cid")
-		filePath, exists := fileMap[cid]
-		if !exists {
-			http.Error(w, "File is not found", http.StatusNotFound)
-			return
-		}
-		// Set the correct headers to make it downloadable
-		w.Header().Set("Content-Disposition", "attachment; filename="+filepath.Base(filePath))
-		w.Header().Set("Content-Type", "application/octet-stream")
-
-		// Serve the file
-		http.ServeFile(w, r, filePath)
-
-	})
+	transfer_router.HandleFunc("/file/{cid}", sendFile)
+	transfer_router.HandleFunc("/price/{cid}", sendFilePrice)
 
 	privateIP, err := getPrivateIP()
 	if err != nil {
-		fmt.Println("we got an error: ", err)
+		fmt.Println("Error finding private IP for transfer server: ", err)
 		log.Fatal(err)
 	}
 	fmt.Println("Transfer server is running on IP: ", privateIP, " Port: 8081")
