@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha256"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -15,7 +14,8 @@ import (
 
 	"github.com/ipfs/go-cid"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
-	"github.com/multiformats/go-multiaddr"
+	"github.com/libp2p/go-libp2p/core/host"
+	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multihash"
 )
 
@@ -27,41 +27,13 @@ func enableCORS(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Expose-Headers", "Content-Disposition")
 }
 
-// Find all private IP addresses in the list of multiaddresses
-func findAllPrivateIPs(multiaddrs []multiaddr.Multiaddr) ([]string, error) {
-	privateIPs := []string{} // Slice to store all private IPs found
-
-	for _, maddr := range multiaddrs {
-		// Extract the IP part from the multiaddress
-		addr, err := maddr.ValueForProtocol(multiaddr.P_IP4)
-		if err != nil {
-			log.Println("Error extracting IP:", err)
-			continue
-		}
-
-		if isPrivateIP(addr) {
-			privateIPs = append(privateIPs, addr) // Add the private IP to the slice
-		}
+// Find all Peer IDs in the list of peer.AddrInfos
+func findAllPeerIDs(peerInfos []peer.AddrInfo) []string {
+	var arr []string
+	for _, peerInfo := range peerInfos {
+		arr = append(arr, peerInfo.ID.String())
 	}
-
-	if len(privateIPs) == 0 {
-		return nil, fmt.Errorf("no private IP addresses found")
-	}
-	return privateIPs, nil // Return the list of private IPs
-}
-
-// Get all providers for a given cid
-func getProviderAddresses(ctx context.Context, dht *dht.IpfsDHT, cid cid.Cid) []multiaddr.Multiaddr {
-	var addresses []multiaddr.Multiaddr
-
-	providers := dht.FindProvidersAsync(ctx, cid, 20)
-	for provider := range providers {
-		// Add all addresses for each provider to the slice
-		for _, addr := range provider.Addrs {
-			addresses = append(addresses, addr)
-		}
-	}
-	return addresses
+	return arr
 }
 
 func getFileFromRequest(r *http.Request) (multipart.File, *multipart.FileHeader, error) {
@@ -108,7 +80,7 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 	}
 	// Get provided price
 	price_s := r.FormValue("price")
-	price, err := strconv.Atoi(price_s)
+	price, err := strconv.ParseFloat(price_s, 64)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -130,11 +102,13 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 		log.Fatal(err)
 	}
 	w.WriteHeader(http.StatusOK)
+
+	fmt.Fprintf(w, "%s", cid)
 	fmt.Println("Successfully announced as provider of: ", cid)
 }
 
 // get providers and their prices for a given cid
-func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r *http.Request) {
+func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w http.ResponseWriter, r *http.Request) {
 	enableCORS(w, r)
 	// must be a GET request
 	if r.Method != http.MethodGet {
@@ -148,46 +122,55 @@ func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWrit
 	}
 
 	// Search for providers of this cid
-	fmt.Println("Finding providers for cid: ", cid)
-	providers := getProviderAddresses(ctx, dht, cid)
-
-	ipAddresses, err := findAllPrivateIPs(providers)
+	providers, err := dht.FindProviders(ctx, cid)
 	if err != nil {
 		log.Fatal(err)
 	}
-	// maps {ip: price}
-	var results []map[string]string
+	fmt.Println("Found providers: ", providers)
 
-	for _, ip := range ipAddresses {
-		resp, err := http.Get("http://" + ip + ":8081" + "/price/" + cid.String())
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer resp.Body.Close()
-
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			log.Fatal(err)
-		}
-		price := string(body)
-		results = append(results, map[string]string{"ip": ip, "price": price})
-	}
-
-	// Set the response header to JSON
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(results); err != nil {
+	peerIDs := findAllPeerIDs(providers)
+	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("Peer Ids found: ", peerIDs)
+
+	for _, peerID := range peerIDs {
+		sendPriceDataToPeer(node, peerID)
+	}
+
+	// maps {ip: price}
+	// var results []map[string]string
+
+	// for _, ip := range ipAddresses {
+	// 	resp, err := http.Get("http://" + ip + ":8081" + "/price/" + cid.String())
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// 	defer resp.Body.Close()
+
+	// 	body, err := io.ReadAll(resp.Body)
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// 	price := string(body)
+	// 	results = append(results, map[string]string{"ip": ip, "price": price})
+	// }
+
+	// // Set the response header to JSON
+	// w.Header().Set("Content-Type", "application/json")
+	// if err := json.NewEncoder(w).Encode(results); err != nil {
+	// 	log.Fatal(err)
+	// }
 }
 
 // Pass ctx and dht in
-func startHttpServer(ctx context.Context, dht *dht.IpfsDHT) {
+func startHttpServer(ctx context.Context, dht *dht.IpfsDHT, node host.Host) {
 	router := http.NewServeMux()
 	router.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
 		uploadFile(ctx, dht, w, r)
 	})
 	router.HandleFunc("/providers/{cid}", func(w http.ResponseWriter, r *http.Request) {
-		getFileProviders(ctx, dht, w, r)
+		getFileProviders(ctx, dht, node, w, r)
 	})
 
 	fmt.Println("Backend server is running on localhost port 8080")

@@ -29,18 +29,19 @@ import (
 )
 
 var (
-	node_id             = "SBU_Id" // give your SBU ID
+	node_id             = "114418346" // give your SBU ID
 	relay_node_addr     = "/ip4/130.245.173.221/tcp/4001/p2p/12D3KooWDpJ7As7BWAwRMfu1VU2WCqNjvq387JEYKDBj4kx6nXTN"
 	bootstrap_node_addr = "/ip4/130.245.173.222/tcp/61000/p2p/12D3KooWQd1K1k8XA9xVEzSAu7HUCodC7LJB6uW5Kw4VwkRdstPE"
 	globalCtx           context.Context
 )
 
+// Type for storing information about files
 type FileInfo struct {
 	FilePath string
-	Price    int
+	Price    float64
 }
 
-// Map from CID to FileInfo
+// Map from cid to FileInfo
 var cidMap = make(map[string]FileInfo)
 
 func generatePrivateKeyFromSeed(seed []byte) (crypto.PrivKey, error) {
@@ -169,6 +170,7 @@ func connectToPeerUsingRelay(node host.Host, targetPeerID string) {
 }
 
 func receiveDataFromPeer(node host.Host) {
+	fmt.Println("Receive called")
 	// Set a stream handler to listen for incoming streams on the "/senddata/p2p" protocol
 	node.SetStreamHandler("/senddata/p2p", func(s network.Stream) {
 		defer s.Close()
@@ -189,7 +191,29 @@ func receiveDataFromPeer(node host.Host) {
 	})
 }
 
+func receivePriceDataFromPeer(node host.Host) {
+	fmt.Println("RECEIVE PROTOCOL INVOKED")
+	node.SetStreamHandler("/sealsync/price", func(s network.Stream) {
+		defer s.Close()
+		// Create a buffered reader to read data from the stream
+		buf := bufio.NewReader(s)
+		// Read data from the stream
+		data, err := buf.ReadBytes('\n') // Reads until a newline character
+		if err != nil {
+			if err == io.EOF {
+				log.Printf("Stream closed by peer: %s", s.Conn().RemotePeer())
+			} else {
+				log.Printf("Error reading from stream: %v", err)
+			}
+			return
+		}
+		// Print the received data
+		log.Printf("RECEIVED PRICE DATA: %s", data)
+	})
+}
+
 func sendDataToPeer(node host.Host, targetpeerid string) {
+	fmt.Println("Send called")
 	var ctx = context.Background()
 	targetPeerID := strings.TrimSpace(targetpeerid)
 	relayAddr, err := multiaddr.NewMultiaddr(relay_node_addr)
@@ -207,6 +231,37 @@ func sendDataToPeer(node host.Host, targetpeerid string) {
 		return
 	}
 	s, err := node.NewStream(network.WithAllowLimitedConn(ctx, "/senddata/p2p"), peerinfo.ID, "/senddata/p2p")
+	if err != nil {
+		log.Printf("Failed to open stream to %s: %s", peerinfo.ID, err)
+		return
+	}
+	defer s.Close()
+	_, err = s.Write([]byte("sending hello to peer\n"))
+	if err != nil {
+		log.Fatalf("Failed to write to stream: %s", err)
+	}
+
+}
+
+func sendPriceDataToPeer(node host.Host, targetpeerid string) {
+	fmt.Println("SEND PRICE DATA INVOKED")
+	var ctx = context.Background()
+	targetPeerID := strings.TrimSpace(targetpeerid)
+	relayAddr, err := multiaddr.NewMultiaddr(relay_node_addr)
+	if err != nil {
+		log.Printf("Failed to create relay multiaddr: %v", err)
+	}
+	peerMultiaddr := relayAddr.Encapsulate(multiaddr.StringCast("/p2p-circuit/p2p/" + targetPeerID))
+
+	peerinfo, err := peer.AddrInfoFromP2pAddr(peerMultiaddr)
+	if err != nil {
+		log.Fatalf("Failed to parse peer address: %s", err)
+	}
+	if err := node.Connect(ctx, *peerinfo); err != nil {
+		log.Printf("Failed to connect to peer %s via relay: %v", peerinfo.ID, err)
+		return
+	}
+	s, err := node.NewStream(network.WithAllowLimitedConn(ctx, "/sealsync/price"), peerinfo.ID, "/sealsync/price")
 	if err != nil {
 		log.Printf("Failed to open stream to %s: %s", peerinfo.ID, err)
 		return
@@ -269,12 +324,12 @@ func main() {
 	makeReservation(node)                // make reservation on realy node
 	go refreshReservation(node, 10*time.Minute)
 	connectToPeer(node, bootstrap_node_addr) // connect to bootstrap node
-	go handlePeerExchange(node)
+	// go handlePeerExchange(node)
 
 	// go handleInput(ctx, dht)
 
 	// Start the http server to communicate between frontend and backend
-	go startHttpServer(ctx, dht)
+	go startHttpServer(ctx, dht, node)
 
 	// Start the http server that listens for connections from other users
 	// It will send the corresponding file as a response
@@ -283,6 +338,7 @@ func main() {
 	// receiveDataFromPeer(node)
 	// sendDataToPeer(node, "12D3KooWKNWVMpDh5ZWpFf6757SngZfyobsTXA8WzAWqmAjgcdE6")
 
+	receivePriceDataFromPeer(node)
 	defer node.Close()
 
 	select {}
@@ -418,3 +474,13 @@ func refreshReservation(node host.Host, interval time.Duration) {
 		}
 	}
 }
+
+// upload file -> gen cid -> set price -> provide to DHT ->
+// download file -> search by cid
+//   -> list of providers -> ask each provider for their price
+//   -> [[provider, price], [provider, price]]...
+//   -> Select provider
+//	 --> Ask provider to send file to us
+
+// need server to communicate with backend
+//

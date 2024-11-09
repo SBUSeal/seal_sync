@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"mime"
 	"net"
 	"net/http"
 	"path/filepath"
@@ -22,9 +23,11 @@ func sendFile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "File is not found", http.StatusNotFound)
 		return
 	}
+	extension := filepath.Ext(fileInfo.FilePath)
+	mimeType := mime.TypeByExtension(extension)
 	// Set the correct headers to make it downloadable
 	w.Header().Set("Content-Disposition", "attachment; filename="+filepath.Base(fileInfo.FilePath))
-	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Header().Set("Content-Type", mimeType)
 
 	// Serve the file
 	http.ServeFile(w, r, fileInfo.FilePath)
