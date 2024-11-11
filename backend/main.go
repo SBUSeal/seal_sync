@@ -335,7 +335,7 @@ func handleFileRequests(node host.Host) {
 			fmt.Println("Failure to copy the file to the stream")
 		}
 
-		fmt.Fprintln(os.Stdout, "Successfully sent file, %d bytes were sent", bytes)
+		fmt.Fprintf(os.Stdout, "Successfully sent file, %d bytes were sent", bytes)
 
 	})
 }
@@ -374,11 +374,11 @@ func requestFile(node host.Host, targetpeerid string, cid string) {
 		fmt.Println("Error creating the file: ", err)
 	}
 	//Copy file contents to the new file
-	bytes, err := io.Copy(s, newFile)
+	bytes, err := io.Copy(newFile, s)
 	if err != nil {
 		fmt.Println("Error copying from stream to new file: ", err)
 	}
-	fmt.Fprintln(os.Stdout, "Successfully copied %d bytes from the stream", bytes)
+	fmt.Fprintf(os.Stdout, "Successfully copied %d bytes from the stream", bytes)
 
 }
 

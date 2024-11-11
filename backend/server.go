@@ -171,6 +171,7 @@ func startHttpServer(ctx context.Context, dht *dht.IpfsDHT, node host.Host) {
 	})
 
 	router.HandleFunc("/download/{cid}/{targetpeerid}", func(w http.ResponseWriter, r *http.Request) {
+		enableCORS(w, r)
 		targetPeerID := r.PathValue("targetpeerid")
 		cid := r.PathValue("cid")
 		requestFile(node, targetPeerID, cid)
