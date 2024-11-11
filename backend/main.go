@@ -316,6 +316,7 @@ func handleFileRequests(node host.Host) {
 		}
 		log.Printf("File Transfer Cid Received: %s, now sending file...", cid)
 		//Send file name (with extension) first
+		cid = strings.TrimSuffix(cid, "\n")
 		fileInfo, exists := cidMap[cid]
 		if !exists {
 			fmt.Println("File didnt exist in map error")
@@ -347,6 +348,7 @@ func requestFile(node host.Host, targetpeerid string, cid string) {
 		log.Printf("Failed to open stream to %s: %s", peer.ID(targetpeerid), err)
 	}
 	defer s.Close()
+	//Write the cid
 	_, err = s.Write([]byte(cid + "\n"))
 	if err != nil {
 		log.Fatalf("Failed to write to stream: %s", err)
@@ -358,9 +360,16 @@ func requestFile(node host.Host, targetpeerid string, cid string) {
 	if err != nil {
 		fmt.Println("Error reading the file name")
 	}
+	filename = strings.TrimSuffix(filename, "\n")
 	fmt.Println("Received Filename: ", filename)
+
+	// Create the downloads directory if it doesn't exist
+	err = os.MkdirAll("downloads", os.ModePerm)
+	if err != nil {
+		fmt.Errorf("failed to create directory: %v", err)
+	}
 	//Create new file
-	newFile, err := os.Create(filename)
+	newFile, err := os.Create(filepath.Join("downloads", filename))
 	if err != nil {
 		fmt.Println("Error creating the file: ", err)
 	}

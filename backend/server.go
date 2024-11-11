@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/json"
@@ -11,6 +10,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/ipfs/go-cid"
@@ -26,6 +26,7 @@ func enableCORS(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Access-Control-Expose-Headers", "Content-Disposition")
+
 }
 
 // Find all Peer IDs in the list of peer.AddrInfos
@@ -47,27 +48,34 @@ func getFileFromRequest(r *http.Request) (multipart.File, *multipart.FileHeader,
 }
 
 func saveFile(file multipart.File, header *multipart.FileHeader, w http.ResponseWriter) cid.Cid {
-	// Read the file into a buffer
-	var buf bytes.Buffer
-	_, err := io.Copy(&buf, file)
-	if err != nil {
-		http.Error(w, "Error reading file", http.StatusInternalServerError)
-	}
-	// Create a new reader from the buffer for generating the CID
-	cid := generateCid(bytes.NewReader(buf.Bytes()))
+	// Create cid for the file
+	cid := generateCid(file)
 
-	// Create the file on disk
-	outFile, err := os.Create("./uploads/" + header.Filename)
+	// Reset file pointer
+	_, err := file.Seek(0, io.SeekStart)
+	if err != nil {
+		log.Fatalf("Failed to reset file pointer: %v", err)
+	}
+
+	// Create the uploads directory if it doesn't exist
+	err = os.MkdirAll("uploads", os.ModePerm)
+	if err != nil {
+		fmt.Errorf("failed to create directory: %v", err)
+	}
+
+	// Create copy of file in /uploads
+	uploadedFile, err := os.Create(filepath.Join("uploads", header.Filename))
 	if err != nil {
 		http.Error(w, "Error creating file", http.StatusInternalServerError)
 	}
-	defer outFile.Close()
+	defer uploadedFile.Close()
 
-	// Write the buffer to the file on disk
-	_, err = buf.WriteTo(outFile)
+	// Copy the contents of the multipart.File to the new file
+	bytes, err := io.Copy(uploadedFile, file)
 	if err != nil {
-		http.Error(w, "Error saving file", http.StatusInternalServerError)
+		fmt.Errorf("failed to copy file: %v", err)
 	}
+	fmt.Println("Successfully copied", bytes, " bytes of the multipart file")
 
 	return cid
 }
@@ -94,7 +102,7 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 
 	cid := saveFile(file, header, w)
 	// add to cidMap
-	fileInfo := FileInfo{FilePath: "./uploads/" + header.Filename, Price: price}
+	fileInfo := FileInfo{FilePath: filepath.Join("uploads", header.Filename), Price: price}
 	cidMap[cid.String()] = fileInfo
 
 	// Announce as a provider for the CID
@@ -193,5 +201,6 @@ func generateCid(file io.Reader) cid.Cid {
 	// Create the CID
 	c := cid.NewCidV1(cid.Raw, mh)
 	fmt.Println("Generated CID:", c)
+
 	return c
 }
