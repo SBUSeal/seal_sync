@@ -92,36 +92,19 @@ const FilesPage = (props) => {
     setIsProvidersModalOpen(true)
   }
 
-  async function getFileFromIp(ip, cid) {
-    try {      
-      const res = await fetch(`http://${ip}:8081/file/${cid}`)
-      if (res.ok) {
-        const blob = await res.blob()
-        const disposition = res.headers.get("Content-Disposition");          
-        let filename = "download"; // Default filename
-        if (disposition && disposition.includes("filename=")) {
-            filename = disposition.split("filename=")[1].replace(/"/g, ""); 
-        }        
-        const contentLength = res.headers.get('Content-Length');
-        if (!contentLength) {
-          console.log('Content-Length header is not available');
-        } 
-        return [blob, filename, contentLength]
-      }
-    } catch (error) {
-      console.error("Getting file from IP failed:", error)
-    }
-  }
 
   async function downloadFile() {
     try {
-      let [blob, fileName, fileSize] = await getFileFromIp(selectedProvider.ip, cid)      
+      // let [blob, fileName, fileSize] = await fetch('http://localhost:8080/download/')
+      const response = await fetch(`http://localhost:8080/download/${cid}/${selectedProvider.peer_id}`, {
+        method: 'GET',
+      });      
       const downloadedFile = {
-        name: fileName, 
-        size: fileSize,
+        name: null, 
+        size: null,
         status: 'unlocked',
         source: 'downloaded',
-        fileObject: blob,
+        fileObject: null,
         price: selectedProvider.price, 
         description: 'Downloaded from seal network', 
         isFolder: false,
@@ -183,6 +166,7 @@ const FilesPage = (props) => {
       }, 2000);
   
     } catch (error) {
+      console.log("Error downloading")
       console.error(error)
     }
   }

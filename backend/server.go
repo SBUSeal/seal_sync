@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha256"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -103,11 +104,11 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 	}
 	w.WriteHeader(http.StatusOK)
 
-	fmt.Fprintf(w, "%s", cid)
 	fmt.Println("Successfully announced as provider of: ", cid)
+
 }
 
-// get providers and their prices for a given cid
+// get provider information for a given cid
 func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w http.ResponseWriter, r *http.Request) {
 	enableCORS(w, r)
 	// must be a GET request
@@ -134,33 +135,21 @@ func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w h
 	}
 	fmt.Println("Peer Ids found: ", peerIDs)
 
+	// maps {Peer_id: FileProviderInfo}
+	var results []FileProviderInfo
 	for _, peerID := range peerIDs {
-		sendPriceDataToPeer(node, peerID)
+		info := requestProviderInfo(node, peerID, cid)
+		results = append(results, info)
 	}
+	fmt.Println("Got list of results: ", results)
 
-	// maps {ip: price}
-	// var results []map[string]string
+	w.Header().Set("Content-Type", "application/json")
+	jsonData, err := json.Marshal(results)
+	if err != nil {
+		log.Fatal("marshalling error", err)
+	}
+	w.Write(jsonData)
 
-	// for _, ip := range ipAddresses {
-	// 	resp, err := http.Get("http://" + ip + ":8081" + "/price/" + cid.String())
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
-	// 	defer resp.Body.Close()
-
-	// 	body, err := io.ReadAll(resp.Body)
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
-	// 	price := string(body)
-	// 	results = append(results, map[string]string{"ip": ip, "price": price})
-	// }
-
-	// // Set the response header to JSON
-	// w.Header().Set("Content-Type", "application/json")
-	// if err := json.NewEncoder(w).Encode(results); err != nil {
-	// 	log.Fatal(err)
-	// }
 }
 
 // Pass ctx and dht in
@@ -171,6 +160,12 @@ func startHttpServer(ctx context.Context, dht *dht.IpfsDHT, node host.Host) {
 	})
 	router.HandleFunc("/providers/{cid}", func(w http.ResponseWriter, r *http.Request) {
 		getFileProviders(ctx, dht, node, w, r)
+	})
+
+	router.HandleFunc("/download/{cid}/{targetpeerid}", func(w http.ResponseWriter, r *http.Request) {
+		targetPeerID := r.PathValue("targetpeerid")
+		cid := r.PathValue("cid")
+		requestFile(node, targetPeerID, cid)
 	})
 
 	fmt.Println("Backend server is running on localhost port 8080")

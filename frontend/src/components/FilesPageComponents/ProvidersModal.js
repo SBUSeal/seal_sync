@@ -6,6 +6,9 @@ const ProvidersModal = ({providers, setProviders, selectedProvider, setSelectedP
         setIsProvidersModalOpen(false)
         setProviders([])
     }
+
+    console.log("Providers: ", providers);
+    
     
     return (
     <div className="modal">
@@ -14,10 +17,10 @@ const ProvidersModal = ({providers, setProviders, selectedProvider, setSelectedP
             {providers.map((provider, index) => (
             <div
                 key={index}
-                className={`provider-item ${ selectedProvider && selectedProvider.ip === provider.ip && selectedProvider.price === provider.price ? 'selected' : ''}`}
+                className={`provider-item ${ selectedProvider && selectedProvider.peer_id === provider.peer_id && selectedProvider.price === provider.price ? 'selected' : ''}`}
                 onClick={() => setSelectedProvider(provider)}
             >
-                <p>IP: {provider.ip}</p>
+                <p>Peer ID: {provider.peer_id}</p>
                 <p>Price: {provider.price} STK </p>
             </div>
             ))}

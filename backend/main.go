@@ -9,7 +9,10 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -39,6 +42,18 @@ var (
 type FileInfo struct {
 	FilePath string
 	Price    float64
+}
+
+type LocationInfo struct {
+	IP      string `json:"ip"`
+	Country string `json:"country"`
+	Region  string `json:"region"`
+}
+
+type FileProviderInfo struct {
+	Peer_id  string       `json:"peer_id"`
+	Price    string       `json:"price"`
+	Location LocationInfo `json:"location"`
 }
 
 // Map from cid to FileInfo
@@ -145,7 +160,7 @@ func connectToPeer(node host.Host, peerAddr string) {
 	fmt.Println("Connected to:", info.ID)
 }
 
-func connectToPeerUsingRelay(node host.Host, targetPeerID string) {
+func connectToPeerUsingRelay(node host.Host, targetPeerID string) *peer.AddrInfo {
 	ctx := globalCtx
 	targetPeerID = strings.TrimSpace(targetPeerID)
 	relayAddr, err := multiaddr.NewMultiaddr(relay_node_addr)
@@ -153,24 +168,21 @@ func connectToPeerUsingRelay(node host.Host, targetPeerID string) {
 		log.Printf("Failed to create relay multiaddr: %v", err)
 	}
 	peerMultiaddr := relayAddr.Encapsulate(multiaddr.StringCast("/p2p-circuit/p2p/" + targetPeerID))
-
 	relayedAddrInfo, err := peer.AddrInfoFromP2pAddr(peerMultiaddr)
 	if err != nil {
 		log.Println("Failed to get relayed AddrInfo: %w", err)
-		return
 	}
 	// Connect to the peer through the relay
 	err = node.Connect(ctx, *relayedAddrInfo)
 	if err != nil {
 		log.Println("Failed to connect to peer through relay: %w", err)
-		return
 	}
 
 	fmt.Printf("Connected to peer via relay: %s\n", targetPeerID)
+	return relayedAddrInfo
 }
 
 func receiveDataFromPeer(node host.Host) {
-	fmt.Println("Receive called")
 	// Set a stream handler to listen for incoming streams on the "/senddata/p2p" protocol
 	node.SetStreamHandler("/senddata/p2p", func(s network.Stream) {
 		defer s.Close()
@@ -191,29 +203,7 @@ func receiveDataFromPeer(node host.Host) {
 	})
 }
 
-func receivePriceDataFromPeer(node host.Host) {
-	fmt.Println("RECEIVE PROTOCOL INVOKED")
-	node.SetStreamHandler("/sealsync/price", func(s network.Stream) {
-		defer s.Close()
-		// Create a buffered reader to read data from the stream
-		buf := bufio.NewReader(s)
-		// Read data from the stream
-		data, err := buf.ReadBytes('\n') // Reads until a newline character
-		if err != nil {
-			if err == io.EOF {
-				log.Printf("Stream closed by peer: %s", s.Conn().RemotePeer())
-			} else {
-				log.Printf("Error reading from stream: %v", err)
-			}
-			return
-		}
-		// Print the received data
-		log.Printf("RECEIVED PRICE DATA: %s", data)
-	})
-}
-
 func sendDataToPeer(node host.Host, targetpeerid string) {
-	fmt.Println("Send called")
 	var ctx = context.Background()
 	targetPeerID := strings.TrimSpace(targetpeerid)
 	relayAddr, err := multiaddr.NewMultiaddr(relay_node_addr)
@@ -243,34 +233,143 @@ func sendDataToPeer(node host.Host, targetpeerid string) {
 
 }
 
-func sendPriceDataToPeer(node host.Host, targetpeerid string) {
-	fmt.Println("SEND PRICE DATA INVOKED")
-	var ctx = context.Background()
-	targetPeerID := strings.TrimSpace(targetpeerid)
-	relayAddr, err := multiaddr.NewMultiaddr(relay_node_addr)
-	if err != nil {
-		log.Printf("Failed to create relay multiaddr: %v", err)
-	}
-	peerMultiaddr := relayAddr.Encapsulate(multiaddr.StringCast("/p2p-circuit/p2p/" + targetPeerID))
+func handleProviderInfoRequests(node host.Host) {
+	node.SetStreamHandler("/sealsync/providerinfo", func(s network.Stream) {
+		defer s.Close()
+		// Create a buffered reader to read data from the stream
+		buf := bufio.NewReader(s)
+		// Read data from the stream
+		cid, err := buf.ReadString('\n') // Reads until a newline character
+		if err != nil {
+			if err == io.EOF {
+				log.Printf("Stream closed by peer: %s", s.Conn().RemotePeer())
+			} else {
+				log.Printf("Error reading from stream: %v", err)
+			}
+			return
+		}
+		log.Printf("Requested CID: %s", cid)
+		cid = strings.TrimSuffix(cid, "\n")
+		// Create FileProviderInfo to be sent back
+		price := strconv.FormatFloat(cidMap[cid].Price, 'f', -1, 64)
+		geoLocation := getGeolocation()
+		providerInfo := FileProviderInfo{
+			Peer_id:  node.ID().String(),
+			Price:    price,
+			Location: geoLocation,
+		}
 
-	peerinfo, err := peer.AddrInfoFromP2pAddr(peerMultiaddr)
-	if err != nil {
-		log.Fatalf("Failed to parse peer address: %s", err)
-	}
-	if err := node.Connect(ctx, *peerinfo); err != nil {
-		log.Printf("Failed to connect to peer %s via relay: %v", peerinfo.ID, err)
-		return
-	}
-	s, err := node.NewStream(network.WithAllowLimitedConn(ctx, "/sealsync/price"), peerinfo.ID, "/sealsync/price")
+		// Write to the stream
+		jsonData, err := json.Marshal(providerInfo)
+		if err != nil {
+			log.Fatal(err)
+		}
+		_, err = s.Write(append(jsonData, '\n'))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+	})
+}
+
+//Connects to peer through relay, sends cid then waits for response containing the price
+
+func requestProviderInfo(node host.Host, targetpeerid string, cid cid.Cid) FileProviderInfo {
+
+	peerinfo := connectToPeerUsingRelay(node, targetpeerid)
+	s, err := node.NewStream(network.WithAllowLimitedConn(globalCtx, "/sealsync/providerinfo"), peerinfo.ID, "/sealsync/providerinfo")
 	if err != nil {
 		log.Printf("Failed to open stream to %s: %s", peerinfo.ID, err)
-		return
 	}
 	defer s.Close()
-	_, err = s.Write([]byte("sending hello to peer\n"))
+	_, err = s.Write([]byte(cid.String() + "\n"))
 	if err != nil {
 		log.Fatalf("Failed to write to stream: %s", err)
 	}
+	// Read the price from the peer
+	var info FileProviderInfo
+	reader := bufio.NewReader(s)
+	providerInfoData, err := reader.ReadString('\n')
+	if err != nil {
+		log.Fatalf("Failed to read provider info: %s", err)
+	}
+	err = json.Unmarshal([]byte(providerInfoData), &info)
+	if err != nil {
+		log.Fatalf("Failed to unmarshal file provider info: %s", err)
+	}
+	return info
+}
+
+func handleFileRequests(node host.Host) {
+	node.SetStreamHandler("/sealsync/file-transfer", func(s network.Stream) {
+		defer s.Close()
+		buf := bufio.NewReader(s)
+		// Read cid from the stream
+		cid, err := buf.ReadString('\n')
+		if err != nil {
+			if err == io.EOF {
+				log.Printf("Stream closed by peer: %s", s.Conn().RemotePeer())
+			} else {
+				log.Printf("Error reading from stream: %v", err)
+			}
+			return
+		}
+		log.Printf("File Transfer Cid Received: %s, now sending file...", cid)
+		//Send file name (with extension) first
+		fileInfo, exists := cidMap[cid]
+		if !exists {
+			fmt.Println("File didnt exist in map error")
+			return
+		}
+		s.Write([]byte(filepath.Base(fileInfo.FilePath + "\n")))
+
+		//Open the file
+		file, err := os.Open(fileInfo.FilePath)
+		if err != nil {
+			fmt.Println("Failure to open the file")
+		}
+
+		bytes, err := io.Copy(s, file)
+		if err != nil {
+			fmt.Println("Failure to copy the file to the stream")
+		}
+
+		fmt.Fprintln(os.Stdout, "Successfully sent file, %d bytes were sent", bytes)
+
+	})
+}
+
+// Connect to peer through relay, (get price), send cid then wait for response containing the file
+func requestFile(node host.Host, targetpeerid string, cid string) {
+	peerinfo := connectToPeerUsingRelay(node, targetpeerid)
+	s, err := node.NewStream(network.WithAllowLimitedConn(globalCtx, "/sealsync/file-transfer"), peerinfo.ID, "/sealsync/file-transfer")
+	if err != nil {
+		log.Printf("Failed to open stream to %s: %s", peer.ID(targetpeerid), err)
+	}
+	defer s.Close()
+	_, err = s.Write([]byte(cid + "\n"))
+	if err != nil {
+		log.Fatalf("Failed to write to stream: %s", err)
+	}
+	reader := bufio.NewReader(s)
+
+	//Read filename
+	filename, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Println("Error reading the file name")
+	}
+	fmt.Println("Received Filename: ", filename)
+	//Create new file
+	newFile, err := os.Create(filename)
+	if err != nil {
+		fmt.Println("Error creating the file: ", err)
+	}
+	//Copy file contents to the new file
+	bytes, err := io.Copy(s, newFile)
+	if err != nil {
+		fmt.Println("Error copying from stream to new file: ", err)
+	}
+	fmt.Fprintln(os.Stdout, "Successfully copied %d bytes from the stream", bytes)
 
 }
 
@@ -338,7 +437,8 @@ func main() {
 	// receiveDataFromPeer(node)
 	// sendDataToPeer(node, "12D3KooWKNWVMpDh5ZWpFf6757SngZfyobsTXA8WzAWqmAjgcdE6")
 
-	receivePriceDataFromPeer(node)
+	handleProviderInfoRequests(node)
+	handleFileRequests(node)
 	defer node.Close()
 
 	select {}
@@ -475,12 +575,41 @@ func refreshReservation(node host.Host, interval time.Duration) {
 	}
 }
 
-// upload file -> gen cid -> set price -> provide to DHT ->
-// download file -> search by cid
-//   -> list of providers -> ask each provider for their price
-//   -> [[provider, price], [provider, price]]...
-//   -> Select provider
-//	 --> Ask provider to send file to us
+func getGeolocation() LocationInfo {
+	// Get the public IP address
+	resp, err := http.Get("https://api.ipify.org?format=text")
+	if err != nil {
+		fmt.Println("Error getting public IP:", err)
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
 
-// need server to communicate with backend
-//
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Error reading response:", err)
+		log.Fatal(err)
+	}
+	publicIP := string(body)
+	fmt.Println("Found Node Public IP:", publicIP)
+
+	// Get location info from public IP
+	geoResp, err := http.Get(fmt.Sprintf("https://ipinfo.io/%s/json", publicIP))
+	if err != nil {
+		fmt.Println("Error getting location:", err)
+		log.Fatal(err)
+	}
+	defer geoResp.Body.Close()
+
+	geoBody, err := io.ReadAll(geoResp.Body)
+	if err != nil {
+		fmt.Println("Error reading location response:", err)
+		log.Fatal(err)
+	}
+
+	var location LocationInfo
+	if err := json.Unmarshal(geoBody, &location); err != nil {
+		fmt.Println("Error parsing location JSON:", err)
+		log.Fatal(err)
+	}
+	return location
+}
