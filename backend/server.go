@@ -20,6 +20,11 @@ import (
 	"github.com/multiformats/go-multihash"
 )
 
+type FileMetadata struct {
+	Name string `json:"name"`
+	Size int64  `json:"size"`
+}
+
 // Handle CORS issues
 func enableCORS(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -161,6 +166,29 @@ func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w h
 		log.Fatal("marshalling error", err)
 	}
 	w.Write(jsonData)
+
+}
+
+func downloadFile(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w http.ResponseWriter, r *http.Request) {
+	enableCORS(w, r)
+	targetPeerID := r.PathValue("targetpeerid")
+	cid := r.PathValue("cid")
+	filename, filesize := requestFile(node, targetPeerID, cid)
+
+	fileData := FileMetadata{
+		Name: filename,
+		Size: filesize,
+	}
+
+	fileDataJson, err := json.Marshal(fileData)
+	if err != nil {
+		fmt.Println("Error marshalling fInfo")
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	w.Write(fileDataJson)
 
 }
 

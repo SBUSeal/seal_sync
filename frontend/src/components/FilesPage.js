@@ -98,10 +98,13 @@ const FilesPage = (props) => {
       // let [blob, fileName, fileSize] = await fetch('http://localhost:8080/download/')
       const response = await fetch(`http://localhost:8080/download/${cid}/${selectedProvider.peer_id}`, {
         method: 'GET',
-      });      
+      });
+      let fileMetadata = await response.json()      
+      console.log("Metadata for downloaded file: ", fileMetadata);
+      
       const downloadedFile = {
-        name: null, 
-        size: null,
+        name: fileMetadata.filename, 
+        size: fileMetadata.filesize,
         status: 'unlocked',
         source: 'downloaded',
         fileObject: null,

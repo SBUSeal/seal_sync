@@ -64,7 +64,7 @@ func handleFileRequests(node host.Host) {
 }
 
 // Connect to peer through relay, (get price), send cid then wait for response containing the file
-func requestFile(node host.Host, targetpeerid string, cid string) {
+func requestFile(node host.Host, targetpeerid string, cid string) (string, int64) {
 	peerinfo := connectToPeerUsingRelay(node, targetpeerid)
 	s, err := node.NewStream(network.WithAllowLimitedConn(globalCtx, "file transfer"), peerinfo.ID, file_transfer_protocol)
 	if err != nil {
@@ -102,6 +102,7 @@ func requestFile(node host.Host, targetpeerid string, cid string) {
 		fmt.Println("Error copying from stream to new file: ", err)
 	}
 	fmt.Fprintf(os.Stdout, "Successfully copied %d bytes from the stream", bytes)
+	return filename, bytes
 
 }
 
