@@ -169,7 +169,7 @@ func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w h
 
 }
 
-func downloadFile(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w http.ResponseWriter, r *http.Request) {
+func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
 	enableCORS(w, r)
 	targetPeerID := r.PathValue("targetpeerid")
 	cid := r.PathValue("cid")
@@ -203,10 +203,7 @@ func startHttpServer(ctx context.Context, dht *dht.IpfsDHT, node host.Host) {
 	})
 
 	router.HandleFunc("/download/{cid}/{targetpeerid}", func(w http.ResponseWriter, r *http.Request) {
-		enableCORS(w, r)
-		targetPeerID := r.PathValue("targetpeerid")
-		cid := r.PathValue("cid")
-		requestFile(node, targetPeerID, cid)
+		downloadFile(node, w, r)
 	})
 
 	fmt.Println("Backend server is running on localhost port 8080")

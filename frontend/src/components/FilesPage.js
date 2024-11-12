@@ -103,8 +103,8 @@ const FilesPage = (props) => {
       console.log("Metadata for downloaded file: ", fileMetadata);
       
       const downloadedFile = {
-        name: fileMetadata.filename, 
-        size: fileMetadata.filesize,
+        name: fileMetadata.name, 
+        size: fileMetadata.size,
         status: 'unlocked',
         source: 'downloaded',
         fileObject: null,
