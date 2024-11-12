@@ -26,7 +26,6 @@ func enableCORS(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Access-Control-Expose-Headers", "Content-Disposition")
-
 }
 
 // Find all Peer IDs in the list of peer.AddrInfos
@@ -111,6 +110,11 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 		log.Fatal(err)
 	}
 	w.WriteHeader(http.StatusOK)
+
+	_, err = w.Write([]byte(cid.String()))
+	if err != nil {
+		fmt.Println("Had an error writing cid of newly uploaded file")
+	}
 
 	fmt.Println("Successfully announced as provider of: ", cid)
 

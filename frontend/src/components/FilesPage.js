@@ -195,7 +195,7 @@ const FilesPage = (props) => {
   
   async function handleUploadModalSubmit() {
     try {
-      const cid = await uploadFile()
+      const cid = await uploadFile()      
       const newFile = {
         name: tempFile.name,
         size: tempFile.size,
