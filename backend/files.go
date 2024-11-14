@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -18,6 +19,24 @@ import (
 	"github.com/libp2p/go-libp2p/core/protocol"
 )
 
+type TransferFile struct {
+	Name    string `json:"name"`
+	Size    int64  `json:"size"`
+	Content []byte `json:"content"`
+}
+
+type LocationInfo struct {
+	IP      string `json:"ip"`
+	Country string `json:"country"`
+	Region  string `json:"region"`
+}
+
+type FileProviderInfo struct {
+	Peer_id  string       `json:"peer_id"`
+	Price    string       `json:"price"`
+	Location LocationInfo `json:"location"`
+}
+
 var file_transfer_protocol = protocol.ID("/sealsync/file-transfer")
 var provider_info_protocol = protocol.ID("/sealsync/providerinfo")
 
@@ -29,42 +48,44 @@ func handleFileRequests(node host.Host) {
 		buf := bufio.NewReader(s)
 		// Read cid from the stream
 		cid, err := buf.ReadString('\n')
-		if err != nil {
-			if err == io.EOF {
-				log.Printf("Stream closed by peer: %s", s.Conn().RemotePeer())
-			} else {
-				log.Printf("Error reading from stream: %v", err)
-			}
-			return
-		}
-		log.Printf("File Transfer Cid Received: %s, now sending file...", cid)
-		//Send file name first
 		cid = strings.TrimSuffix(cid, "\n")
+		// Find the file in our cid map
 		fileInfo, exists := cidMap[cid]
 		if !exists {
 			fmt.Println("File didnt exist in map error")
 			return
 		}
-		s.Write([]byte(filepath.Base(fileInfo.FilePath + "\n")))
-
-		//Open the file
+		// Read the file into a buffer and send it over the stream
 		file, err := os.Open(fileInfo.FilePath)
 		if err != nil {
-			fmt.Println("Failure to open the file")
+			log.Fatal("Error opening file")
 		}
 
-		bytes, err := io.Copy(s, file)
+		var fileBuffer bytes.Buffer
+		filename := filepath.Base(fileInfo.FilePath)
+		filesize, err := io.Copy(&fileBuffer, file)
 		if err != nil {
-			fmt.Println("Failure to copy the file to the stream")
+			log.Fatal("Error copying file to buffer")
 		}
 
-		fmt.Fprintf(os.Stdout, "Successfully sent file, %d bytes were sent", bytes)
+		transferFile := TransferFile{
+			Name:    filename,
+			Size:    filesize,
+			Content: fileBuffer.Bytes(),
+		}
 
+		var data []byte
+		data, err = json.Marshal(transferFile)
+		if err != nil {
+			log.Fatal("Error marshalling transfer file")
+		}
+
+		s.Write(data)
 	})
 }
 
 // Connect to peer through relay, (get price), send cid then wait for response containing the file
-func requestFile(node host.Host, targetpeerid string, cid string) (string, int64) {
+func requestFile(node host.Host, targetpeerid string, cid string) TransferFile {
 	peerinfo := connectToPeerUsingRelay(node, targetpeerid)
 	s, err := node.NewStream(network.WithAllowLimitedConn(globalCtx, "file transfer"), peerinfo.ID, file_transfer_protocol)
 	if err != nil {
@@ -76,34 +97,20 @@ func requestFile(node host.Host, targetpeerid string, cid string) (string, int64
 	if err != nil {
 		log.Fatalf("Failed to write to stream: %s", err)
 	}
-	reader := bufio.NewReader(s)
 
-	//Read filename
-	filename, err := reader.ReadString('\n')
+	// Get the transferred file
+	decoder := json.NewDecoder(s)
+	var TransferredFile TransferFile
+	err = decoder.Decode(TransferredFile)
 	if err != nil {
-		fmt.Println("Error reading the file name")
+		if err == io.EOF {
+			log.Fatal("End of stream reached")
+		} else {
+			log.Fatal("Error decoding JSON:", err)
+		}
 	}
-	filename = strings.TrimSuffix(filename, "\n")
-	fmt.Println("Received Filename: ", filename)
-
-	// Create the downloads directory if it doesn't exist
-	err = os.MkdirAll("downloads", os.ModePerm)
-	if err != nil {
-		fmt.Errorf("failed to create directory: %v", err)
-	}
-	//Create new file
-	newFile, err := os.Create(filepath.Join("downloads", filename))
-	if err != nil {
-		fmt.Println("Error creating the file: ", err)
-	}
-	//Copy file contents to the new file
-	bytes, err := io.Copy(newFile, s)
-	if err != nil {
-		fmt.Println("Error copying from stream to new file: ", err)
-	}
-	fmt.Fprintf(os.Stdout, "Successfully copied %d bytes from the stream", bytes)
-	return filename, bytes
-
+	fmt.Println("(files.go) Downloaded File Name & Size: ", TransferredFile.Name, TransferredFile.Size)
+	return TransferredFile
 }
 
 func handleProviderInfoRequests(node host.Host) {

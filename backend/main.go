@@ -42,18 +42,6 @@ type FileInfo struct {
 	Price    float64
 }
 
-type LocationInfo struct {
-	IP      string `json:"ip"`
-	Country string `json:"country"`
-	Region  string `json:"region"`
-}
-
-type FileProviderInfo struct {
-	Peer_id  string       `json:"peer_id"`
-	Price    string       `json:"price"`
-	Location LocationInfo `json:"location"`
-}
-
 // Map from cid to FileInfo
 var cidMap = make(map[string]FileInfo)
 

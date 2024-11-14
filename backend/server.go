@@ -20,11 +20,6 @@ import (
 	"github.com/multiformats/go-multihash"
 )
 
-type FileMetadata struct {
-	Name string `json:"name"`
-	Size int64  `json:"size"`
-}
-
 // Handle CORS issues
 func enableCORS(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -77,7 +72,7 @@ func saveFile(file multipart.File, header *multipart.FileHeader, w http.Response
 	// Copy the contents of the multipart.File to the new file
 	bytes, err := io.Copy(uploadedFile, file)
 	if err != nil {
-		fmt.Errorf("failed to copy file: %v", err)
+		log.Fatal("failed to copy file", err)
 	}
 	fmt.Println("Successfully copied", bytes, " bytes of the multipart file")
 
@@ -173,22 +168,15 @@ func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
 	enableCORS(w, r)
 	targetPeerID := r.PathValue("targetpeerid")
 	cid := r.PathValue("cid")
-	filename, filesize := requestFile(node, targetPeerID, cid)
 
-	fileData := FileMetadata{
-		Name: filename,
-		Size: filesize,
-	}
-
-	fileDataJson, err := json.Marshal(fileData)
-	if err != nil {
-		fmt.Println("Error marshalling fInfo")
-	}
+	fileData := requestFile(node, targetPeerID, cid)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	w.Write(fileDataJson)
+	if err := json.NewEncoder(w).Encode(fileData); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 
 }
 
