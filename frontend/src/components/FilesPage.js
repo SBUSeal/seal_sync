@@ -122,7 +122,7 @@ const FilesPage = (props) => {
 
       const downloadedFile = {
         name: fileName, 
-        size: fileSize,
+        size: parseInt(fileSize),
         status: 'unlocked',
         source: 'downloaded',
         fileObject: fileBlob,
