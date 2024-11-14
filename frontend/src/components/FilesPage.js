@@ -93,21 +93,39 @@ const FilesPage = (props) => {
   }
 
 
+  function triggerDownload(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  }
+
   async function downloadFile() {
     try {      
-      // let [blob, fileName, fileSize] = await fetch('http://localhost:8080/download/')
+
       const response = await fetch(`http://localhost:8080/download/${cid}/${selectedProvider.peer_id}`, {
         method: 'GET',
       });
-      let fileMetadata = await response.json()      
-      console.log("Metadata for downloaded file: ", fileMetadata);
-      
+      const fileBlob = await response.blob()
+      const fileSize = response.headers.get("Content-Length")
+      let fileName = "downloadedFile"
+      const contentDisposition = response.headers.get("Content-Disposition")
+      const matches = /filename="(.+)"/.exec(contentDisposition);
+      if (matches && matches[1]) {
+        fileName = matches[1];  
+      }
+      triggerDownload(fileBlob, fileName)
+
       const downloadedFile = {
-        name: fileMetadata.name, 
-        size: fileMetadata.size,
+        name: fileName, 
+        size: fileSize,
         status: 'unlocked',
         source: 'downloaded',
-        fileObject: null,
+        fileObject: fileBlob,
         price: selectedProvider.price, 
         description: 'Downloaded from seal network', 
         isFolder: false,

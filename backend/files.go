@@ -101,7 +101,7 @@ func requestFile(node host.Host, targetpeerid string, cid string) TransferFile {
 	// Get the transferred file
 	decoder := json.NewDecoder(s)
 	var TransferredFile TransferFile
-	err = decoder.Decode(TransferredFile)
+	err = decoder.Decode(&TransferredFile)
 	if err != nil {
 		if err == io.EOF {
 			log.Fatal("End of stream reached")

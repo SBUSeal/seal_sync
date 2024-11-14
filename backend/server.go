@@ -171,13 +171,12 @@ func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
 
 	fileData := requestFile(node, targetPeerID, cid)
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
-	if err := json.NewEncoder(w).Encode(fileData); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Header().Set("Content-Disposition", `attachment; filename="`+fileData.Name+`"`)
+	_, err := w.Write(fileData.Content)
+	if err != nil {
+		http.Error(w, "Couldnt write file content", 500)
 	}
-
 }
 
 // Pass ctx and dht in
