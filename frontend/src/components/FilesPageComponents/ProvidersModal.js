@@ -22,6 +22,7 @@ const ProvidersModal = ({providers, setProviders, selectedProvider, setSelectedP
             >
                 <p>Peer ID: {provider.peer_id}</p>
                 <p>Price: {provider.price} STK </p>
+                <p>Location: {provider.location.country + ", " + provider.location.region} </p>
             </div>
             ))}
 

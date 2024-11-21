@@ -106,7 +106,6 @@ const FilesPage = (props) => {
 
   async function downloadFile() {
     try {      
-
       const response = await fetch(`http://localhost:8080/download/${cid}/${selectedProvider.peer_id}`, {
         method: 'GET',
       });
