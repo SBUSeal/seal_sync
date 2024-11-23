@@ -48,6 +48,9 @@ func handleFileRequests(node host.Host) {
 		buf := bufio.NewReader(s)
 		// Read cid from the stream
 		cid, err := buf.ReadString('\n')
+		if err != nil {
+			log.Fatal(err)
+		}
 		cid = strings.TrimSuffix(cid, "\n")
 		// Find the file in our cid map
 		fileInfo, exists := cidMap[cid]

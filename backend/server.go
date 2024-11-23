@@ -21,7 +21,7 @@ import (
 )
 
 // Handle CORS issues
-func enableCORS(w http.ResponseWriter, r *http.Request) {
+func enableCORS(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
@@ -59,7 +59,7 @@ func saveFile(file multipart.File, header *multipart.FileHeader, w http.Response
 	// Create the uploads directory if it doesn't exist
 	err = os.MkdirAll("uploads", os.ModePerm)
 	if err != nil {
-		fmt.Errorf("failed to create directory: %v", err)
+		log.Fatal("failed to create directory")
 	}
 
 	// Create copy of file in /uploads
@@ -81,7 +81,7 @@ func saveFile(file multipart.File, header *multipart.FileHeader, w http.Response
 
 // Get the provided file and price, save a copy to the ./uploads folder, and upload to DHT
 func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r *http.Request) {
-	enableCORS(w, r)
+	enableCORS(w)
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -122,7 +122,7 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 
 // get provider information for a given cid
 func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w http.ResponseWriter, r *http.Request) {
-	enableCORS(w, r)
+	enableCORS(w)
 	// must be a GET request
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -165,7 +165,7 @@ func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w h
 }
 
 func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
-	enableCORS(w, r)
+	enableCORS(w)
 	targetPeerID := r.PathValue("targetpeerid")
 	cid := r.PathValue("cid")
 
