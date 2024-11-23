@@ -173,10 +173,12 @@ func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/octet-stream")
 	w.Header().Set("Content-Disposition", `attachment; filename="`+fileData.Name+`"`)
+	w.Header().Set("Content-Length", strconv.Itoa(len(fileData.Content)))
 	_, err := w.Write(fileData.Content)
 	if err != nil {
 		http.Error(w, "Couldnt write file content", 500)
 	}
+
 }
 
 // Pass ctx and dht in
