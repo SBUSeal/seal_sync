@@ -115,7 +115,7 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 
 	_, err = w.Write([]byte(cid.String()))
 	if err != nil {
-		fmt.Println("Had an error writing cid of newly uploaded file")
+		log.Fatal("Had an error writing cid of newly uploaded file", err)
 	}
 
 	fmt.Println("Successfully announced as provider of: ", cid)
@@ -142,6 +142,7 @@ func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w h
 		log.Fatal(err)
 	}
 
+	// Get the providers peer ids
 	peerIDs := findAllPeerIDs(node, providers)
 	if err != nil {
 		log.Fatal(err)
@@ -154,32 +155,38 @@ func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w h
 		results = append(results, info)
 	}
 	w.Header().Set("Content-Type", "application/json")
-	jsonData, err := json.Marshal(results)
+	providersJson, err := json.Marshal(results)
 	if err != nil {
 		log.Fatal("marshalling error", err)
 	}
-	w.Write(jsonData)
+	w.Write(providersJson)
 
 }
 
 func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
 	enableCORS(w)
+
 	targetPeerID := r.PathValue("targetpeerid")
 	cid := r.PathValue("cid")
 
 	fileData, downloadStream := requestFile(node, targetPeerID, cid)
 	defer downloadStream.Close()
 
-	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Header().Set("Content-Type", fileData.Type)
 	w.Header().Set("Content-Disposition", `attachment; filename="`+fileData.Name+`"`)
 	w.Header().Set("Content-Length", strconv.FormatInt(fileData.Size, 10))
+
+	if r.Method == http.MethodHead {
+		w.WriteHeader(http.StatusOK) // Send only headers without a body
+		return
+	}
 
 	// Stream download
 	nbytes, err := io.Copy(w, downloadStream)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf(" (server.go) Downloaded file %s, %d bytes\n", fileData.Name, nbytes)
+	log.Printf(" (server.go) Downloaded file %s, streamed %d bytes\n", fileData.Name, nbytes)
 }
 
 // Pass ctx and dht in

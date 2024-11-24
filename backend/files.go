@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"mime"
 	"os"
 	"strconv"
 	"strings"
@@ -20,6 +21,7 @@ import (
 type FileMetadata struct {
 	Name string `json:"name"`
 	Size int64  `json:"size"`
+	Type string `json:"type"`
 }
 
 type LocationInfo struct {
@@ -74,10 +76,15 @@ func handleFileRequests(node host.Host) {
 		}
 		fileName := info.Name()
 		fileSize := info.Size()
+		fileType := mime.TypeByExtension(fileInfo.FilePath)
+		if fileType == "" {
+			fileType = "application/octet-stream"
+		}
 
 		FileMetadata := FileMetadata{
 			Name: fileName,
 			Size: fileSize,
+			Type: fileType,
 		}
 
 		// Send file metadata
