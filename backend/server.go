@@ -28,11 +28,13 @@ func enableCORS(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Expose-Headers", "Content-Disposition")
 }
 
-// Find all Peer IDs in the list of peer.AddrInfos
-func findAllPeerIDs(peerInfos []peer.AddrInfo) []string {
+// Find all Peer IDs in the list of peer.AddrInfos (excluding ourselves)
+func findAllPeerIDs(node host.Host, peerInfos []peer.AddrInfo) []string {
 	var arr []string
 	for _, peerInfo := range peerInfos {
-		arr = append(arr, peerInfo.ID.String())
+		if peerInfo.ID.String() != node.ID().String() {
+			arr = append(arr, peerInfo.ID.String())
+		}
 	}
 	return arr
 }
@@ -70,11 +72,11 @@ func saveFile(file multipart.File, header *multipart.FileHeader, w http.Response
 	defer uploadedFile.Close()
 
 	// Copy the contents of the multipart.File to the new file
-	bytes, err := io.Copy(uploadedFile, file)
+	_, err = io.Copy(uploadedFile, file)
 	if err != nil {
 		log.Fatal("failed to copy file", err)
 	}
-	fmt.Println("Successfully copied", bytes, " bytes of the multipart file")
+	log.Printf("Saved File: %s", uploadedFile.Name())
 
 	return cid
 }
@@ -139,13 +141,11 @@ func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w h
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Found providers: ", providers)
 
-	peerIDs := findAllPeerIDs(providers)
+	peerIDs := findAllPeerIDs(node, providers)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Peer Ids found: ", peerIDs)
 
 	// maps {Peer_id: FileProviderInfo}
 	var results []FileProviderInfo
@@ -153,8 +153,6 @@ func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w h
 		info := requestProviderInfo(node, peerID, cid)
 		results = append(results, info)
 	}
-	fmt.Println("Got list of results: ", results)
-
 	w.Header().Set("Content-Type", "application/json")
 	jsonData, err := json.Marshal(results)
 	if err != nil {
@@ -169,16 +167,19 @@ func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
 	targetPeerID := r.PathValue("targetpeerid")
 	cid := r.PathValue("cid")
 
-	fileData := requestFile(node, targetPeerID, cid)
+	fileData, downloadStream := requestFile(node, targetPeerID, cid)
+	defer downloadStream.Close()
 
 	w.Header().Set("Content-Type", "application/octet-stream")
 	w.Header().Set("Content-Disposition", `attachment; filename="`+fileData.Name+`"`)
-	w.Header().Set("Content-Length", strconv.Itoa(len(fileData.Content)))
-	_, err := w.Write(fileData.Content)
-	if err != nil {
-		http.Error(w, "Couldnt write file content", 500)
-	}
+	w.Header().Set("Content-Length", strconv.FormatInt(fileData.Size, 10))
 
+	// Stream download
+	nbytes, err := io.Copy(w, downloadStream)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf(" (server.go) Downloaded file %s, %d bytes\n", fileData.Name, nbytes)
 }
 
 // Pass ctx and dht in
@@ -218,8 +219,5 @@ func generateCid(file io.Reader) cid.Cid {
 	}
 
 	// Create the CID
-	c := cid.NewCidV1(cid.Raw, mh)
-	fmt.Println("Generated CID:", c)
-
-	return c
+	return cid.NewCidV1(cid.Raw, mh)
 }
