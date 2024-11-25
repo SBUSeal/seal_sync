@@ -77,9 +77,24 @@ func handleFileRequests(node host.Host) {
 		}
 		fileName := info.Name()
 		fileSize := info.Size()
-		fileType := mime.TypeByExtension(filepath.Ext(fileInfo.FilePath))
+		fileExt := filepath.Ext(fileInfo.FilePath)
+		fileType := mime.TypeByExtension(fileExt)
+		// If we can't get the type, do it manually
 		if fileType == "" {
-			fileType = "application/octet-stream"
+			if fileType == "" {
+				switch fileExt {
+				case ".txt":
+					fileType = "text/plain"
+				case ".html":
+					fileType = "text/html"
+				case ".png":
+					fileType = "image/png"
+				case ".pdf":
+					fileType = "application/pdf"
+				default:
+					fileType = "application/octet-stream" // Fallback
+				}
+			}
 		}
 
 		FileMetadata := FileMetadata{
