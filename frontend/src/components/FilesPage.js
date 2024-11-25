@@ -93,7 +93,7 @@ const FilesPage = (props) => {
   }
 
 
-  function triggerDownload(url) {
+  function triggerNonBlobDownload(url) {
     const a = document.createElement('a')
     a.href = url
     a.download = ''
@@ -101,6 +101,25 @@ const FilesPage = (props) => {
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
+    return null
+  }
+
+  async function triggerBlobDownload(url, filename) {
+      const response = await fetch(url, {
+      method: "GET"
+    })
+    const blob = await response.blob()
+    
+    // Trigger blob download
+    const a = document.createElement('a');
+    const obj_url = URL.createObjectURL(blob);
+    a.href = obj_url;
+    a.download = filename;  
+    document.body.appendChild(a);
+    a.click();
+    URL.revokeObjectURL(obj_url);
+    document.body.removeChild(a);
+    return blob
   }
 
   async function downloadFile() {
@@ -112,25 +131,30 @@ const FilesPage = (props) => {
         method: 'HEAD'
       })
 
-      console.log("FILE TYPE RESPONSE: " , response.headers.get("Content-Type"));
-      
-
-      const fileSize = response.headers.get("Content-Length")
+      const fileSize = parseInt(response.headers.get("Content-Length"))
       let fileName = "downloadedFile"
       const contentDisposition = response.headers.get("Content-Disposition")
       const matches = /filename="(.+)"/.exec(contentDisposition);
       if (matches && matches[1]) {
         fileName = matches[1];  
       }
-      triggerDownload(url)
 
+      // If file > 50 MB, dont use a blob to download it
+      // Also means we wont be able to show a preview of it
+      let blob;
+      if (fileSize > 50 * 1024 * 1024) {
+        blob = await triggerNonBlobDownload(url)
+      }
+      else {
+        blob = await triggerBlobDownload(url, fileName)
+      }
 
       const downloadedFile = {
         name: fileName, 
-        size: parseInt(fileSize),
+        size: fileSize,
         status: 'unlocked',
         source: 'downloaded',
-        fileObject: null,
+        fileObject: blob,
         price: selectedProvider.price, 
         description: 'Downloaded from seal network', 
         isFolder: false,

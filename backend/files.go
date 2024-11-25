@@ -8,6 +8,7 @@ import (
 	"log"
 	"mime"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -76,7 +77,7 @@ func handleFileRequests(node host.Host) {
 		}
 		fileName := info.Name()
 		fileSize := info.Size()
-		fileType := mime.TypeByExtension(fileInfo.FilePath)
+		fileType := mime.TypeByExtension(filepath.Ext(fileInfo.FilePath))
 		if fileType == "" {
 			fileType = "application/octet-stream"
 		}
