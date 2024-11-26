@@ -225,6 +225,10 @@ const FilesPage = (props) => {
     const formData = new FormData();
     formData.append('file', tempFile);
     formData.append('price', newFileDetails.price)
+    formData.append('size', tempFile.size)
+    formData.append('description', newFileDetails.description)
+    formData.append('dateAdded', new Date().toLocaleDateString())
+
     try {
       const response = await fetch('http://localhost:8080/upload', {
           method: 'POST',
@@ -258,7 +262,7 @@ const FilesPage = (props) => {
         type: tempFile.type,
         downloading: tempFile.downloading,
         unpublishTime: tempFile.unpublishTime,
-        published: true,
+        published: true,                 
         cid: cid
       }
             

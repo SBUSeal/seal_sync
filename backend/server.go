@@ -81,6 +81,31 @@ func saveFile(file multipart.File, header *multipart.FileHeader, w http.Response
 	return cid
 }
 
+func saveCidMap(filename string, cidMap map[string]FileInfo) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	return encoder.Encode(cidMap)
+}
+
+func loadCidMap(filename string) (map[string]FileInfo, error) {
+	data := make(map[string]FileInfo)
+	file, err := os.Open(filename)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&data)
+	return data, err
+
+}
+
 // Get the provided file and price, save a copy to the ./uploads folder, and upload to DHT
 func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r *http.Request) {
 	enableCORS(w)
@@ -94,6 +119,17 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Get provided file description
+	description := r.FormValue("description")
+	// Get date added string
+	dateAdded := r.FormValue("dateAdded")
+
+	//Get provided file size
+	size_s := r.FormValue("size")
+	size, err := strconv.ParseInt(size_s, 10, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
 	// Get provided file
 	file, header, err := getFileFromRequest(r)
 	if err != nil {
@@ -102,9 +138,25 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 	defer file.Close()
 
 	cid := saveFile(file, header, w)
-	// add to cidMap
-	fileInfo := FileInfo{FilePath: filepath.Join("uploads", header.Filename), Price: price}
+
+	// Add file to cidMap
+	fileInfo := FileInfo{
+		FilePath:    filepath.Join("uploads", header.Filename),
+		Name:        header.Filename,
+		Price:       price,
+		Description: description,
+		Size:        size,
+		Cid:         cid.String(),
+		Published:   true,
+		DateAdded:   dateAdded,
+	}
 	cidMap[cid.String()] = fileInfo
+
+	//Testing saving cidmap
+	err = saveCidMap("cidMap.json", cidMap)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Announce as a provider for the CID
 	err = dht.Provide(ctx, cid, true)
@@ -113,13 +165,12 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 	}
 	w.WriteHeader(http.StatusOK)
 
+	// Write the cid as a response
 	_, err = w.Write([]byte(cid.String()))
 	if err != nil {
 		log.Fatal("Had an error writing cid of newly uploaded file", err)
 	}
-
 	fmt.Println("Successfully announced as provider of: ", cid)
-
 }
 
 // get provider information for a given cid

@@ -35,8 +35,14 @@ var (
 
 // Type for storing information about files
 type FileInfo struct {
-	FilePath string
-	Price    float64
+	FilePath    string  `json:"filePath"`
+	Name        string  `json:"name"`
+	Price       float64 `json:"price"`
+	Description string  `json:"description"`
+	Size        int64   `json:"size"`
+	Cid         string  `json:"cid"`
+	Published   bool    `json:"published"`
+	DateAdded   string  `json:"dateAdded"`
 }
 
 // Map from cid to FileInfo
