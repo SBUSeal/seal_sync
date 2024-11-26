@@ -35,22 +35,23 @@ var (
 
 // Type for storing information about files
 type FileInfo struct {
-	FilePath    string  `json:"filePath"`
-	Name        string  `json:"name"`
-	Price       float64 `json:"price"`
-	Description string  `json:"description"`
-	Size        int64   `json:"size"`
-	Cid         string  `json:"cid"`
-	Published   bool    `json:"published"`
-	DateAdded   string  `json:"dateAdded"`
+	Name          string    `json:"name"`
+	Price         float64   `json:"price"`
+	Description   string    `json:"description"`
+	Size          int64     `json:"size"`
+	Cid           string    `json:"cid"`
+	Published     bool      `json:"published"`
+	UnpublishTime time.Time `json:"unpublishTime"`
+	DateAdded     string    `json:"dateAdded"`
+	Source        string    `json:"source"`
 }
 
-// Map from cid to FileInfo
-var cidMap = make(map[string]FileInfo)
+// In memory maps for uploaded and downloaded files
+var uploadedFileMap = make(map[string]FileInfo)
+var downloadedFileMap = make(map[string]FileInfo)
 
 func generatePrivateKeyFromSeed(seed []byte) (crypto.PrivKey, error) {
-	hash := sha256.Sum256(seed) // Generate deterministic key material
-	// Create an Ed25519 private key from the hash
+	hash := sha256.Sum256(seed)
 	privKey, _, err := crypto.GenerateEd25519Key(
 		bytes.NewReader(hash[:]),
 	)
@@ -216,6 +217,14 @@ func main() {
 
 	fmt.Println("Node multiaddresses:", node.Addrs())
 	fmt.Println("Node Peer ID:", node.ID())
+
+	// Load uploadedFileMap in
+	uploadedFileMap, err = LoadMapAsJson("uploadedFileMap.json")
+	if err != nil {
+		log.Print(err)
+	}
+
+	fmt.Println("UPLOADED FILE MAP: ", uploadedFileMap)
 
 	connectToPeer(node, relay_node_addr) // connect to relay node
 	makeReservation(node)                // make reservation on realy node

@@ -58,14 +58,15 @@ func handleFileRequests(node host.Host) {
 		defer s.Close()
 		// Read cid from the stream
 		cid := readCid(s)
-		// Find the file in our cid map
-		fileInfo, exists := cidMap[cid]
+		// Find the file in our uploaded file map
+		fileInfo, exists := uploadedFileMap[cid]
 		if !exists {
 			fmt.Println("File didnt exist in map error")
 			return
 		}
+		filePath := filepath.Join("uploads", fileInfo.Name)
 		// Open the file
-		file, err := os.Open(fileInfo.FilePath)
+		file, err := os.Open(filePath)
 		if err != nil {
 			log.Fatal("Error opening file")
 		}
@@ -77,7 +78,7 @@ func handleFileRequests(node host.Host) {
 		}
 		fileName := info.Name()
 		fileSize := info.Size()
-		fileExt := filepath.Ext(fileInfo.FilePath)
+		fileExt := filepath.Ext(filePath)
 		fileType := mime.TypeByExtension(fileExt)
 		// If we can't get the type, do it manually
 		if fileType == "" {
@@ -150,7 +151,7 @@ func handleProviderInfoRequests(node host.Host) {
 		//read the cid
 		cid := readCid(s)
 		// Create FileProviderInfo to be sent back
-		price := strconv.FormatFloat(cidMap[cid].Price, 'f', -1, 64)
+		price := strconv.FormatFloat(uploadedFileMap[cid].Price, 'f', -1, 64)
 		geoLocation := getGeolocation()
 		providerInfo := FileProviderInfo{
 			Peer_id:  node.ID().String(),

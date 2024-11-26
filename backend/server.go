@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/ipfs/go-cid"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
@@ -81,31 +82,6 @@ func saveFile(file multipart.File, header *multipart.FileHeader, w http.Response
 	return cid
 }
 
-func saveCidMap(filename string, cidMap map[string]FileInfo) error {
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	encoder := json.NewEncoder(file)
-	return encoder.Encode(cidMap)
-}
-
-func loadCidMap(filename string) (map[string]FileInfo, error) {
-	data := make(map[string]FileInfo)
-	file, err := os.Open(filename)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&data)
-	return data, err
-
-}
-
 // Get the provided file and price, save a copy to the ./uploads folder, and upload to DHT
 func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r *http.Request) {
 	enableCORS(w)
@@ -123,6 +99,17 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 	description := r.FormValue("description")
 	// Get date added string
 	dateAdded := r.FormValue("dateAdded")
+	// Get unpublish time
+	unpublishTime_s := r.FormValue("unpublishTime")
+	var unpublishTime time.Time
+	if unpublishTime_s == "" {
+		unpublishTime = time.Time{}
+	} else {
+		unpublishTime, err = time.Parse("2006-01-02T15:04", unpublishTime_s)
+		if err != nil {
+			log.Fatal("Error parsing the time: ", err)
+		}
+	}
 
 	//Get provided file size
 	size_s := r.FormValue("size")
@@ -139,24 +126,27 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 
 	cid := saveFile(file, header, w)
 
-	// Add file to cidMap
+	// Add file to uploadedFileMap
 	fileInfo := FileInfo{
-		FilePath:    filepath.Join("uploads", header.Filename),
-		Name:        header.Filename,
-		Price:       price,
-		Description: description,
-		Size:        size,
-		Cid:         cid.String(),
-		Published:   true,
-		DateAdded:   dateAdded,
+		Name:          header.Filename,
+		Price:         price,
+		Description:   description,
+		Size:          size,
+		Cid:           cid.String(),
+		Published:     true,
+		UnpublishTime: unpublishTime,
+		DateAdded:     dateAdded,
+		Source:        "uploaded",
 	}
-	cidMap[cid.String()] = fileInfo
+	uploadedFileMap[cid.String()] = fileInfo
 
-	//Testing saving cidmap
-	err = saveCidMap("cidMap.json", cidMap)
+	//Testing saving uploadedFileMap
+	err = SaveMapAsJson("uploadedFileMap.json", uploadedFileMap)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println("New Uploaded File Map: ", uploadedFileMap)
 
 	// Announce as a provider for the CID
 	err = dht.Provide(ctx, cid, true)

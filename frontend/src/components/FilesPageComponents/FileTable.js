@@ -47,7 +47,6 @@ const FileTable = ({files, setFiles, filteredFiles, setFilteredFiles, formatFile
   }
 
   function openFile(file) {
-    if (file.isFolder) return; 
     setCurrentFile(file);
     setIsViewerOpen(true);
   }
@@ -114,9 +113,9 @@ const FileTable = ({files, setFiles, filteredFiles, setFilteredFiles, formatFile
           {filteredFiles.map((file, index) => ( 
             <tr key={index} style={{ color: 'red' }}>
               <td>
-                {file.isFolder ? <LayersIcon /> : <FileIcon />} {file.name}
+                {<FileIcon />} {file.name}
               </td>
-              <td>{file.isFolder ? 'Folder' : 'File'}</td>
+              <td>{'File'}</td>
               <td>{formatFileSize(file.size)}</td>
               <td> {file.source === 'uploaded'? 'local': 'seal-network'} </td>
               <td>{new Date().toLocaleDateString()}</td>
@@ -170,7 +169,7 @@ const FileTable = ({files, setFiles, filteredFiles, setFilteredFiles, formatFile
                         <TrashIcon />
                       </button>
                     )}
-                <button onClick={() => file.isFolder ? 'OPENFOLDER' : openFileDetails(file)} disabled={file.downloading}>
+                <button onClick={() => openFileDetails(file)} disabled={file.downloading}>
                   <DotsVerticalIcon />
                 </button>
               

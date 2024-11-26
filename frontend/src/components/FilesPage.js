@@ -26,7 +26,7 @@ const FilesPage = (props) => {
 
   const [currentFile, setCurrentFile] = useState(null); 
   const [tempFile, setTempFile] = useState(null);
-  const [newFileDetails, setNewFileDetails] = useState({ price: '', description: '' });
+  const [newFileDetails, setNewFileDetails] = useState({ price: '', description: '', timeLimited: false, unpublishTime: '' });
   const [searchQuery, setSearchQuery] = useState(''); 
   const [filteredFiles, setFilteredFiles] = useState(files); 
   const [cid, setCid] = useState('');
@@ -152,12 +152,10 @@ const FilesPage = (props) => {
       const downloadedFile = {
         name: fileName, 
         size: fileSize,
-        status: 'unlocked',
         source: 'downloaded',
         fileObject: blob,
         price: selectedProvider.price, 
         description: 'Downloaded from seal network', 
-        isFolder: false,
         downloading: true, 
         paused: false,
         cid: cid
@@ -227,7 +225,8 @@ const FilesPage = (props) => {
     formData.append('price', newFileDetails.price)
     formData.append('size', tempFile.size)
     formData.append('description', newFileDetails.description)
-    formData.append('dateAdded', new Date().toLocaleDateString())
+    formData.append('dateAdded', new Date().toLocaleDateString())    
+    formData.append('unpublishTime', newFileDetails.unpublishTime)
 
     try {
       const response = await fetch('http://localhost:8080/upload', {
@@ -253,13 +252,10 @@ const FilesPage = (props) => {
       const newFile = {
         name: tempFile.name,
         size: tempFile.size,
-        status: 'unlocked',
         source: 'uploaded',
         description: newFileDetails.description,
         price: newFileDetails.price,
         fileObject: tempFile,  
-        isFolder: false,
-        type: tempFile.type,
         downloading: tempFile.downloading,
         unpublishTime: tempFile.unpublishTime,
         published: true,                 
@@ -277,13 +273,13 @@ const FilesPage = (props) => {
     }
     
     setTempFile(null); 
-    setNewFileDetails({ price: '', description: '' }); 
+    setNewFileDetails({ price: '', description: '', timeLimited: false, unpublishTime: '' }); 
     setisUploadModalOpen(false);
   }
 
   function handleUploadModalClose() {
     setTempFile(null); 
-    setNewFileDetails({ price: '', description: '' }); 
+    setNewFileDetails({ price: '', description: '', timeLimited: false, unpublishTime: '' }); 
     setisUploadModalOpen(false); 
   }
 

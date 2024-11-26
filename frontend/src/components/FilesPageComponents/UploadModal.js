@@ -1,6 +1,6 @@
 import React from 'react'
 
-const UploadModal = ({newFileDetails, setNewFileDetails, handleUploadModalClose, handleUploadModalSubmit}) => {
+const UploadModal = ({newFileDetails, setNewFileDetails, handleUploadModalClose, handleUploadModalSubmit}) => {  
   return (
 <div className="modal">
           <div className="modal-content">
