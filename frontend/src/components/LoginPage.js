@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import '../stylesheets/LoginPage.css';
 import SealLogo from '../images/Seal_Logo.png';
 
-function LoginPage({ onLogin, onSignUp }) {
+function LoginPage({ handleDebug, onLogin, onSignUp }) {
   const [walletAddress, setWalletAddress] = useState('');
+  const [walletPassword, setWalletPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Check if wallet address is provided
     setErrorMessage('');
     if (walletAddress) {
-      onLogin(walletAddress); // Callback to parent component
+      onLogin(walletAddress, walletPassword);
     } else {
       setErrorMessage('Please enter your Wallet Address.');
     }
@@ -28,22 +28,48 @@ function LoginPage({ onLogin, onSignUp }) {
           {errorMessage && <p className="error-message" style={{ color: 'red' }}>{errorMessage}</p>}
           <form onSubmit={handleSubmit} style={{ width: "70%" }}>
             <div className="input-group">
-              <label htmlFor="walletAddress">Wallet Address:</label>
+            <label htmlFor="walletAddress">Wallet Address:</label>
               <input
                 type="text"
                 id="walletAddress"
                 value={walletAddress}
                 onChange={(e) => setWalletAddress(e.target.value)}
                 placeholder="Enter your wallet address"
+                autoFocus
+              />
+              <label htmlFor="walletAddress">Wallet Password:</label>
+              <input
+                type="password"
+                id="walletPassword"
+                value={walletPassword}
+                onChange={(e) => setWalletPassword(e.target.value)}
+                placeholder="Enter your wallet password"
+                autoFocus
               />
             </div>
-            <div style={{ textAlign: 'center' }}>
-              <button type="submit">Login</button>
+            <div style={{ textAlign: 'center', marginTop: '20px' }}>
+              <button type="submit" className="login-button">
+                Login
+              </button>
+             
             </div>
           </form>
-          <p style={{ marginTop: 50, color: 'black' }}>Don't have a Wallet?
-            <button onClick={onSignUp} style={{ marginLeft: 20 }} className="signup-button"> Generate Wallet </button>
+          
+          <p style={{ marginTop: 50, color: 'black' }}>
+            Don't have a Wallet?
+            <button
+              onClick={onSignUp}
+              className="signup-button"
+              style={{ marginLeft: 20 }}
+            >
+              Generate Wallet
+            </button>
+            
           </p>
+          <br/>
+          <button  onClick={()=>{handleDebug()}} className="debug-button">
+                Debug
+              </button>
         </div>
       </div>
     </div>
