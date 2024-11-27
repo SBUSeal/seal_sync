@@ -118,7 +118,7 @@ const FileTable = ({files, setFiles, filteredFiles, setFilteredFiles, formatFile
               <td>{'File'}</td>
               <td>{formatFileSize(file.size)}</td>
               <td> {file.source === 'uploaded'? 'local': 'seal-network'} </td>
-              <td>{new Date().toLocaleDateString()}</td>
+              <td>{"*******"}</td>
               
               {((!file.downloading) && (file.source === 'uploaded'))?
                             <td>

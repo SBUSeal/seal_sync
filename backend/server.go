@@ -127,7 +127,7 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 	cid := saveFile(file, header, w)
 
 	// Add file to uploadedFileMap
-	fileInfo := FileInfo{
+	fileInfo := UploadedFileInfo{
 		Name:          header.Filename,
 		Price:         price,
 		Description:   description,
@@ -140,13 +140,11 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 	}
 	uploadedFileMap[cid.String()] = fileInfo
 
-	//Testing saving uploadedFileMap
-	err = SaveMapAsJson("uploadedFileMap.json", uploadedFileMap)
+	//Save uploadedFileMap
+	err = SaveUploadedMap("uploadedFileMap.json", uploadedFileMap)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Println("New Uploaded File Map: ", uploadedFileMap)
 
 	// Announce as a provider for the CID
 	err = dht.Provide(ctx, cid, true)
@@ -154,12 +152,14 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 		log.Fatal(err)
 	}
 	w.WriteHeader(http.StatusOK)
-
-	// Write the cid as a response
-	_, err = w.Write([]byte(cid.String()))
+	w.Header().Set("Content-Type", "application/json")
+	// Write the UploadedFileInfo as a response
+	newFileInfo, err := json.Marshal(fileInfo)
 	if err != nil {
-		log.Fatal("Had an error writing cid of newly uploaded file", err)
+		log.Fatal("marshalling error", err)
 	}
+	w.Write(newFileInfo)
+
 	fmt.Println("Successfully announced as provider of: ", cid)
 }
 
@@ -213,20 +213,71 @@ func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
 	fileData, downloadStream := requestFile(node, targetPeerID, cid)
 	defer downloadStream.Close()
 
-	w.Header().Set("Content-Type", fileData.Type)
-	w.Header().Set("Content-Disposition", `attachment; filename="`+fileData.Name+`"`)
-	w.Header().Set("Content-Length", strconv.FormatInt(fileData.Size, 10))
-
-	if r.Method == http.MethodHead {
-		w.WriteHeader(http.StatusOK) // Send only headers without a body
+	if r.Method == http.MethodHead { // Send the metadata through headers
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Name", fileData.Name)
+		w.Header().Set("Price", strconv.FormatFloat(fileData.Price, 'f', -1, 64))
+		w.Header().Set("Description", "Downloaded from Seal network")
+		w.Header().Set("Size", strconv.FormatInt(fileData.Size, 10))
+		w.Header().Set("Cid", cid)
+		w.Header().Set("DateAdded", time.Now().String())
+		w.Header().Set("Source", "downloaded")
 		return
 	}
 
-	// Stream download
-	nbytes, err := io.Copy(w, downloadStream)
+	// Create the downloads directory if it doesn't exist
+	err := os.MkdirAll("downloads", os.ModePerm)
+	if err != nil {
+		log.Fatal("failed to create downloads directory")
+	}
+
+	// Create copy of file in /downloads
+	downloadedFile, err := os.Create(filepath.Join("downloads", fileData.Name))
+	if err != nil {
+		http.Error(w, "Error creating file", http.StatusInternalServerError)
+	}
+	_, err = io.Copy(downloadedFile, downloadStream)
+	if err != nil {
+		log.Fatal("error saving copy of file to /downloads: ", err)
+	}
+	downloadedFile.Close()
+
+	// Reopen the file for reading
+	downloadedFile, err = os.Open(filepath.Join("downloads", fileData.Name))
+	if err != nil {
+		http.Error(w, "Error reading saved file", http.StatusInternalServerError)
+		return
+	}
+	defer downloadedFile.Close()
+
+	newlyDownloadedFile := DownloadedFileInfo{
+		Name:        fileData.Name,
+		Price:       fileData.Price,
+		Description: "Downloaded from seal network",
+		Size:        fileData.Size,
+		Cid:         cid,
+		DateAdded:   time.Now().String(),
+		Source:      "downloaded",
+	}
+
+	w.Header().Set("Content-Type", fileData.Type)
+	w.Header().Set("Content-Disposition", `attachment; filename="`+fileData.Name+`"`)
+	w.Header().Set("Content-Length", strconv.FormatInt(fileData.Size, 10))
+	// Write file to response
+	nbytes, err := io.Copy(w, downloadedFile)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Add file to downloadedFileMap
+	downloadedFileMap[cid] = newlyDownloadedFile
+
+	//Save downloadedFileMap
+	err = SaveDownloadedMap("downloadedFileMap.json", downloadedFileMap)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	log.Printf(" (server.go) Downloaded file %s, streamed %d bytes\n", fileData.Name, nbytes)
 }
 
@@ -242,6 +293,21 @@ func startHttpServer(ctx context.Context, dht *dht.IpfsDHT, node host.Host) {
 
 	router.HandleFunc("/download/{cid}/{targetpeerid}", func(w http.ResponseWriter, r *http.Request) {
 		downloadFile(node, w, r)
+	})
+
+	router.HandleFunc("/files", func(w http.ResponseWriter, r *http.Request) {
+		enableCORS(w)
+
+		allFiles := GetFiles()
+
+		fmt.Println("ALL FILES ARE: ", allFiles)
+		// Set response header to indicate JSON content
+		w.Header().Set("Content-Type", "application/json")
+
+		err := json.NewEncoder(w).Encode(allFiles)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	})
 
 	fmt.Println("Backend server is running on localhost port 8080")

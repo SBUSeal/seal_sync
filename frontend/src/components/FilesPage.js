@@ -54,6 +54,22 @@ const FilesPage = (props) => {
     localStorage.setItem('downloadedFilesCount', downloadCount);
   }, [files]); 
 
+  useEffect(() => {
+    const getFiles = async () => {
+      try {
+        let files = await fetch('http://localhost:8080/files', {
+          method: 'GET',
+        })
+        files = await files.json()        
+        setFiles(files)
+      } catch (err) {
+        console.error("Error fetching files: ", err)
+      }
+    }
+    getFiles()
+    
+  }, [])
+
   function closeViewer() {
     setIsViewerOpen(false);
     setCurrentFile(null);
@@ -105,7 +121,7 @@ const FilesPage = (props) => {
   }
 
   async function triggerBlobDownload(url, filename) {
-      const response = await fetch(url, {
+    const response = await fetch(url, {
       method: "GET"
     })
     const blob = await response.blob()
@@ -130,45 +146,30 @@ const FilesPage = (props) => {
       const response = await fetch(url, {
         method: 'HEAD'
       })
-
-      const fileSize = parseInt(response.headers.get("Content-Length"))
-      let fileName = "downloadedFile"
-      const contentDisposition = response.headers.get("Content-Disposition")
-      const matches = /filename="(.+)"/.exec(contentDisposition);
-      if (matches && matches[1]) {
-        fileName = matches[1];  
+      let downloadedFile = {
+        name: response.headers.get("Name"),
+        price: response.headers.get("Price"),
+        description: response.headers.get("Description"),
+        size: parseInt(response.headers.get("Size")),
+        cid: response.headers.get("Cid"),
+        dateAdded: response.headers.get("DateAdded"),
+        source: response.headers.get("Source")
       }
+      
 
       // If file > 50 MB, dont use a blob to download it
       // Also means we wont be able to show a preview of it
       let blob;
-      if (fileSize > 50 * 1024 * 1024) {
+      if (downloadedFile.size > 50 * 1024 * 1024) {
         blob = await triggerNonBlobDownload(url)
       }
       else {
-        blob = await triggerBlobDownload(url, fileName)
+        blob = await triggerBlobDownload(url, downloadedFile.name)
       }
+      downloadedFile.fileObject = blob
 
-      const downloadedFile = {
-        name: fileName, 
-        size: fileSize,
-        source: 'downloaded',
-        fileObject: blob,
-        price: selectedProvider.price, 
-        description: 'Downloaded from seal network', 
-        downloading: true, 
-        paused: false,
-        cid: cid
-      }
       setFiles([...files, downloadedFile]);
-      setDownloadsInProgress(prevDownloads => {
-        const isAlreadyDownloading = prevDownloads.some(f => f.name === downloadedFile.name);
-        if (!isAlreadyDownloading) {
-          return [...prevDownloads, downloadedFile]; 
-        }
-        return prevDownloads;
-      });
-   
+  
       const filtered = files.filter(file => {
         return (file.source === filter || filter === "All") && file.name.toLowerCase().includes(searchQuery.toLowerCase());
       });
@@ -195,24 +196,7 @@ const FilesPage = (props) => {
         sealTokens: downloadedFile.price,
         reason: downloadedFile.name + " purchased from files",
       },] )
-  
-  
-      setTimeout(() => {
-        setFiles(prevFiles => {
-          return prevFiles.map(f => {
-            if (f.name === downloadedFile.name && !f.paused) { 
-              return { ...f, downloading: false }; 
-            }
-            return f;
-          });
-        });
-      
-        setDownloadsInProgress(prevDownloads => 
-          prevDownloads.filter(f => f.name !== downloadedFile.name)
-        );
-      
-      }, 2000);
-  
+
     } catch (error) {
       console.log("Error downloading")
       console.error(error)
@@ -237,7 +221,7 @@ const FilesPage = (props) => {
       if (response.ok) {
           const result = await response;
           console.log('Successfuly Uploaded File:', result);
-          return await result.text()
+          return await result.json()
       } else {
           console.error('Upload failed:', response.statusText);
       }
@@ -248,21 +232,22 @@ const FilesPage = (props) => {
   
   async function handleUploadModalSubmit() {
     try {
-      const cid = await uploadFile()      
-      const newFile = {
-        name: tempFile.name,
-        size: tempFile.size,
-        source: 'uploaded',
-        description: newFileDetails.description,
-        price: newFileDetails.price,
-        fileObject: tempFile,  
-        downloading: tempFile.downloading,
-        unpublishTime: tempFile.unpublishTime,
-        published: true,                 
-        cid: cid
-      }
+      const newlyUploadedFile = await uploadFile()      
+      
+      // const newFile = {
+      //   name: tempFile.name,
+      //   size: tempFile.size,
+      //   source: 'uploaded',
+      //   description: newFileDetails.description,
+      //   price: newFileDetails.price,
+      //   fileObject: tempFile,  
+      //   downloading: tempFile.downloading,
+      //   unpublishTime: tempFile.unpublishTime,
+      //   published: true,                 
+      //   cid: cid
+      // }
             
-      setFiles([...files, newFile]);
+      setFiles([...files, newlyUploadedFile]);
       const filtered = files.filter(file => {
         return (file.source === filter || filter === "All") && file.name.toLowerCase().includes(searchQuery.toLowerCase());
       });

@@ -20,9 +20,10 @@ import (
 )
 
 type FileMetadata struct {
-	Name string `json:"name"`
-	Size int64  `json:"size"`
-	Type string `json:"type"`
+	Name  string  `json:"name"`
+	Size  int64   `json:"size"`
+	Type  string  `json:"type"`
+	Price float64 `json:"price"`
 }
 
 type LocationInfo struct {
@@ -99,9 +100,10 @@ func handleFileRequests(node host.Host) {
 		}
 
 		FileMetadata := FileMetadata{
-			Name: fileName,
-			Size: fileSize,
-			Type: fileType,
+			Name:  fileName,
+			Size:  fileSize,
+			Type:  fileType,
+			Price: fileInfo.Price,
 		}
 
 		// Send file metadata

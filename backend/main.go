@@ -33,22 +33,9 @@ var (
 	globalCtx           context.Context
 )
 
-// Type for storing information about files
-type FileInfo struct {
-	Name          string    `json:"name"`
-	Price         float64   `json:"price"`
-	Description   string    `json:"description"`
-	Size          int64     `json:"size"`
-	Cid           string    `json:"cid"`
-	Published     bool      `json:"published"`
-	UnpublishTime time.Time `json:"unpublishTime"`
-	DateAdded     string    `json:"dateAdded"`
-	Source        string    `json:"source"`
-}
-
 // In memory maps for uploaded and downloaded files
-var uploadedFileMap = make(map[string]FileInfo)
-var downloadedFileMap = make(map[string]FileInfo)
+var uploadedFileMap = make(map[string]UploadedFileInfo)
+var downloadedFileMap = make(map[string]DownloadedFileInfo)
 
 func generatePrivateKeyFromSeed(seed []byte) (crypto.PrivKey, error) {
 	hash := sha256.Sum256(seed)
@@ -219,12 +206,19 @@ func main() {
 	fmt.Println("Node Peer ID:", node.ID())
 
 	// Load uploadedFileMap in
-	uploadedFileMap, err = LoadMapAsJson("uploadedFileMap.json")
+	uploadedFileMap, err = LoadUploadedMap("uploadedFileMap.json")
 	if err != nil {
 		log.Print(err)
 	}
 
-	fmt.Println("UPLOADED FILE MAP: ", uploadedFileMap)
+	// Load downloadedFileMap in
+	downloadedFileMap, err = LoadDownloadedMap("downloadedFileMap.json")
+	if err != nil {
+		log.Print(err)
+	}
+
+	fmt.Println("(main.go) UPLOADED FILE MAP: ", uploadedFileMap)
+	fmt.Println("(main.go) DOWNLOADED FILE MAP: ", downloadedFileMap)
 
 	connectToPeer(node, relay_node_addr) // connect to relay node
 	makeReservation(node)                // make reservation on realy node
