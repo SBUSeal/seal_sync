@@ -17,6 +17,7 @@ import (
 	"github.com/ipfs/go-cid"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/libp2p/go-libp2p/core/host"
+	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/multiformats/go-multihash"
 )
@@ -49,7 +50,7 @@ func getFileFromRequest(r *http.Request) (multipart.File, *multipart.FileHeader,
 	return file, header, err
 }
 
-func saveFile(file multipart.File, header *multipart.FileHeader, w http.ResponseWriter) cid.Cid {
+func saveUploadedFile(file multipart.File, header *multipart.FileHeader) cid.Cid {
 	// Create cid for the file
 	cid := generateCid(file)
 
@@ -68,7 +69,7 @@ func saveFile(file multipart.File, header *multipart.FileHeader, w http.Response
 	// Create copy of file in /uploads
 	uploadedFile, err := os.Create(filepath.Join("uploads", header.Filename))
 	if err != nil {
-		http.Error(w, "Error creating file", http.StatusInternalServerError)
+		log.Fatal("Error creating copy of file to /uploads: ", err)
 	}
 	defer uploadedFile.Close()
 
@@ -77,29 +78,18 @@ func saveFile(file multipart.File, header *multipart.FileHeader, w http.Response
 	if err != nil {
 		log.Fatal("failed to copy file", err)
 	}
-	log.Printf("Saved File: %s", uploadedFile.Name())
-
 	return cid
 }
 
-// Get the provided file and price, save a copy to the ./uploads folder, and upload to DHT
-func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r *http.Request) {
-	enableCORS(w)
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-	// Get provided price
+func processUploadedFile(r *http.Request) (cid.Cid, UploadedFileInfo) {
+	// Get provided file metadata
 	price_s := r.FormValue("price")
 	price, err := strconv.ParseFloat(price_s, 64)
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Get provided file description
 	description := r.FormValue("description")
-	// Get date added string
 	dateAdded := r.FormValue("dateAdded")
-	// Get unpublish time
 	unpublishTime_s := r.FormValue("unpublishTime")
 	var unpublishTime time.Time
 	if unpublishTime_s == "" {
@@ -110,8 +100,6 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 			log.Fatal("Error parsing the time: ", err)
 		}
 	}
-
-	//Get provided file size
 	size_s := r.FormValue("size")
 	size, err := strconv.ParseInt(size_s, 10, 64)
 	if err != nil {
@@ -120,11 +108,11 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 	// Get provided file
 	file, header, err := getFileFromRequest(r)
 	if err != nil {
-		http.Error(w, "Error retrieving file", http.StatusBadRequest)
+		log.Fatal("Error with getFileFromRequest: ", err)
 	}
 	defer file.Close()
 
-	cid := saveFile(file, header, w)
+	cid := saveUploadedFile(file, header)
 
 	// Add file to uploadedFileMap
 	fileInfo := UploadedFileInfo{
@@ -139,31 +127,42 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 		Source:        "uploaded",
 	}
 	uploadedFileMap[cid.String()] = fileInfo
-
 	//Save uploadedFileMap
 	err = SaveUploadedMap("uploadedFileMap.json", uploadedFileMap)
 	if err != nil {
 		log.Fatal(err)
 	}
+	return cid, fileInfo
+}
+
+// Get the provided file, save it, and upload to DHT. Send back metadata as response
+func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r *http.Request) {
+	enableCORS(w)
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Extract file metadata and save copy of file to /uploads
+	cid, fileInfo := processUploadedFile(r)
 
 	// Announce as a provider for the CID
-	err = dht.Provide(ctx, cid, true)
+	err := dht.Provide(ctx, cid, true)
 	if err != nil {
 		log.Fatal(err)
 	}
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	// Write the UploadedFileInfo as a response
+	w.WriteHeader(http.StatusOK)
+	// Write the file metadata as a response
 	newFileInfo, err := json.Marshal(fileInfo)
 	if err != nil {
 		log.Fatal("marshalling error", err)
 	}
 	w.Write(newFileInfo)
-
 	fmt.Println("Successfully announced as provider of: ", cid)
 }
 
-// get provider information for a given cid
+// Get provider information for a given cid
 func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w http.ResponseWriter, r *http.Request) {
 	enableCORS(w)
 	// must be a GET request
@@ -189,7 +188,6 @@ func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w h
 		log.Fatal(err)
 	}
 
-	// maps {Peer_id: FileProviderInfo}
 	var results []FileProviderInfo
 	for _, peerID := range peerIDs {
 		info := requestProviderInfo(node, peerID, cid)
@@ -204,16 +202,67 @@ func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w h
 
 }
 
+func saveDownloadedFile(fileData FileMetadata, cid string, downloadStream network.Stream) {
+	// Create the downloads directory if it doesn't exist
+	err := os.MkdirAll("downloads", os.ModePerm)
+	if err != nil {
+		log.Fatal("failed to create downloads directory")
+	}
+
+	// Create copy of file in /downloads
+	downloadedFile, err := os.Create(filepath.Join("downloads", fileData.Name))
+	if err != nil {
+		log.Fatal("Error creating file in /downloads: ", err)
+	}
+	_, err = io.Copy(downloadedFile, downloadStream)
+	if err != nil {
+		log.Fatal("Error saving copy of file to /downloads: ", err)
+	}
+	downloadedFile.Close()
+
+	newlyDownloadedFile := DownloadedFileInfo{
+		Name:        fileData.Name,
+		Price:       fileData.Price,
+		Description: "Downloaded from seal network",
+		Size:        fileData.Size,
+		Cid:         cid,
+		DateAdded:   time.Now().Format(time.RFC3339),
+		Source:      "downloaded",
+	}
+	// Add file to downloadedFileMap
+	downloadedFileMap[cid] = newlyDownloadedFile
+
+	//Save downloadedFileMap
+	err = SaveDownloadedMap("downloadedFileMap.json", downloadedFileMap)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func writeFileToResponse(w http.ResponseWriter, filename string) int64 {
+	downloadedFile, err := os.Open(filename)
+	if err != nil {
+		log.Fatal("Error reading saved file: ", err)
+	}
+	defer downloadedFile.Close()
+
+	w.Header().Set("Content-Disposition", `attachment; filename="`+filename+`"`)
+	nbytes, err := io.Copy(w, downloadedFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return nbytes
+}
+
 func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
 	enableCORS(w)
 
 	targetPeerID := r.PathValue("targetpeerid")
 	cid := r.PathValue("cid")
-
 	fileData, downloadStream := requestFile(node, targetPeerID, cid)
 	defer downloadStream.Close()
-
-	if r.Method == http.MethodHead { // Send the metadata through headers
+	// For a HEAD request, just send the metadata through headers
+	if r.Method == http.MethodHead {
 		w.Header().Set("Name", fileData.Name)
 		w.Header().Set("Price", strconv.FormatFloat(fileData.Price, 'f', -1, 64))
 		w.Header().Set("Description", "Downloaded from Seal network")
@@ -225,60 +274,22 @@ func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Create the downloads directory if it doesn't exist
-	err := os.MkdirAll("downloads", os.ModePerm)
-	if err != nil {
-		log.Fatal("failed to create downloads directory")
-	}
+	// Save copy of file to /downloads and update downloadedFileMap
+	saveDownloadedFile(fileData, cid, downloadStream)
 
-	// Create copy of file in /downloads
-	downloadedFile, err := os.Create(filepath.Join("downloads", fileData.Name))
-	if err != nil {
-		http.Error(w, "Error creating file", http.StatusInternalServerError)
-	}
-	_, err = io.Copy(downloadedFile, downloadStream)
-	if err != nil {
-		log.Fatal("error saving copy of file to /downloads: ", err)
-	}
-	downloadedFile.Close()
-
-	// Reopen the file for reading
-	downloadedFile, err = os.Open(filepath.Join("downloads", fileData.Name))
-	if err != nil {
-		http.Error(w, "Error reading saved file", http.StatusInternalServerError)
-		return
-	}
-	defer downloadedFile.Close()
-
-	newlyDownloadedFile := DownloadedFileInfo{
-		Name:        fileData.Name,
-		Price:       fileData.Price,
-		Description: "Downloaded from seal network",
-		Size:        fileData.Size,
-		Cid:         cid,
-		DateAdded:   time.Now().String(),
-		Source:      "downloaded",
-	}
-
-	w.Header().Set("Content-Type", fileData.Type)
-	w.Header().Set("Content-Disposition", `attachment; filename="`+fileData.Name+`"`)
-	w.Header().Set("Content-Length", strconv.FormatInt(fileData.Size, 10))
-	// Write file to response
-	nbytes, err := io.Copy(w, downloadedFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Add file to downloadedFileMap
-	downloadedFileMap[cid] = newlyDownloadedFile
-
-	//Save downloadedFileMap
-	err = SaveDownloadedMap("downloadedFileMap.json", downloadedFileMap)
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	// Send the file as response
+	nbytes := writeFileToResponse(w, filepath.Join("downloads", fileData.Name))
 	log.Printf(" (server.go) Downloaded file %s, streamed %d bytes\n", fileData.Name, nbytes)
+}
+
+func getAllFiles(w http.ResponseWriter, r *http.Request) {
+	enableCORS(w)
+	allFiles := GetFiles()
+	w.Header().Set("Content-Type", "application/json")
+	err := json.NewEncoder(w).Encode(allFiles)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 // Pass ctx and dht in
@@ -290,25 +301,10 @@ func startHttpServer(ctx context.Context, dht *dht.IpfsDHT, node host.Host) {
 	router.HandleFunc("/providers/{cid}", func(w http.ResponseWriter, r *http.Request) {
 		getFileProviders(ctx, dht, node, w, r)
 	})
-
 	router.HandleFunc("/download/{cid}/{targetpeerid}", func(w http.ResponseWriter, r *http.Request) {
 		downloadFile(node, w, r)
 	})
-
-	router.HandleFunc("/files", func(w http.ResponseWriter, r *http.Request) {
-		enableCORS(w)
-
-		allFiles := GetFiles()
-
-		fmt.Println("ALL FILES ARE: ", allFiles)
-		// Set response header to indicate JSON content
-		w.Header().Set("Content-Type", "application/json")
-
-		err := json.NewEncoder(w).Encode(allFiles)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-	})
+	router.HandleFunc("/files", getAllFiles)
 
 	fmt.Println("Backend server is running on localhost port 8080")
 	err := http.ListenAndServe(":8080", router)

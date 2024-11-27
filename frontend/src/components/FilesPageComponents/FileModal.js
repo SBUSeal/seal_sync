@@ -1,7 +1,7 @@
 import React from 'react'
 
-const FileModal = ({currentFile, formatFileSize, setIsFileModalOpen}) => {
-  
+const FileModal = ({currentFile, formatFileSize, setIsFileModalOpen}) => {  
+
   return (
     <div className="modal">
         <div className="modal-content"  style={{textAlign: "left"}}>
@@ -10,7 +10,7 @@ const FileModal = ({currentFile, formatFileSize, setIsFileModalOpen}) => {
             <p><strong>Size:</strong> {formatFileSize(currentFile.size)}</p>
             <p><strong>Price:</strong> {currentFile.price + " STK"}</p>
             <p><strong>Description:</strong> {currentFile.description}</p>
-            {currentFile.unpublishTime &&  <p><strong>Unpublish Time:</strong> {new Date(currentFile.unpublishTime).toLocaleString()}</p>}
+            {currentFile.unpublishTime && new Date(currentFile.unpublishTime).getFullYear() > 5 && <p><strong>Unpublish Time:</strong> {new Date(currentFile.unpublishTime).toLocaleString()}</p>}
         <div className="modal-actions" style={{marginTop: "30px"}}>
             <button onClick={() => setIsFileModalOpen(false)}>Close</button>
         </div>

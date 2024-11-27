@@ -54,6 +54,44 @@ func readCid(s network.Stream) string {
 	return cid
 }
 
+func getFileMetadata(file *os.File, price float64) FileMetadata {
+
+	info, err := file.Stat()
+	if err != nil {
+		log.Fatal("Error getting file info:", err)
+	}
+	fileName := info.Name()
+	fileSize := info.Size()
+	fileExt := filepath.Ext(fileName)
+	fileType := mime.TypeByExtension(fileExt)
+	// If we can't get the type, do it manually
+	if fileType == "" {
+		if fileType == "" {
+			switch fileExt {
+			case ".txt":
+				fileType = "text/plain"
+			case ".html":
+				fileType = "text/html"
+			case ".png":
+				fileType = "image/png"
+			case ".pdf":
+				fileType = "application/pdf"
+			default:
+				fileType = "application/octet-stream" // Fallback
+			}
+		}
+	}
+
+	FileMetadata := FileMetadata{
+		Name:  fileName,
+		Size:  fileSize,
+		Type:  fileType,
+		Price: price,
+	}
+
+	return FileMetadata
+}
+
 func handleFileRequests(node host.Host) {
 	node.SetStreamHandler(file_transfer_protocol, func(s network.Stream) {
 		defer s.Close()
@@ -72,39 +110,7 @@ func handleFileRequests(node host.Host) {
 			log.Fatal("Error opening file")
 		}
 		// Get file metadata
-		info, err := file.Stat()
-		if err != nil {
-			fmt.Println("Error getting file info:", err)
-			return
-		}
-		fileName := info.Name()
-		fileSize := info.Size()
-		fileExt := filepath.Ext(filePath)
-		fileType := mime.TypeByExtension(fileExt)
-		// If we can't get the type, do it manually
-		if fileType == "" {
-			if fileType == "" {
-				switch fileExt {
-				case ".txt":
-					fileType = "text/plain"
-				case ".html":
-					fileType = "text/html"
-				case ".png":
-					fileType = "image/png"
-				case ".pdf":
-					fileType = "application/pdf"
-				default:
-					fileType = "application/octet-stream" // Fallback
-				}
-			}
-		}
-
-		FileMetadata := FileMetadata{
-			Name:  fileName,
-			Size:  fileSize,
-			Type:  fileType,
-			Price: fileInfo.Price,
-		}
+		FileMetadata := getFileMetadata(file, fileInfo.Price)
 
 		// Send file metadata
 		var data []byte
@@ -127,7 +133,7 @@ func requestFile(node host.Host, targetpeerid string, cid string) (FileMetadata,
 	peerinfo := connectToPeerUsingRelay(node, targetpeerid)
 	s, err := node.NewStream(network.WithAllowLimitedConn(globalCtx, "file transfer"), peerinfo.ID, file_transfer_protocol)
 	if err != nil {
-		log.Printf("Failed to open stream to %s: %s", peer.ID(targetpeerid), err)
+		log.Fatalf("Failed to open stream to %s: %s", peer.ID(targetpeerid), err)
 	}
 	//Write the cid
 	_, err = s.Write([]byte(cid + "\n"))
