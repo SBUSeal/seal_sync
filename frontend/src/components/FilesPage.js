@@ -60,7 +60,7 @@ const FilesPage = (props) => {
         let files = await fetch('http://localhost:8080/files', {
           method: 'GET',
         })
-        files = await files.json()        
+        files = await files.json() || []        
         setFiles(files)
       } catch (err) {
         console.error("Error fetching files: ", err)
@@ -154,7 +154,7 @@ const FilesPage = (props) => {
         cid: response.headers.get("Cid"),
         dateAdded: response.headers.get("DateAdded"),
         source: response.headers.get("Source")
-      }
+      }      
       
 
       // If file > 50 MB, dont use a blob to download it

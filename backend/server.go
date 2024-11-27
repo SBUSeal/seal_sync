@@ -24,9 +24,9 @@ import (
 // Handle CORS issues
 func enableCORS(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, HEAD")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	w.Header().Set("Access-Control-Expose-Headers", "Content-Disposition")
+	w.Header().Set("Access-Control-Expose-Headers", "*")
 }
 
 // Find all Peer IDs in the list of peer.AddrInfos (excluding ourselves)
@@ -214,14 +214,14 @@ func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
 	defer downloadStream.Close()
 
 	if r.Method == http.MethodHead { // Send the metadata through headers
-		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Name", fileData.Name)
 		w.Header().Set("Price", strconv.FormatFloat(fileData.Price, 'f', -1, 64))
 		w.Header().Set("Description", "Downloaded from Seal network")
 		w.Header().Set("Size", strconv.FormatInt(fileData.Size, 10))
 		w.Header().Set("Cid", cid)
-		w.Header().Set("DateAdded", time.Now().String())
+		w.Header().Set("DateAdded", time.Now().Format(time.RFC3339))
 		w.Header().Set("Source", "downloaded")
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 
