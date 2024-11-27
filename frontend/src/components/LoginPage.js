@@ -12,8 +12,17 @@ function LoginPage({ handleDebug, onLogin, onSignUp }) {
     setErrorMessage('');
     if (walletAddress) {
       onLogin(walletAddress, walletPassword);
+
     } else {
       setErrorMessage('Please enter your Wallet Address.');
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    const inputPassword = e.target.value;
+    // Ensure the password doesn't exceed the max length even if pasted
+    if (inputPassword.length <= maxwalletPasswordLength) {
+      setwalletPassword(inputPassword);
     }
   };
 

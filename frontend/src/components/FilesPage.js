@@ -163,7 +163,6 @@ const FilesPage = (props) => {
 
   function dummyDownload() {
     const dummyFile = {
-      // name: `Dummy File ${files.length + 1 } purchased from Files`, 
       name: `Dummy File ${files.length + 1 }`, 
       size: 100,
       status: 'unlocked',
@@ -200,7 +199,6 @@ const FilesPage = (props) => {
     setIsProvidersModalOpen(false)
     setSelectedProvider(null)
 
-    // setDownloadsInProgress(prevDownloads => [...prevDownloads, dummyFile]);
 
     props.setSealTokenBalance(props.sealTokenBalance - dummyFile.price)
     alert(`Successfully bought file for ${dummyFile.price} STK!`)
@@ -630,7 +628,6 @@ const FilesPage = (props) => {
                       <div className='modal-actions'>
                         <button onClick={dummyDownload} style={{fontSize: '20px'}}>Download</button>
                       </div>
-                    
                     </div>
                   </div>
                 </div>
