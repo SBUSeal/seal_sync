@@ -217,9 +217,6 @@ func main() {
 		log.Print(err)
 	}
 
-	fmt.Println("(main.go) UPLOADED FILE MAP: ", uploadedFileMap)
-	fmt.Println("(main.go) DOWNLOADED FILE MAP: ", downloadedFileMap)
-
 	connectToPeer(node, relay_node_addr) // connect to relay node
 	makeReservation(node)                // make reservation on realy node
 	go refreshReservation(node, 10*time.Minute)
@@ -280,7 +277,6 @@ func getGeolocation() LocationInfo {
 		log.Fatal(err)
 	}
 	publicIP := string(body)
-	fmt.Println("Found Node Public IP:", publicIP)
 
 	// Get location info from public IP
 	geoResp, err := http.Get(fmt.Sprintf("https://ipinfo.io/%s/json", publicIP))
