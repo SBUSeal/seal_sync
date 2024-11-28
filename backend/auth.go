@@ -31,7 +31,7 @@ func IdentifyWalletByAddress(address string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to create request for listwallets: %v", err)
 	}
-	req.SetBasicAuth("user", "password") 
+	req.SetBasicAuth("user", "password")
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := client.Do(req)
@@ -104,6 +104,7 @@ func enableCORS(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins (or restrict to specific domains)
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Expose-Headers", "Name, Cid, Price, Size, Description, DateAdded, Source")
 
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusOK)
@@ -126,7 +127,7 @@ func HandleCreateWallet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var requestBody struct {
-		WalletName    string `json:"walletName"`
+		WalletName     string `json:"walletName"`
 		WalletPassword string `json:"walletPassword"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
@@ -282,7 +283,6 @@ func HandleCreateWallet(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-
 func HandleLoginWallet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -359,7 +359,7 @@ func HandleLoginWallet(w http.ResponseWriter, r *http.Request) {
 		"params":  []interface{}{requestBody.WalletPassword, 60}, // Unlock for 60 seconds
 	}
 	rpcRequestBody, _ := json.Marshal(rpcRequest)
-	req, err = http.NewRequest("POST", "http://127.0.0.1:8332/wallet/"+ WalletName, bytes.NewBuffer(rpcRequestBody))
+	req, err = http.NewRequest("POST", "http://127.0.0.1:8332/wallet/"+WalletName, bytes.NewBuffer(rpcRequestBody))
 	if err != nil {
 		http.Error(w, "Failed to create HTTP request for unlocking wallet", http.StatusInternalServerError)
 		return
