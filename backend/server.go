@@ -22,14 +22,6 @@ import (
 	"github.com/multiformats/go-multihash"
 )
 
-// Handle CORS issues
-func enableCORS(w http.ResponseWriter) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, HEAD")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	w.Header().Set("Access-Control-Expose-Headers", "*")
-}
-
 // Find all Peer IDs in the list of peer.AddrInfos (excluding ourselves)
 func findAllPeerIDs(node host.Host, peerInfos []peer.AddrInfo) []string {
 	var arr []string
@@ -137,7 +129,6 @@ func processUploadedFile(r *http.Request) (cid.Cid, UploadedFileInfo) {
 
 // Get the provided file, save it, and upload to DHT. Send back metadata as response
 func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r *http.Request) {
-	enableCORS(w)
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -164,7 +155,6 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 
 // Get provider information for a given cid
 func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w http.ResponseWriter, r *http.Request) {
-	enableCORS(w)
 	// must be a GET request
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -255,8 +245,6 @@ func writeFileToResponse(w http.ResponseWriter, filename string) int64 {
 }
 
 func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
-	enableCORS(w)
-
 	targetPeerID := r.PathValue("targetpeerid")
 	cid := r.PathValue("cid")
 	fileData, downloadStream := requestFile(node, targetPeerID, cid)
@@ -283,7 +271,6 @@ func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
 }
 
 func getAllFiles(w http.ResponseWriter, r *http.Request) {
-	enableCORS(w)
 	allFiles := GetFiles()
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(allFiles)
@@ -293,25 +280,25 @@ func getAllFiles(w http.ResponseWriter, r *http.Request) {
 }
 
 // Pass ctx and dht in
-func startHttpServer(ctx context.Context, dht *dht.IpfsDHT, node host.Host) {
-	router := http.NewServeMux()
-	router.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
-		uploadFile(ctx, dht, w, r)
-	})
-	router.HandleFunc("/providers/{cid}", func(w http.ResponseWriter, r *http.Request) {
-		getFileProviders(ctx, dht, node, w, r)
-	})
-	router.HandleFunc("/download/{cid}/{targetpeerid}", func(w http.ResponseWriter, r *http.Request) {
-		downloadFile(node, w, r)
-	})
-	router.HandleFunc("/files", getAllFiles)
+// func startHttpServer(ctx context.Context, dht *dht.IpfsDHT, node host.Host) {
+// 	router := http.NewServeMux()
+// 	router.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
+// 		uploadFile(ctx, dht, w, r)
+// 	})
+// 	router.HandleFunc("/providers/{cid}", func(w http.ResponseWriter, r *http.Request) {
+// 		getFileProviders(ctx, dht, node, w, r)
+// 	})
+// 	router.HandleFunc("/download/{cid}/{targetpeerid}", func(w http.ResponseWriter, r *http.Request) {
+// 		downloadFile(node, w, r)
+// 	})
+// 	router.HandleFunc("/files", getAllFiles)
 
-	fmt.Println("Backend server is running on localhost port 8080")
-	err := http.ListenAndServe(":8080", router)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
-	}
-}
+// 	fmt.Println("Backend server is running on localhost port 8080")
+// 	err := http.ListenAndServe(":8080", router)
+// 	if err != nil {
+// 		log.Fatal("ListenAndServe: ", err)
+// 	}
+// }
 
 func generateCid(file io.Reader) cid.Cid {
 	// Create sha-256 hash
