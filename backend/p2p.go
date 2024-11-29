@@ -26,16 +26,12 @@ import (
 	"github.com/multiformats/go-multiaddr"
 )
 
-var (
-	node_id             = "114418346" // give your SBU ID
-	relay_node_addr     = "/ip4/130.245.173.221/tcp/4001/p2p/12D3KooWDpJ7As7BWAwRMfu1VU2WCqNjvq387JEYKDBj4kx6nXTN"
-	bootstrap_node_addr = "/ip4/130.245.173.222/tcp/61000/p2p/12D3KooWQd1K1k8XA9xVEzSAu7HUCodC7LJB6uW5Kw4VwkRdstPE"
-	globalCtx           context.Context
-)
-
-// In memory maps for uploaded and downloaded files
-var uploadedFileMap = make(map[string]UploadedFileInfo)
-var downloadedFileMap = make(map[string]DownloadedFileInfo)
+// var (
+// 	node_id             = "114418346" // give your SBU ID
+// 	relay_node_addr     = "/ip4/130.245.173.221/tcp/4001/p2p/12D3KooWDpJ7As7BWAwRMfu1VU2WCqNjvq387JEYKDBj4kx6nXTN"
+// 	bootstrap_node_addr = "/ip4/130.245.173.222/tcp/61000/p2p/12D3KooWQd1K1k8XA9xVEzSAu7HUCodC7LJB6uW5Kw4VwkRdstPE"
+// 	globalCtx           context.Context
+// )
 
 func generatePrivateKeyFromSeed(seed []byte) (crypto.PrivKey, error) {
 	hash := sha256.Sum256(seed)
@@ -256,4 +252,25 @@ func getGeolocation() LocationInfo {
 		log.Fatal(err)
 	}
 	return location
+}
+
+func initializeNode() (host.Host, *dht.IpfsDHT) {
+	node, dht, err := createNode()
+	if err != nil {
+		log.Fatalf("Failed to create node: %s", err)
+	}
+
+	fmt.Println("Node multiaddresses:", node.Addrs())
+	fmt.Println("Node Peer ID:", node.ID())
+
+	connectToPeer(node, relay_node_addr) // connect to relay node
+	makeReservation(node)                // make reservation on realy node
+	go refreshReservation(node, 10*time.Minute)
+	connectToPeer(node, bootstrap_node_addr) // connect to bootstrap node
+
+	go handlePeerExchange(node)
+	handleProviderInfoRequests(node)
+	handleFileRequests(node)
+
+	return node, dht
 }

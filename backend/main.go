@@ -5,44 +5,28 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
+)
+
+var (
+	node_id             = "114418346" // give your SBU ID
+	relay_node_addr     = "/ip4/130.245.173.221/tcp/4001/p2p/12D3KooWDpJ7As7BWAwRMfu1VU2WCqNjvq387JEYKDBj4kx6nXTN"
+	bootstrap_node_addr = "/ip4/130.245.173.222/tcp/61000/p2p/12D3KooWQd1K1k8XA9xVEzSAu7HUCodC7LJB6uW5Kw4VwkRdstPE"
+	globalCtx           context.Context
+	uploadedFileMap     = make(map[string]UploadedFileInfo)
+	downloadedFileMap   = make(map[string]DownloadedFileInfo)
 )
 
 func main() {
-	// intitalize p2p stuff
-	node, dht, err := createNode()
-	if err != nil {
-		log.Fatalf("Failed to create node: %s", err)
-	}
 
+	// Initialize our node (connect to bootstrap & relay node, initialize dht)
+	node, dht := initializeNode()
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	globalCtx = ctx
-
-	fmt.Println("Node multiaddresses:", node.Addrs())
-	fmt.Println("Node Peer ID:", node.ID())
-
-	// Load uploadedFileMap in
-	uploadedFileMap, err = LoadUploadedMap("uploadedFileMap.json")
-	if err != nil {
-		log.Print(err)
-	}
-
-	// Load downloadedFileMap in
-	downloadedFileMap, err = LoadDownloadedMap("downloadedFileMap.json")
-	if err != nil {
-		log.Print(err)
-	}
-
-	connectToPeer(node, relay_node_addr) // connect to relay node
-	makeReservation(node)                // make reservation on realy node
-	go refreshReservation(node, 10*time.Minute)
-	connectToPeer(node, bootstrap_node_addr) // connect to bootstrap node
-
-	go handlePeerExchange(node)
-	handleProviderInfoRequests(node)
-	handleFileRequests(node)
 	defer node.Close()
+	// Load file maps in
+	uploadedFileMap = LoadUploadedMap("uploadedFileMap.json")
+	downloadedFileMap = LoadDownloadedMap("downloadedFileMap.json")
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/createWallet", HandleCreateWallet)

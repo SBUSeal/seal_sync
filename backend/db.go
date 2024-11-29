@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"io"
 	"log"
 	"os"
 	"time"
@@ -52,17 +53,27 @@ func SaveDownloadedMap(filename string, fileMap map[string]DownloadedFileInfo) e
 	return err
 }
 
-func LoadDownloadedMap(filename string) (map[string]DownloadedFileInfo, error) {
-	data := make(map[string]DownloadedFileInfo)
+func LoadDownloadedMap(filename string) map[string]DownloadedFileInfo {
+	// Create the file if it doesn't exist
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		_, err := os.Create(filename)
+		if err != nil {
+			log.Fatal("Failed to create file:", err)
+		}
+	}
+
 	file, err := os.Open(filename)
 	if err != nil {
-		return data, err
+		log.Fatal("Failed to open file:", err)
 	}
 	defer file.Close()
 
-	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&data)
-	return data, err
+	data := make(map[string]DownloadedFileInfo)
+	if err := json.NewDecoder(file).Decode(&data); err != nil && err != io.EOF {
+		log.Fatal("Failed to decode JSON:", err)
+	}
+
+	return data
 }
 
 func SaveUploadedMap(filename string, fileMap map[string]UploadedFileInfo) error {
@@ -82,17 +93,27 @@ func SaveUploadedMap(filename string, fileMap map[string]UploadedFileInfo) error
 	return err
 }
 
-func LoadUploadedMap(filename string) (map[string]UploadedFileInfo, error) {
-	data := make(map[string]UploadedFileInfo)
+func LoadUploadedMap(filename string) map[string]UploadedFileInfo {
+	// Create the file if it doesn't exist
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		_, err := os.Create(filename)
+		if err != nil {
+			log.Fatal("Failed to create file:", err)
+		}
+	}
+
 	file, err := os.Open(filename)
 	if err != nil {
-		return data, err
+		log.Fatal("Failed to open file:", err)
 	}
 	defer file.Close()
 
-	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&data)
-	return data, err
+	data := make(map[string]UploadedFileInfo)
+	if err := json.NewDecoder(file).Decode(&data); err != nil && err != io.EOF {
+		log.Fatal("Failed to decode JSON:", err)
+	}
+
+	return data
 }
 
 func RepublishFiles(fileMap map[string]UploadedFileInfo, ctx context.Context, dht *dht.IpfsDHT) {
