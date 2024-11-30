@@ -14,7 +14,7 @@ import TransactionsPage from './components/TransactionsPage';
 
 function App() {
   const [activePage, setActivePage] = useState('Status');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [sealTokenBalance, setSealTokenBalance] = useState(100);
   const [currentProxy, setcurrentProxy] = useState(null);
@@ -58,10 +58,33 @@ function App() {
     },
   ]);
 
+
+  const handleDebug = () => {
+    setActivePage("Status")
+    setIsLoggedIn(true)
+  }
+
   // Handle login
-  const handleLogin = (walletAddress, privateKey) => {
-    if (walletAddress && privateKey) {
-      setIsLoggedIn(true);
+  const handleLogin = async (walletAddress, walletPassword) => {
+    try {
+      const response = await fetch("http://localhost:8080/loginWallet", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ walletAddress, walletPassword }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setActivePage("Status")
+        setIsLoggedIn(true)
+      } else {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.message}`);
+      }
+    } catch (error) {
+      alert(`Error: ${error.message}`);
     }
   };
 
@@ -102,7 +125,7 @@ function App() {
       return <SignUpPage setActivePage={setActivePage} setIsSigningUp={setIsSigningUp} setIsLoggedIn={setIsLoggedIn} />;
     }
     if (!isLoggedIn) {
-      return <LoginPage onLogin={handleLogin} onSignUp={handleSignUp} />;
+      return <LoginPage handleDebug={handleDebug} onLogin={handleLogin} onSignUp={handleSignUp} />;
     }
     switch (activePage) {
       case 'Status':
