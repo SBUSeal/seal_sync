@@ -22,6 +22,7 @@ function App() {
   const [isOn, setIsOn] = useState(false); 
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [price, setPrice] = useState('');
+  const [notifStatus, setNotifStatus] = useState('All');
 
   // State to manage Files
   const [files, setFiles] = useState([]);
@@ -83,6 +84,18 @@ function App() {
     setIsDarkMode(!isDarkMode);
   };
 
+  const toggleNotifUrgent = () => {
+    setNotifStatus('Urgent');
+  }
+
+  const toggleNotifOff = () => {
+    setNotifStatus('Off');
+  }
+
+  const toggleNotifAll = () => {
+    setNotifStatus('All');
+  }
+
   // Function to render content based on activePage
   const renderContent = () => {
     if (isSigningUp) {
@@ -142,7 +155,7 @@ function App() {
           />
         );
       case 'Settings':
-        return <SettingsPage handleLogout={handleLogout} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />;
+        return <SettingsPage handleLogout={handleLogout} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} notifStatus={notifStatus} setNotifStatus={setNotifStatus}/>;
       case 'Transactions': // Handle when the active page is Transactions
         return (
           <TransactionsPage

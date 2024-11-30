@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../stylesheets/SettingsPage.css';
 
-const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
+const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode, notifStatus, setNotifStatus }) => {
 
     const [activeTab, setActiveTab] = useState('Configuration');
     const [showLogoutModal, setShowLogoutModal] = useState(false); 
@@ -68,21 +68,27 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
                                 <input
                                     type="radio"
                                     name="notification"
-                                    value="All new activity or messages"
-                                    checked={notificationChoice === 'All new activity or messages'}
-                                    onChange={(e) => setNotificationChoice(e.target.value)}
+                                    //value="All new activity or messages"
+                                    value = "All" 
+                                    //checked={notificationChoice === 'All new activity or messages'}
+                                    checked={notifStatus === 'All'}
+                                    //onChange={(e) => setNotificationChoice(e.target.value)}
+                                    onChange={() => setNotifStatus('All')}
                                 />
-                                <label>All new activity or messages</label>
+                                <label>All notifications</label>
                             </div>
                             <div className="notification-option">
                                 <input
                                     type="radio"
                                     name="notification"
-                                    value="Urgent activity or messages only"
-                                    checked={notificationChoice === 'Urgent activity or messages only'}
-                                    onChange={(e) => setNotificationChoice(e.target.value)}
+                                    //value="Urgent activity or messages only"
+                                    value="Urgent"
+                                    //checked={notificationChoice === 'Urgent activity or messages only'}
+                                    checked={notifStatus === 'Urgent'}
+                                    //onChange={(e) => setNotificationChoice(e.target.value)}
+                                    onChange={() => setNotifStatus('Urgent')}
                                 />
-                                <label>Urgent activity or messages only</label>
+                                <label>Urgent notifications only</label>
                             </div>
                             <div className="notification-option">
                                 <input
@@ -90,9 +96,10 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
                                     name="notification"
                                     value="Nothing"
                                     checked={notificationChoice === 'Nothing'}
-                                    onChange={(e) => setNotificationChoice(e.target.value)}
+                                    //onChange={(e) => setNotificationChoice(e.target.value)}
+                                    onChange={() => setNotifStatus('Nothing')}
                                 />
-                                <label>Nothing</label>
+                                <label>No notifications</label>
                             </div>
                         </form>
                         <button className="primary-button" onClick={() => handleNotificationUpdate()}>
@@ -108,17 +115,28 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode }) => {
 
     const handleNotificationUpdate = () => {
         let message = '';
-        if (notificationChoice === 'Nothing') {
+        /*if (notificationChoice === 'Nothing') {
             message = 'You will not be notified.';
         } else {
             message = `You will receive ${notificationChoice.toLowerCase()}.`;
         }
-        setNotificationMessage(message);
+        setNotificationMessage(message);*/
+        if(notifStatus === 'Nothing') {
+            message = 'You will not be notified.';
+        } else if(notifStatus === 'Urgent') {
+            message = 'You will only receive urgent notifications.';
+        } else {
+            message = 'You will receive all notifications.';
+        }
         showNotification(message, 'success');
     };
 
    
     const showNotification = (message, type) => {
+        console.log("Message in showNotification function is:"+message);
+        console.log("Type in showNotification function is:"+type);
+        /*if(notifStatus === 'Nothing') return;
+        if(notifStatus === 'Urgent') return;//type !== 'urgent'*/
         setNotificationMessage(message);
         setShowPopup(true); 
 
