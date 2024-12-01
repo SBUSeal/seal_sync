@@ -5,28 +5,38 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 )
 
 var (
-	node_id             = "114418346" // give your SBU ID
-	relay_node_addr     = "/ip4/130.245.173.221/tcp/4001/p2p/12D3KooWDpJ7As7BWAwRMfu1VU2WCqNjvq387JEYKDBj4kx6nXTN"
-	bootstrap_node_addr = "/ip4/130.245.173.222/tcp/61000/p2p/12D3KooWQd1K1k8XA9xVEzSAu7HUCodC7LJB6uW5Kw4VwkRdstPE"
-	globalCtx           context.Context
+	node_id         = "114418346" // give your SBU ID
+	relay_node_addr = "/ip4/130.245.173.221/tcp/4001/p2p/12D3KooWDpJ7As7BWAwRMfu1VU2WCqNjvq387JEYKDBj4kx6nXTN"
+	// bootstrap_node_addr = "/ip4/130.245.173.222/tcp/61000/p2p/12D3KooWQd1K1k8XA9xVEzSAu7HUCodC7LJB6uW5Kw4VwkRdstPE"
+	// Use my own bootstrap node for now
+	bootstrap_node_addr = "/ip4/192.168.1.176/tcp/61000/p2p/12D3KooWRNRgkCut2kEobuML9zn8zR9dFthaMpgaRAAXdn5jdoGm"
+	globalCtx           = context.Background()
 	uploadedFileMap     = make(map[string]UploadedFileInfo)
 	downloadedFileMap   = make(map[string]DownloadedFileInfo)
+	unpublishedFiles    = []string{}
 )
 
 func main() {
 
 	// Initialize our node (connect to bootstrap & relay node, initialize dht)
 	node, dht := initializeNode()
+	defer node.Close()
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	globalCtx = ctx
-	defer node.Close()
+
 	// Load file maps in
-	uploadedFileMap = LoadUploadedMap("uploadedFileMap.json")
-	downloadedFileMap = LoadDownloadedMap("downloadedFileMap.json")
+	uploadedFileMap = LoadUploadedMap()
+	downloadedFileMap = LoadDownloadedMap()
+	unpublishedFiles = LoadUnpublishedFiles()
+	// Periodically re-Provide our uploaded files and unpublish any files that have expired
+	go refreshFileUploads(10*time.Minute, ctx, dht)
+	go handleAutoUnpublish(10*time.Minute, ctx)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/createWallet", HandleCreateWallet)
@@ -45,6 +55,10 @@ func main() {
 		downloadFile(node, w, r)
 	})
 	mux.HandleFunc("/files", getAllFiles)
+	mux.HandleFunc("/unpublishFile/{cid}", unpublishFileByCid)
+	mux.HandleFunc("/publishFile/{cid}", func(w http.ResponseWriter, r *http.Request) {
+		publishFileByCid(ctx, dht, w, r)
+	})
 
 	fmt.Println("Server is running on port 8080")
 	handler := enableCORS(mux)

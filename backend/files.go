@@ -158,11 +158,18 @@ func handleProviderInfoRequests(node host.Host) {
 		defer s.Close()
 		//read the cid
 		cid := readCid(s)
+
+		// Dont send our info if we have unpublished this file
+		peer_id := node.ID().String()
+		if hasBeenUnpublished(cid) {
+			peer_id = "UNAVAILABLE"
+		}
+
 		// Create FileProviderInfo to be sent back
 		price := strconv.FormatFloat(uploadedFileMap[cid].Price, 'f', -1, 64)
 		geoLocation := getGeolocation()
 		providerInfo := FileProviderInfo{
-			Peer_id:  node.ID().String(),
+			Peer_id:  peer_id,
 			Price:    price,
 			Location: geoLocation,
 		}

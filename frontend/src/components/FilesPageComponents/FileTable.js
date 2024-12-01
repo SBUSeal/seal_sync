@@ -4,16 +4,50 @@ import { LayersIcon, DownloadIcon, FileIcon, Share1Icon, TrashIcon, DotsVertical
 
 const FileTable = ({files, setFiles, filteredFiles, setFilteredFiles, formatFileSize, setDownloadsInProgress, setCurrentFile, setIsViewerOpen, openShareModal, setIsFileModalOpen, filter, setFilter}) => {
 
+  async function unpublishFile(file) {
+    try {
+      const response = await fetch(`http://localhost:8080/unpublishFile/${file.cid}`, {
+        method: 'GET',
+      });
+      if (response.ok) {
+        return true
+    } else {
+        console.error('Bad response code:', response.statusText);
+    }
+    } catch (err) {
+      console.error("Error unpublishing file: ", err)
+    }
+  }
 
-  function handleToggle(event, file) {
+  async function publishFile(file) {
+    try {
+      const response = await fetch(`http://localhost:8080/publishFile/${file.cid}`, {
+        method: 'GET',
+      });
+      if (response.ok) {
+        return true
+    } else {
+        console.error('Bad response code:', response.statusText);
+    }
+    } catch (err) {
+      console.error("Error publishing file: ", err)
+    }
+  }
+
+  async function handleToggle(event, file) {
     const isChecked = event.target.checked;
     const updatedFiles = files.map(f => 
       f.name === file.name ? { ...f, published: isChecked } : f
     );
     setFiles(updatedFiles);
     setFilteredFiles(updatedFiles);
+    if (!isChecked) {
+      await unpublishFile(file)
+    } else {
+      await publishFile(file)
+    }
   }
-
+  
   function handleResume(file) {
     setFiles(prevFiles =>
       prevFiles.map(f =>

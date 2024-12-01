@@ -8,7 +8,7 @@ const ProvidersModal = ({providers, setProviders, selectedProvider, setSelectedP
     }
 
     console.log("Providers: ", providers);
-    
+    providers = providers.filter((provider) => provider.peer_id != "UNAVAILABLE")
     
     return (
     <div className="modal">
