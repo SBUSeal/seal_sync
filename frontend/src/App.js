@@ -14,7 +14,7 @@ import TransactionsPage from './components/TransactionsPage';
 
 function App() {
   const [activePage, setActivePage] = useState('Status');
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [sealTokenBalance, setSealTokenBalance] = useState(100);
   const [currentProxy, setcurrentProxy] = useState(null);

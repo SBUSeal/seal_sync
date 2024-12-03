@@ -388,4 +388,92 @@ func HandleLoginWallet(w http.ResponseWriter, r *http.Request) {
 	response := map[string]string{"message": "Login successful!"}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
+
+	// Set WALLET_ADDRESS now
+	WALLET_ADDRESS = requestBody.WalletAddress
+	fmt.Println("Our WALLET_ADDRESS IS: ", WALLET_ADDRESS)
+}
+
+func SendToAddress(walletName, recipientAddress string, amount float64, comment string) (string, error) {
+	client := &http.Client{}
+
+	// Create the request body
+	sendToAddressReq := map[string]interface{}{
+		"jsonrpc": "1.0",
+		"id":      "curltext",
+		"method":  "sendtoaddress",
+		"params":  []interface{}{recipientAddress, amount, comment},
+	}
+	sendToAddressBody, err := json.Marshal(sendToAddressReq)
+	if err != nil {
+		return "", fmt.Errorf("failed to create request body: %v", err)
+	}
+
+	// Make the request to the specific wallet's endpoint
+	req, err := http.NewRequest("POST", "http://127.0.0.1:18443/wallet/"+walletName, bytes.NewBuffer(sendToAddressBody))
+	if err != nil {
+		return "", fmt.Errorf("failed to create HTTP request: %v", err)
+	}
+	req.SetBasicAuth("user", "password")
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("failed to connect to Bitcoin Core: %v", err)
+	}
+	defer resp.Body.Close()
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("failed to read response: %v", err)
+	}
+
+	var sendToAddressResponse RPCResponse
+	if err := json.Unmarshal(respBody, &sendToAddressResponse); err != nil {
+		return "", fmt.Errorf("failed to parse response: %v", err)
+	}
+
+	if sendToAddressResponse.Error != nil {
+		return "", fmt.Errorf("error from sendtoaddress: %v", sendToAddressResponse.Error)
+	}
+
+	// Return the transaction ID
+	txID, ok := sendToAddressResponse.Result.(string)
+	if !ok {
+		return "", fmt.Errorf("unexpected response format")
+	}
+
+	return txID, nil
+}
+
+func HandleSendToAddress(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var requestBody struct {
+		WalletName       string  `json:"walletName"`
+		RecipientAddress string  `json:"recipientAddress"`
+		Amount           float64 `json:"amount"`
+		Comment          string  `json:"comment"`
+	}
+
+	// Decode the request
+	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Send coins
+	txID, err := SendToAddress(requestBody.WalletName, requestBody.RecipientAddress, requestBody.Amount, requestBody.Comment)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error sending coins: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	// Respond with the transaction ID
+	response := map[string]string{"transactionID": txID}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }

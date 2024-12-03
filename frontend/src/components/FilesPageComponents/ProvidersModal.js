@@ -13,7 +13,7 @@ const ProvidersModal = ({providers, setProviders, selectedProvider, setSelectedP
     return (
     <div className="modal">
     <div className="modal-content" style={{width: "600px"}}>
-        <h2> Found Providers </h2>
+        <h2> {providers.length != 0 ? "Found Providers" : "No Providers Found"} </h2>
             {providers.map((provider, index) => (
             <div
                 key={index}

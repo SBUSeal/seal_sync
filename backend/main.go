@@ -13,11 +13,12 @@ var (
 	relay_node_addr = "/ip4/130.245.173.221/tcp/4001/p2p/12D3KooWDpJ7As7BWAwRMfu1VU2WCqNjvq387JEYKDBj4kx6nXTN"
 	// bootstrap_node_addr = "/ip4/130.245.173.222/tcp/61000/p2p/12D3KooWQd1K1k8XA9xVEzSAu7HUCodC7LJB6uW5Kw4VwkRdstPE"
 	// Use my own bootstrap node for now
-	bootstrap_node_addr = "/ip4/192.168.1.176/tcp/61000/p2p/12D3KooWRNRgkCut2kEobuML9zn8zR9dFthaMpgaRAAXdn5jdoGm"
+	bootstrap_node_addr = "/ip4/127.0.0.1/tcp/61000/p2p/12D3KooWRNRgkCut2kEobuML9zn8zR9dFthaMpgaRAAXdn5jdoGm"
 	globalCtx           = context.Background()
 	uploadedFileMap     = make(map[string]UploadedFileInfo)
 	downloadedFileMap   = make(map[string]DownloadedFileInfo)
 	unpublishedFiles    = []string{}
+	WALLET_ADDRESS      string
 )
 
 func main() {
@@ -39,6 +40,7 @@ func main() {
 	go handleAutoUnpublish(10*time.Minute, ctx)
 
 	mux := http.NewServeMux()
+	mux.HandleFunc("/sendToAddress", HandleSendToAddress)
 	mux.HandleFunc("/createWallet", HandleCreateWallet)
 	mux.HandleFunc("/loginWallet", HandleLoginWallet)
 	mux.HandleFunc("/sanity_check", SanityRoute)

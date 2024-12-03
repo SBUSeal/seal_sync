@@ -20,10 +20,11 @@ import (
 )
 
 type FileMetadata struct {
-	Name  string  `json:"name"`
-	Size  int64   `json:"size"`
-	Type  string  `json:"type"`
-	Price float64 `json:"price"`
+	Name          string  `json:"name"`
+	Size          int64   `json:"size"`
+	Type          string  `json:"type"`
+	Price         float64 `json:"price"`
+	WalletAddress string  `json:"walletAddress"`
 }
 
 type LocationInfo struct {
@@ -83,10 +84,11 @@ func getFileMetadata(file *os.File, price float64) FileMetadata {
 	}
 
 	FileMetadata := FileMetadata{
-		Name:  fileName,
-		Size:  fileSize,
-		Type:  fileType,
-		Price: price,
+		Name:          fileName,
+		Size:          fileSize,
+		Type:          fileType,
+		Price:         price,
+		WalletAddress: WALLET_ADDRESS,
 	}
 
 	return FileMetadata
@@ -148,6 +150,9 @@ func requestFile(node host.Host, targetpeerid string, cid string) (FileMetadata,
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Pay the price to the other user's wallet address
+	fmt.Printf("****Pay %d STK to Wallet Address: %s****\n", fileMetadata.Price, fileMetadata.WalletAddress)
 
 	// Return the metadata, and a stream that will be used for downloading
 	return fileMetadata, s
