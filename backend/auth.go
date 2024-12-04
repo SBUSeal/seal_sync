@@ -15,21 +15,107 @@ type RPCResponse struct {
 	ID     string                 `json:"id"`
 }
 
+// func IdentifyWalletByAddress(address string) (string, error) {
+// 	client := &http.Client{}
+
+// 	// Step 1: List all loaded wallets
+// 	listWalletsReq := map[string]interface{}{
+// 		"jsonrpc": "1.0",
+// 		"id":      "curltext",
+// 		"method":  "listwallets",
+// 		"params":  []interface{}{},
+// 	}
+// 	listWalletsBody, _ := json.Marshal(listWalletsReq)
+
+// 	req, err := http.NewRequest("POST", "http://127.0.0.1:8332", bytes.NewBuffer(listWalletsBody))
+// 	if err != nil {
+// 		return "", fmt.Errorf("failed to create request for listwallets: %v", err)
+// 	}
+// 	req.SetBasicAuth("user", "password")
+// 	req.Header.Set("Content-Type", "application/json")
+
+// 	resp, err := client.Do(req)
+// 	if err != nil {
+// 		return "", fmt.Errorf("failed to connect to Bitcoin Core: %v", err)
+// 	}
+// 	defer resp.Body.Close()
+
+// 	respBody, _ := ioutil.ReadAll(resp.Body)
+
+// 	var walletsResponse RPCResponse
+// 	if err := json.Unmarshal(respBody, &walletsResponse); err != nil {
+// 		return "", fmt.Errorf("failed to parse listwallets response: %v", err)
+// 	}
+
+// 	if walletsResponse.Error != nil {
+// 		return "", fmt.Errorf("error from listwallets: %v", walletsResponse.Error)
+// 	}
+
+// 	loadedWallets := walletsResponse.Result.([]interface{})
+
+// 	// Step 2: Iterate through each wallet and check the address
+// 	for _, wallet := range loadedWallets {
+// 		walletName := wallet.(string)
+
+// 		// RPC request to check address info
+// 		getAddressInfoReq := map[string]interface{}{
+// 			"jsonrpc": "1.0",
+// 			"id":      "curltext",
+// 			"method":  "getaddressinfo",
+// 			"params":  []interface{}{address},
+// 		}
+// 		getAddressInfoBody, _ := json.Marshal(getAddressInfoReq)
+
+// 		req, err := http.NewRequest("POST", "http://127.0.0.1:8332/wallet/"+walletName, bytes.NewBuffer(getAddressInfoBody))
+// 		if err != nil {
+// 			log.Printf("Failed to create request for wallet: %s, error: %v", walletName, err)
+// 			continue
+// 		}
+// 		req.SetBasicAuth("user", "password")
+// 		req.Header.Set("Content-Type", "application/json")
+
+// 		resp, err := client.Do(req)
+// 		if err != nil {
+// 			log.Printf("Failed to connect to wallet: %s, error: %v", walletName, err)
+// 			continue
+// 		}
+// 		defer resp.Body.Close()
+
+// 		respBody, _ := ioutil.ReadAll(resp.Body)
+// 		var addressInfoResponse RPCResponse
+// 		if err := json.Unmarshal(respBody, &addressInfoResponse); err != nil {
+// 			log.Printf("Failed to parse getaddressinfo response for wallet: %s, error: %v", walletName, err)
+// 			continue
+// 		}
+
+// 		// Check if the address belongs to the wallet
+// 		if addressInfoResponse.Result != nil {
+// 			result := addressInfoResponse.Result.(map[string]interface{})
+// 			if isMine, ok := result["ismine"].(bool); ok && isMine {
+// 				return walletName, nil
+// 			}
+// 		}
+// 	}
+
+//		return "", fmt.Errorf("address not found in any loaded wallet")
+//	}
+//
+// This is a new version that works even if the wallet is not currently loaded
 func IdentifyWalletByAddress(address string) (string, error) {
 	client := &http.Client{}
 
-	// Step 1: List all loaded wallets
-	listWalletsReq := map[string]interface{}{
+	// Step 1: List all available wallets
+	listWalletDirReq := map[string]interface{}{
 		"jsonrpc": "1.0",
 		"id":      "curltext",
-		"method":  "listwallets",
+		"method":  "listwalletdir",
 		"params":  []interface{}{},
 	}
-	listWalletsBody, _ := json.Marshal(listWalletsReq)
+	listWalletDirBody, _ := json.Marshal(listWalletDirReq)
 
-	req, err := http.NewRequest("POST", "http://127.0.0.1:8332", bytes.NewBuffer(listWalletsBody))
+	req, err := http.NewRequest("POST", "http://127.0.0.1:8332", bytes.NewBuffer(listWalletDirBody))
 	if err != nil {
-		return "", fmt.Errorf("failed to create request for listwallets: %v", err)
+		return "", fmt.Errorf("failed to create request for listwalletdir: %v", err)
 	}
 	req.SetBasicAuth("user", "password")
 	req.Header.Set("Content-Type", "application/json")
@@ -42,22 +128,44 @@ func IdentifyWalletByAddress(address string) (string, error) {
 
 	respBody, _ := ioutil.ReadAll(resp.Body)
 
-	var walletsResponse RPCResponse
-	if err := json.Unmarshal(respBody, &walletsResponse); err != nil {
-		return "", fmt.Errorf("failed to parse listwallets response: %v", err)
+	var walletDirResponse RPCResponse
+	if err := json.Unmarshal(respBody, &walletDirResponse); err != nil {
+		return "", fmt.Errorf("failed to parse listwalletdir response: %v", err)
 	}
 
-	if walletsResponse.Error != nil {
-		return "", fmt.Errorf("error from listwallets: %v", walletsResponse.Error)
+	if walletDirResponse.Error != nil {
+		return "", fmt.Errorf("error from listwalletdir: %v", walletDirResponse.Error)
 	}
 
-	loadedWallets := walletsResponse.Result.([]interface{})
+	wallets := walletDirResponse.Result.(map[string]interface{})["wallets"].([]interface{})
 
-	// Step 2: Iterate through each wallet and check the address
-	for _, wallet := range loadedWallets {
-		walletName := wallet.(string)
+	// Step 2: Check if the address exists in any wallet
+	for _, wallet := range wallets {
+		walletName := wallet.(map[string]interface{})["name"].(string)
 
-		// RPC request to check address info
+		// Load the wallet if it's not already loaded
+		loadWalletReq := map[string]interface{}{
+			"jsonrpc": "1.0",
+			"id":      "curltext",
+			"method":  "loadwallet",
+			"params":  []interface{}{walletName},
+		}
+		loadWalletBody, _ := json.Marshal(loadWalletReq)
+
+		req, err := http.NewRequest("POST", "http://127.0.0.1:8332", bytes.NewBuffer(loadWalletBody))
+		if err != nil {
+			return "", fmt.Errorf("failed to create request for loadwallet: %v", err)
+		}
+		req.SetBasicAuth("user", "password")
+		req.Header.Set("Content-Type", "application/json")
+
+		resp, err := client.Do(req)
+		if err != nil {
+			return "", fmt.Errorf("failed to load wallet %s: %v", walletName, err)
+		}
+		defer resp.Body.Close()
+
+		// Check address ownership
 		getAddressInfoReq := map[string]interface{}{
 			"jsonrpc": "1.0",
 			"id":      "curltext",
@@ -66,7 +174,7 @@ func IdentifyWalletByAddress(address string) (string, error) {
 		}
 		getAddressInfoBody, _ := json.Marshal(getAddressInfoReq)
 
-		req, err := http.NewRequest("POST", "http://127.0.0.1:8332/wallet/"+walletName, bytes.NewBuffer(getAddressInfoBody))
+		req, err = http.NewRequest("POST", "http://127.0.0.1:8332/wallet/"+walletName, bytes.NewBuffer(getAddressInfoBody))
 		if err != nil {
 			log.Printf("Failed to create request for wallet: %s, error: %v", walletName, err)
 			continue
@@ -74,7 +182,7 @@ func IdentifyWalletByAddress(address string) (string, error) {
 		req.SetBasicAuth("user", "password")
 		req.Header.Set("Content-Type", "application/json")
 
-		resp, err := client.Do(req)
+		resp, err = client.Do(req)
 		if err != nil {
 			log.Printf("Failed to connect to wallet: %s, error: %v", walletName, err)
 			continue
@@ -88,17 +196,33 @@ func IdentifyWalletByAddress(address string) (string, error) {
 			continue
 		}
 
-		// Check if the address belongs to the wallet
 		if addressInfoResponse.Result != nil {
 			result := addressInfoResponse.Result.(map[string]interface{})
 			if isMine, ok := result["ismine"].(bool); ok && isMine {
 				return walletName, nil
 			}
 		}
+
+		// Unload the wallet if it was loaded
+		unloadWalletReq := map[string]interface{}{
+			"jsonrpc": "1.0",
+			"id":      "curltext",
+			"method":  "unloadwallet",
+			"params":  []interface{}{walletName},
+		}
+		unloadWalletBody, _ := json.Marshal(unloadWalletReq)
+
+		req, err = http.NewRequest("POST", "http://127.0.0.1:8332", bytes.NewBuffer(unloadWalletBody))
+		if err != nil {
+			log.Printf("Failed to create request to unload wallet %s: %v", walletName, err)
+		} else {
+			client.Do(req) // Ignore unload errors
+		}
 	}
 
-	return "", fmt.Errorf("address not found in any loaded wallet")
+	return "", fmt.Errorf("address not found in any wallet")
 }
+
 func enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins (or restrict to specific domains)
@@ -389,9 +513,12 @@ func HandleLoginWallet(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 
-	// Set WALLET_ADDRESS now
+	// Set WALLET_ADDRESS and WALLET_NAME now
 	WALLET_ADDRESS = requestBody.WalletAddress
 	fmt.Println("Our WALLET_ADDRESS IS: ", WALLET_ADDRESS)
+	WALLET_NAME = WalletName
+	fmt.Println("Our WALLET_NAME IS: ", WALLET_NAME)
+
 }
 
 func SendToAddress(walletName, recipientAddress string, amount float64, comment string) (string, error) {
@@ -458,8 +585,6 @@ func HandleSendToAddress(w http.ResponseWriter, r *http.Request) {
 		Amount           float64 `json:"amount"`
 		Comment          string  `json:"comment"`
 	}
-
-	log.Println("Attempting Transfer: ", requestBody.WalletName)
 
 	// Decode the request
 	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {

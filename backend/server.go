@@ -263,6 +263,15 @@ func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Pay the price to the other user's wallet address
+	log.Printf("Now Paying %f STK to Wallet Address: %s...\n", fileData.Price, fileData.WalletAddress)
+	// Send coins
+	txID, err := SendToAddress(WALLET_NAME, fileData.WalletAddress, fileData.Price, "Sending for file: "+fileData.Name)
+	if err != nil {
+		log.Fatal("Error sending coin: ", err)
+	}
+	log.Println("Successfully sent coin, txID: ", txID)
+
 	// Save copy of file to /downloads and update downloadedFileMap
 	saveDownloadedFile(fileData, cid, targetPeerID, downloadStream)
 
