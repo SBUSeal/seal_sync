@@ -356,7 +356,7 @@ func HandleLoginWallet(w http.ResponseWriter, r *http.Request) {
 		"jsonrpc": "1.0",
 		"id":      "curltext",
 		"method":  "walletpassphrase",
-		"params":  []interface{}{requestBody.WalletPassword, 60}, // Unlock for 60 seconds
+		"params":  []interface{}{requestBody.WalletPassword, 6000}, // Unlock for 60 seconds
 	}
 	rpcRequestBody, _ := json.Marshal(rpcRequest)
 	req, err = http.NewRequest("POST", "http://127.0.0.1:8332/wallet/"+WalletName, bytes.NewBuffer(rpcRequestBody))
@@ -410,7 +410,7 @@ func SendToAddress(walletName, recipientAddress string, amount float64, comment 
 	}
 
 	// Make the request to the specific wallet's endpoint
-	req, err := http.NewRequest("POST", "http://127.0.0.1:18443/wallet/"+walletName, bytes.NewBuffer(sendToAddressBody))
+	req, err := http.NewRequest("POST", "http://127.0.0.1:8332/wallet/"+walletName, bytes.NewBuffer(sendToAddressBody))
 	if err != nil {
 		return "", fmt.Errorf("failed to create HTTP request: %v", err)
 	}
@@ -458,6 +458,8 @@ func HandleSendToAddress(w http.ResponseWriter, r *http.Request) {
 		Amount           float64 `json:"amount"`
 		Comment          string  `json:"comment"`
 	}
+
+	log.Println("Attempting Transfer: ", requestBody.WalletName)
 
 	// Decode the request
 	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {

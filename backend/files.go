@@ -151,8 +151,8 @@ func requestFile(node host.Host, targetpeerid string, cid string) (FileMetadata,
 		log.Fatal(err)
 	}
 
-	// Pay the price to the other user's wallet address
-	fmt.Printf("****Pay %d STK to Wallet Address: %s****\n", fileMetadata.Price, fileMetadata.WalletAddress)
+	// Pay the price to the other user's wallet address (not implemented yet)
+	log.Printf("****Pay %f STK to Wallet Address: %s****\n", fileMetadata.Price, fileMetadata.WalletAddress)
 
 	// Return the metadata, and a stream that will be used for downloading
 	return fileMetadata, s
