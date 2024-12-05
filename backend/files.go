@@ -20,10 +20,11 @@ import (
 )
 
 type FileMetadata struct {
-	Name  string  `json:"name"`
-	Size  int64   `json:"size"`
-	Type  string  `json:"type"`
-	Price float64 `json:"price"`
+	Name          string  `json:"name"`
+	Size          int64   `json:"size"`
+	Type          string  `json:"type"`
+	Price         float64 `json:"price"`
+	WalletAddress string  `json:"walletAddress"`
 }
 
 type LocationInfo struct {
@@ -83,10 +84,11 @@ func getFileMetadata(file *os.File, price float64) FileMetadata {
 	}
 
 	FileMetadata := FileMetadata{
-		Name:  fileName,
-		Size:  fileSize,
-		Type:  fileType,
-		Price: price,
+		Name:          fileName,
+		Size:          fileSize,
+		Type:          fileType,
+		Price:         price,
+		WalletAddress: WALLET_ADDRESS,
 	}
 
 	return FileMetadata
@@ -158,11 +160,18 @@ func handleProviderInfoRequests(node host.Host) {
 		defer s.Close()
 		//read the cid
 		cid := readCid(s)
+
+		// Dont send our info if we have unpublished this file
+		peer_id := node.ID().String()
+		if hasBeenUnpublished(cid) {
+			peer_id = "UNAVAILABLE"
+		}
+
 		// Create FileProviderInfo to be sent back
 		price := strconv.FormatFloat(uploadedFileMap[cid].Price, 'f', -1, 64)
 		geoLocation := getGeolocation()
 		providerInfo := FileProviderInfo{
-			Peer_id:  node.ID().String(),
+			Peer_id:  peer_id,
 			Price:    price,
 			Location: geoLocation,
 		}

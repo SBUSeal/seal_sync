@@ -85,7 +85,8 @@ func processUploadedFile(r *http.Request) (cid.Cid, UploadedFileInfo) {
 	unpublishTime_s := r.FormValue("unpublishTime")
 	var unpublishTime time.Time
 	if unpublishTime_s == "" {
-		unpublishTime = time.Time{}
+		// Set a time really far in the future
+		unpublishTime = time.Date(9999, 12, 31, 23, 59, 59, 999999999, time.UTC)
 	} else {
 		unpublishTime, err = time.Parse("2006-01-02T15:04", unpublishTime_s)
 		if err != nil {
@@ -120,7 +121,7 @@ func processUploadedFile(r *http.Request) (cid.Cid, UploadedFileInfo) {
 	}
 	uploadedFileMap[cid.String()] = fileInfo
 	//Save uploadedFileMap
-	err = SaveUploadedMap("uploadedFileMap.json", uploadedFileMap)
+	err = SaveUploadedMap(uploadedFileMap)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -140,7 +141,7 @@ func uploadFile(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r 
 	// Announce as a provider for the CID
 	err := dht.Provide(ctx, cid, true)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("DHT Provide Error: ", err)
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -192,7 +193,7 @@ func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w h
 
 }
 
-func saveDownloadedFile(fileData FileMetadata, cid string, downloadStream network.Stream) {
+func saveDownloadedFile(fileData FileMetadata, cid string, from string, downloadStream network.Stream) {
 	// Create the downloads directory if it doesn't exist
 	err := os.MkdirAll("downloads", os.ModePerm)
 	if err != nil {
@@ -213,7 +214,7 @@ func saveDownloadedFile(fileData FileMetadata, cid string, downloadStream networ
 	newlyDownloadedFile := DownloadedFileInfo{
 		Name:        fileData.Name,
 		Price:       fileData.Price,
-		Description: "Downloaded from seal network",
+		Description: "File downloaded from " + from,
 		Size:        fileData.Size,
 		Cid:         cid,
 		DateAdded:   time.Now().Format(time.RFC3339),
@@ -253,7 +254,7 @@ func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodHead {
 		w.Header().Set("Name", fileData.Name)
 		w.Header().Set("Price", strconv.FormatFloat(fileData.Price, 'f', -1, 64))
-		w.Header().Set("Description", "Downloaded from Seal network")
+		w.Header().Set("Description", "File downloaded from "+targetPeerID)
 		w.Header().Set("Size", strconv.FormatInt(fileData.Size, 10))
 		w.Header().Set("Cid", cid)
 		w.Header().Set("DateAdded", time.Now().Format(time.RFC3339))
@@ -262,12 +263,31 @@ func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Pay the price to the other user's wallet address
+	log.Printf("Now Paying %f STK to Wallet Address: %s...\n", fileData.Price, fileData.WalletAddress)
+	// Send coins
+	txID, err := SendToAddress(WALLET_NAME, fileData.WalletAddress, fileData.Price, "Sending for file: "+fileData.Name)
+	if err != nil {
+		log.Fatal("Error sending coin: ", err)
+	}
+	log.Println("Successfully sent coin, txID: ", txID)
+
 	// Save copy of file to /downloads and update downloadedFileMap
-	saveDownloadedFile(fileData, cid, downloadStream)
+	saveDownloadedFile(fileData, cid, targetPeerID, downloadStream)
 
 	// Send the file as response
 	nbytes := writeFileToResponse(w, filepath.Join("downloads", fileData.Name))
 	log.Printf(" (server.go) Downloaded file %s, streamed %d bytes\n", fileData.Name, nbytes)
+}
+
+func unpublishFileByCid(w http.ResponseWriter, r *http.Request) {
+	cid := r.PathValue("cid")
+	UnpublishFile(cid)
+}
+
+func publishFileByCid(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r *http.Request) {
+	cid := r.PathValue("cid")
+	PublishFile(cid, ctx, dht)
 }
 
 func getAllFiles(w http.ResponseWriter, r *http.Request) {
@@ -278,27 +298,6 @@ func getAllFiles(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
-
-// Pass ctx and dht in
-// func startHttpServer(ctx context.Context, dht *dht.IpfsDHT, node host.Host) {
-// 	router := http.NewServeMux()
-// 	router.HandleFunc("/upload", func(w http.ResponseWriter, r *http.Request) {
-// 		uploadFile(ctx, dht, w, r)
-// 	})
-// 	router.HandleFunc("/providers/{cid}", func(w http.ResponseWriter, r *http.Request) {
-// 		getFileProviders(ctx, dht, node, w, r)
-// 	})
-// 	router.HandleFunc("/download/{cid}/{targetpeerid}", func(w http.ResponseWriter, r *http.Request) {
-// 		downloadFile(node, w, r)
-// 	})
-// 	router.HandleFunc("/files", getAllFiles)
-
-// 	fmt.Println("Backend server is running on localhost port 8080")
-// 	err := http.ListenAndServe(":8080", router)
-// 	if err != nil {
-// 		log.Fatal("ListenAndServe: ", err)
-// 	}
-// }
 
 func generateCid(file io.Reader) cid.Cid {
 	// Create sha-256 hash
