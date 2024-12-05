@@ -9,10 +9,9 @@ import (
 )
 
 var (
-	node_id         = "114418346" // give your SBU ID
-	relay_node_addr = "/ip4/130.245.173.221/tcp/4001/p2p/12D3KooWDpJ7As7BWAwRMfu1VU2WCqNjvq387JEYKDBj4kx6nXTN"
-	// bootstrap_node_addr = "/ip4/130.245.173.222/tcp/61000/p2p/12D3KooWQd1K1k8XA9xVEzSAu7HUCodC7LJB6uW5Kw4VwkRdstPE"
-	bootstrap_node_addr = "/ip4/127.0.0.1/tcp/61000/p2p/12D3KooWRNRgkCut2kEobuML9zn8zR9dFthaMpgaRAAXdn5jdoGm"
+	node_id             = "114418346" // give your SBU ID
+	relay_node_addr     = "/ip4/130.245.173.221/tcp/4001/p2p/12D3KooWDpJ7As7BWAwRMfu1VU2WCqNjvq387JEYKDBj4kx6nXTN"
+	bootstrap_node_addr = "/ip4/130.245.173.222/tcp/61000/p2p/12D3KooWQd1K1k8XA9xVEzSAu7HUCodC7LJB6uW5Kw4VwkRdstPE"
 	globalCtx           = context.Background()
 	uploadedFileMap     = make(map[string]UploadedFileInfo)
 	downloadedFileMap   = make(map[string]DownloadedFileInfo)
@@ -31,10 +30,6 @@ func main() {
 	defer cancel()
 	globalCtx = ctx
 
-	// Load file maps in
-	uploadedFileMap = LoadUploadedMap()
-	downloadedFileMap = LoadDownloadedMap()
-	unpublishedFiles = LoadUnpublishedFiles()
 	// Periodically re-Provide our uploaded files and unpublish any files that have expired
 	go refreshFileUploads(10*time.Minute, ctx, dht)
 	go handleAutoUnpublish(10*time.Minute, ctx)

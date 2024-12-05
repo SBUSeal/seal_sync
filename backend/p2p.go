@@ -265,5 +265,10 @@ func initializeNode() (host.Host, *dht.IpfsDHT) {
 	handleProviderInfoRequests(node)
 	handleFileRequests(node)
 
+	// Load file maps in
+	uploadedFileMap = LoadUploadedMap()
+	downloadedFileMap = LoadDownloadedMap()
+	unpublishedFiles = LoadUnpublishedFiles()
+
 	return node, dht
 }
