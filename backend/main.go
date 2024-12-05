@@ -2,43 +2,33 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
-	//"github.com/rs/cors" idk it not needed
 )
+
+func enableCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins (or restrict to specific domains)
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
 
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/uploadFile", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != "POST" {
-			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-			return
-		}
+	// mux.HandleFunc("/createWallet", HandleCreateWallet)
+	// mux.HandleFunc("/loginWallet", HandleLoginWallet)
+	// mux.HandleFunc("/sanity_check", SanityRoute)
+	mux.HandleFunc("/shared_link", ServeFile)
+	mux.HandleFunc("/generateFileLink", GenerateFileLink)
 
-		// Retrieve the file from form data
-		file, handler, err := r.FormFile("file")
-		if err != nil {
-			http.Error(w, "Error retrieving file", http.StatusBadRequest)
-			return
-		}
-		defer file.Close()
-
-		fmt.Fprintf(w, "Uploaded File: %+v\n", handler.Filename)
-		fmt.Fprintf(w, "File Size: %+v\n", handler.Size)
-		fmt.Fprintf(w, "MIME Header: %+v\n", handler.Header)
-
-		// save file on server...
-	})
-
-	// // Set up the CORS handler
-	// c := cors.New(cors.Options{
-	// 	AllowedOrigins:   []string{"http://localhost:3000"},
-	// 	AllowCredentials: true,
-	// 	AllowedMethods:   []string{"POST"},
-	// })
-
-	// handler := c.Handler(mux)
-
-	// Start the server
-	fmt.Println("Server listening on :8080")
-	http.ListenAndServe(":8080", mux)
+	fmt.Println("Server is running on port 8080")
+	handler := enableCORS(mux)
+	log.Fatal(http.ListenAndServe(":8080", handler))
 }
