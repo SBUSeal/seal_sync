@@ -21,6 +21,14 @@ func enableCORS(next http.Handler) http.Handler {
 }
 
 func main() {
+	privateIP, err := getPrivateIP()
+	if err != nil {
+		fmt.Println("Error retrieving public IP:", err)
+	} else {
+		fmt.Println("Server Private IP Address:", privateIP)
+	}
+	go startTransferServer(privateIP)
+
 	mux := http.NewServeMux()
 	// mux.HandleFunc("/createWallet", HandleCreateWallet)
 	// mux.HandleFunc("/loginWallet", HandleLoginWallet)
@@ -28,7 +36,8 @@ func main() {
 	mux.HandleFunc("/shared_link", ServeFile)
 	mux.HandleFunc("/generateFileLink", GenerateFileLink)
 
-	fmt.Println("Server is running on port 8080")
 	handler := enableCORS(mux)
 	log.Fatal(http.ListenAndServe(":8080", handler))
+	select {}
+
 }
