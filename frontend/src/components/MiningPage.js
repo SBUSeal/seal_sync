@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import '../stylesheets/MiningPage.css';
 
-const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMiningLog}) => {
+const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMiningLog, notifStatus}) => {
     const [isMining, setIsMining] = useState(false);
     const [hashPower, setHashPower] = useState(492.44);
     const [cpuUsage, setCpuUsage] = useState(0);
     const [gpuUsage, setGpuUsage] = useState(0);
+    const [notification, setNotification] = useState({ message: '', type: '' });
 
     useEffect(() => {
         let interval;
@@ -41,8 +42,35 @@ const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMining
         setIsMining(!isMining);
     };
 
+    const showNotification = (message, type) => {
+        setNotification({ message, type });
+        setTimeout(() => {
+            setNotification({ message: '', type: '' });
+        }, 3000);
+    };
+
+    const testAllNotifications = () => {
+        console.log('testAllNotifs called with notifStatus'+notifStatus);
+        if (notifStatus === 'All') {
+            showNotification('This is a test for "All notifications" setting.', 'success');
+        }
+    };
+
+    const testUrgentNotifications = () => {
+        console.log('testUrgentNotifs called with notifStatus'+notifStatus);
+        if (notifStatus === 'All' || notifStatus === 'Urgent') {
+            showNotification('This is a test for "Urgent notifications" setting.', 'success');
+        }
+    };
+
     return (
         <div className="mining-container">
+            {/* Notification */}
+            {notification.message && (
+                <div className={`notification ${notification.type}`}>
+                    {notification.message}
+                </div>
+            )}
             <div className="dashboard">
                 <div className="tile">
                     <h2>Balance: {sealTokenBalance.toFixed(2)} SKT</h2>
@@ -59,6 +87,10 @@ const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMining
                         {isMining ? 'Stop Mining' : 'Start Mining'}
                     </span>
                 </div>
+            </div>
+            <div className="test-buttons">
+                <button onClick={testAllNotifications}>Test "All Notifications"</button>
+                <button onClick={testUrgentNotifications}>Test "Urgent Notifications"</button>
             </div>
             <div className="mining-log">
                 <h3>Mining Activity Log:</h3>

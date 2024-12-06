@@ -109,14 +109,17 @@ function App() {
 
   const toggleNotifUrgent = () => {
     setNotifStatus('Urgent');
+    console.log('notifStatus set to "Urgent" in App.js');
   }
 
   const toggleNotifOff = () => {
     setNotifStatus('Off');
+    console.log('notifStatus set to "None" in App.js');
   }
 
   const toggleNotifAll = () => {
     setNotifStatus('All');
+    console.log('notifStatus set to "All" in App.js');
   }
 
   // Function to render content based on activePage
@@ -140,6 +143,7 @@ function App() {
             transactions={transactions}
             setTransactions={setTransactions}
             setDownloadsInProgress={setDownloadsInProgress}
+            notifStatus={notifStatus}
           />
         );
       case 'Wallet':
@@ -149,7 +153,8 @@ function App() {
             setSealTokenBalance={setSealTokenBalance}
             transactions={transactions}
             setTransactions={setTransactions}
-            onShowMore={() => setActivePage('Transactions')}  
+            onShowMore={() => setActivePage('Transactions')} 
+            notifStatus={notifStatus} 
           />
         );
       case 'Proxy':
@@ -166,6 +171,7 @@ function App() {
             setTransactions={setTransactions}
             price={price}
             setPrice={setPrice}
+            notifStatus={notifStatus}
           />
         );
       case 'Mining':
@@ -175,6 +181,7 @@ function App() {
             setSealTokenBalance={setSealTokenBalance}
             miningLog={miningLog}
             setMiningLog={setMiningLog}
+            notifStatus={notifStatus}
           />
         );
       case 'Settings':
