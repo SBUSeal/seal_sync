@@ -233,19 +233,6 @@ const FilesPage = (props) => {
   async function handleUploadModalSubmit() {
     try {
       const newlyUploadedFile = await uploadFile()      
-      
-      // const newFile = {
-      //   name: tempFile.name,
-      //   size: tempFile.size,
-      //   source: 'uploaded',
-      //   description: newFileDetails.description,
-      //   price: newFileDetails.price,
-      //   fileObject: tempFile,  
-      //   downloading: tempFile.downloading,
-      //   unpublishTime: tempFile.unpublishTime,
-      //   published: true,                 
-      //   cid: cid
-      // }
             
       setFiles([...files, newlyUploadedFile]);
       const filtered = files.filter(file => {

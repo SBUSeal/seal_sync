@@ -46,14 +46,14 @@ func remove(slice []string, value string) []string {
 	return slice
 }
 
-func SaveDownloadedMap(filename string, fileMap map[string]DownloadedFileInfo) error {
+func SaveDownloadedMap(fileMap map[string]DownloadedFileInfo) error {
 	// Convert the map to pretty-printed JSON
 	data, err := json.MarshalIndent(fileMap, "", "  ")
 	if err != nil {
 		return err
 	}
 
-	file, err := os.Create(filename)
+	file, err := os.Create("downloadedFileMap.json")
 	if err != nil {
 		return err
 	}
@@ -138,8 +138,6 @@ func SaveUnpublishedFiles(slice []string) {
 	if err != nil {
 		log.Fatal("Error encoding unpublished files", err)
 	}
-
-	log.Println("Unpublished Files saved to file:", "unpublishedFiles.json")
 }
 
 func LoadUnpublishedFiles() []string {
@@ -233,6 +231,22 @@ func PublishFile(cid_s string, ctx context.Context, dht *dht.IpfsDHT) {
 
 	log.Println("Published File: ", file.Name)
 
+}
+
+func DeleteUploadedFile(cid string) {
+	delete(uploadedFileMap, cid)
+	err := SaveUploadedMap(uploadedFileMap)
+	if err != nil {
+		log.Println("Error deleting uploaded file from map")
+	}
+}
+
+func DeleteDownloadedFile(cid string) {
+	delete(downloadedFileMap, cid)
+	err := SaveDownloadedMap(downloadedFileMap)
+	if err != nil {
+		log.Println("Error deleting uploaded file from map")
+	}
 }
 
 func autoUnpublishFiles() {
