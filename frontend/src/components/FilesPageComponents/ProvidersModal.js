@@ -26,7 +26,7 @@ const ProvidersModal = ({providers, setProviders, selectedProvider, setSelectedP
             </div>
             ))}
 
-        <h2> Your Balance: {balance} STK</h2>
+        {providers.length !== 0 ? <h2> Your Balance: {balance} STK</h2> : <></>}
         <div style={{
             display: 'flex',
             justifyContent: 'space-between',  
@@ -37,7 +37,7 @@ const ProvidersModal = ({providers, setProviders, selectedProvider, setSelectedP
             <button onClick={closeModal} style={{fontSize: '20px'}}> Close </button>
             </div>
             <div className='modal-actions'>
-            <button onClick={downloadFile} style={{fontSize: '20px'}}>Download</button>
+            {<button onClick={downloadFile} style={{ fontSize: '20px'}} disabled={providers.length === 0}>Download</button>} 
             </div>
         </div>
         </div>

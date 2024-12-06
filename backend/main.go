@@ -56,6 +56,8 @@ func main() {
 	mux.HandleFunc("/publishFile/{cid}", func(w http.ResponseWriter, r *http.Request) {
 		publishFileByCid(ctx, dht, w, r)
 	})
+	mux.HandleFunc("/deleteUploadedFile/{cid}", deleteUploadedFile)
+	mux.HandleFunc("/deleteDownloadedFile/{cid}", deleteDownloadedFile)
 
 	fmt.Println("Server is running on port 8080")
 	handler := enableCORS(mux)

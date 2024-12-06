@@ -161,10 +161,19 @@ func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w h
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
+	results := []FileProviderInfo{}
+
 	// Get the provided cid
 	cid, err := cid.Decode(r.PathValue("cid"))
 	if err != nil {
-		log.Fatal(err)
+		log.Println("CID is not valid: ", err)
+		providersJson, err := json.Marshal(results)
+		if err != nil {
+			log.Fatal("marshalling error", err)
+		}
+		w.Write(providersJson)
+		return
 	}
 
 	// Search for providers of this cid
@@ -179,12 +188,10 @@ func getFileProviders(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w h
 		log.Fatal(err)
 	}
 
-	var results []FileProviderInfo
 	for _, peerID := range peerIDs {
 		info := requestProviderInfo(node, peerID, cid)
 		results = append(results, info)
 	}
-	w.Header().Set("Content-Type", "application/json")
 	providersJson, err := json.Marshal(results)
 	if err != nil {
 		log.Fatal("marshalling error", err)
@@ -224,7 +231,7 @@ func saveDownloadedFile(fileData FileMetadata, cid string, from string, download
 	downloadedFileMap[cid] = newlyDownloadedFile
 
 	//Save downloadedFileMap
-	err = SaveDownloadedMap("downloadedFileMap.json", downloadedFileMap)
+	err = SaveDownloadedMap(downloadedFileMap)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -288,6 +295,16 @@ func unpublishFileByCid(w http.ResponseWriter, r *http.Request) {
 func publishFileByCid(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r *http.Request) {
 	cid := r.PathValue("cid")
 	PublishFile(cid, ctx, dht)
+}
+
+func deleteUploadedFile(w http.ResponseWriter, r *http.Request) {
+	cid := r.PathValue("cid")
+	DeleteUploadedFile(cid)
+}
+
+func deleteDownloadedFile(w http.ResponseWriter, r *http.Request) {
+	cid := r.PathValue("cid")
+	DeleteDownloadedFile(cid)
 }
 
 func getAllFiles(w http.ResponseWriter, r *http.Request) {
