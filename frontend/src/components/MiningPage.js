@@ -6,6 +6,7 @@ const MiningPage = ({ sealTokenBalance, setSealTokenBalance, miningLog, setMinin
     const [prevBalance, setPreviousBalance] = useState(0);
     const startMiningEndpoint = "http://localhost:8080/startMining";
     const stopMiningEndpoint = "http://localhost:8080/stopMining";
+    const [notification, setNotification] = useState({ message: '', type: '' });
 
 
     const updateLog = (message) => {
@@ -80,9 +81,39 @@ const MiningPage = ({ sealTokenBalance, setSealTokenBalance, miningLog, setMinin
         }
     }, [isMining]);
 
+    const handleToggle = () => {
+        setIsMining(!isMining);
+    };
+
+    const showNotification = (message, type) => {
+        setNotification({ message, type });
+        setTimeout(() => {
+            setNotification({ message: '', type: '' });
+        }, 3000);
+    };
+
+    const testAllNotifications = () => {
+        console.log('testAllNotifs called with notifStatus'+notifStatus);
+        if (notifStatus === 'All') {
+            showNotification('This is a test for "All notifications" setting.', 'success');
+        }
+    };
+
+    const testUrgentNotifications = () => {
+        console.log('testUrgentNotifs called with notifStatus'+notifStatus);
+        if (notifStatus === 'All' || notifStatus === 'Urgent') {
+            showNotification('This is a test for "Urgent notifications" setting.', 'success');
+        }
+    };
 
     return (
         <div className="mining-container">
+            {/* Notification */}
+            {notification.message && (
+                <div className={`notification ${notification.type}`}>
+                    {notification.message}
+                </div>
+            )}
             <div className="dashboard">
                 <div className="tile">
                     <h2>Balance: {sealTokenBalance.toFixed(2)} SKT</h2>
@@ -97,6 +128,10 @@ const MiningPage = ({ sealTokenBalance, setSealTokenBalance, miningLog, setMinin
                         {isMining ? 'Stop Mining' : 'Start Mining'}
                     </span>
                 </div>
+            </div>
+            <div className="test-buttons">
+                <button onClick={testAllNotifications}>Test "All Notifications"</button>
+                <button onClick={testUrgentNotifications}>Test "Urgent Notifications"</button>
             </div>
             <div className="mining-log">
                 <h3>Mining Activity Log:</h3>

@@ -14,6 +14,13 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     const [proxies, setProxies] = useState([])
     const [proxyHistory, setProxyHistory] = useState([]);
     const [filteredProxies, setFilteredProxies] = useState([]);
+    const [notification, setNotification] = useState({ message: '', type: '' });
+    const showNotification = (message, type) => {
+            setNotification({ message, type });
+            setTimeout(() => {
+                setNotification({ message: '', type: '' });
+            }, 3000);
+        };
 
     // GET req constantly getting
     useEffect(() => {
@@ -167,7 +174,25 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     );
         setFilteredProxies(filtered);
     }
-  
+
+    // Function to handle "All Notifications" test
+    const handleTestAllNotifications = () => {
+        if (notifStatus === 'All') {
+            showNotification('This is a test for "All notifications" setting.', 'success');
+        } 
+    };
+
+    // Function to handle "Urgent Notifications" test
+    const handleTestUrgentNotifications = () => {
+        if (notifStatus === 'All' || notifStatus === 'Urgent') {
+            showNotification('This is a test for "Urgent notifications" setting.', 'success');
+        }
+    };
+
+    const handleTestErrorNotifications = () => {
+        showNotification('This is a test for error notifications.', 'error');
+    };
+
     return (
         <div className="container">
             <div className="proxy-head">
@@ -195,7 +220,30 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                     </div>
                 </div>
 
-                {isOn && host_data && (  
+                {/* Notification Test Buttons */}
+                <div className="notification-test-buttons">
+                    <button
+                        className="test-button"
+                        onClick={handleTestAllNotifications}
+                    >
+                        Test All Notifications
+                    </button>
+                    <button
+                        className="test-button"
+                        onClick={handleTestUrgentNotifications}
+                    >
+                        Test Urgent Notifications
+                    </button>
+                </div>
+
+                {/* Notification */}
+                {notification.message && (
+                    <div className={`notification ${notification.type}`}>
+                        {notification.message}
+                    </div>
+                )}
+
+                {isOn && host_data &&(  
                 <div className="proxy-form">
                     <div>
                         <p>Active Proxy Details:</p>

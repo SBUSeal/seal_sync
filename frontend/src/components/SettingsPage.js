@@ -8,6 +8,7 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode, notifStatus, se
     const [notificationMessage, setNotificationMessage] = useState('');
     const [notificationChoice, setNotificationChoice] = useState('All new activity or messages');
     const [showPopup, setShowPopup] = useState(false);
+    const [notification, setNotification] = useState({ message: '', type: '' });
 
   
     useEffect(() => {
@@ -73,7 +74,10 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode, notifStatus, se
                                     //checked={notificationChoice === 'All new activity or messages'}
                                     checked={notifStatus === 'All'}
                                     //onChange={(e) => setNotificationChoice(e.target.value)}
-                                    onChange={() => setNotifStatus('All')}
+                                    onChange={() => {
+                                        setNotifStatus('All');
+                                        console.log('notifStatus updated to "All" in SettingsPage');}
+                                    }
                                 />
                                 <label>All notifications</label>
                             </div>
@@ -86,7 +90,10 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode, notifStatus, se
                                     //checked={notificationChoice === 'Urgent activity or messages only'}
                                     checked={notifStatus === 'Urgent'}
                                     //onChange={(e) => setNotificationChoice(e.target.value)}
-                                    onChange={() => setNotifStatus('Urgent')}
+                                    onChange={() => {
+                                        setNotifStatus('Urgent');
+                                        console.log('notifStatus updated to "Urgent" in SettingsPage');}
+                                    }
                                 />
                                 <label>Urgent notifications only</label>
                             </div>
@@ -97,7 +104,10 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode, notifStatus, se
                                     value="Nothing"
                                     checked={notificationChoice === 'Nothing'}
                                     //onChange={(e) => setNotificationChoice(e.target.value)}
-                                    onChange={() => setNotifStatus('Nothing')}
+                                    onChange={() => {
+                                        setNotifStatus('Nothing');
+                                        console.log('notifStatus updated to "Nothing" in SettingsPage');}
+                                    }
                                 />
                                 <label>No notifications</label>
                             </div>
@@ -128,6 +138,7 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode, notifStatus, se
         } else {
             message = 'You will receive all notifications.';
         }
+        console.log(`Notification setting sent to App.js: ${notifStatus}`);
         showNotification(message, 'success');
     };
 
@@ -136,12 +147,16 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode, notifStatus, se
         console.log("Message in showNotification function is:"+message);
         console.log("Type in showNotification function is:"+type);
         /*if(notifStatus === 'Nothing') return;
-        if(notifStatus === 'Urgent') return;//type !== 'urgent'*/
+        if(notifStatus === 'Urgent') return;//type !== 'urgent'
         setNotificationMessage(message);
         setShowPopup(true); 
 
         setTimeout(() => {
             setShowPopup(false);
+        }, 3000);*/
+        setNotification({ message, type });
+        setTimeout(() => {
+            setNotification({ message: '', type: '' });
         }, 3000);
     };
 
@@ -175,12 +190,12 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode, notifStatus, se
            
             {showLogoutModal && renderLogoutModal()}
 
-           
-            {showPopup && (
-                <div className="notification-popup">
-                    {notificationMessage}
-                </div>
-            )}
+            {/* Notification Popup */}
+            {notification.message && (
+                    <div className={`notification ${notification.type}`}>
+                        {notification.message}
+                    </div>
+                )}
         </div>
         </div>
     );

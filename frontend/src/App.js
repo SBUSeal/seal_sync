@@ -139,6 +139,7 @@ function App() {
             transactions={transactions}
             setTransactions={setTransactions}
             setDownloadsInProgress={setDownloadsInProgress}
+            notifStatus={notifStatus}
           />
         );
       case 'Wallet':
@@ -149,7 +150,8 @@ function App() {
             setSealTokenBalance={setSealTokenBalance}
             transactions={transactions}
             setTransactions={setTransactions}
-            onShowMore={() => setActivePage('Transactions')}  
+            onShowMore={() => setActivePage('Transactions')} 
+            notifStatus={notifStatus} 
           />
         );
       case 'Proxy':
@@ -166,6 +168,7 @@ function App() {
             setTransactions={setTransactions}
             price={price}
             setPrice={setPrice}
+            notifStatus={notifStatus}
           />
         );
       case 'Mining':
@@ -178,6 +181,7 @@ function App() {
             isMining={isMining}
             setIsMining={setIsMining}
             fetchBalance={fetchBalance}
+            notifStatus={notifStatus}
           />
         );
       case 'Settings':
