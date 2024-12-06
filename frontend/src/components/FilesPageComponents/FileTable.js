@@ -4,16 +4,50 @@ import { LayersIcon, DownloadIcon, FileIcon, Share1Icon, TrashIcon, DotsVertical
 
 const FileTable = ({files, setFiles, filteredFiles, setFilteredFiles, formatFileSize, setDownloadsInProgress, setCurrentFile, setIsViewerOpen, openShareModal, setIsFileModalOpen, filter, setFilter}) => {
 
+  async function unpublishFile(file) {
+    try {
+      const response = await fetch(`http://localhost:8080/unpublishFile/${file.cid}`, {
+        method: 'GET',
+      });
+      if (response.ok) {
+        return true
+    } else {
+        console.error('Bad response code:', response.statusText);
+    }
+    } catch (err) {
+      console.error("Error unpublishing file: ", err)
+    }
+  }
 
-  function handleToggle(event, file) {
+  async function publishFile(file) {
+    try {
+      const response = await fetch(`http://localhost:8080/publishFile/${file.cid}`, {
+        method: 'GET',
+      });
+      if (response.ok) {
+        return true
+    } else {
+        console.error('Bad response code:', response.statusText);
+    }
+    } catch (err) {
+      console.error("Error publishing file: ", err)
+    }
+  }
+
+  async function handleToggle(event, file) {
     const isChecked = event.target.checked;
     const updatedFiles = files.map(f => 
       f.name === file.name ? { ...f, published: isChecked } : f
     );
     setFiles(updatedFiles);
     setFilteredFiles(updatedFiles);
+    if (!isChecked) {
+      await unpublishFile(file)
+    } else {
+      await publishFile(file)
+    }
   }
-
+  
   function handleResume(file) {
     setFiles(prevFiles =>
       prevFiles.map(f =>
@@ -51,9 +85,27 @@ const FileTable = ({files, setFiles, filteredFiles, setFilteredFiles, formatFile
     setIsViewerOpen(true);
   }
 
-  function handleDeleteFile(file) {
+  async function deleteFile(file) {
+    const endpoint = (file.source === "uploaded" ? "UploadedFile" : "DownloadedFile")
+    try {
+      const response = await fetch(`http://localhost:8080/delete${endpoint}/${file.cid}`, {
+        method: 'GET',
+      });
+      if (response.ok) {
+        return true
+    } else {
+        console.error('Bad response code:', response.statusText);
+    }
+    } catch (err) {
+      console.error("Error deleting file: ", err)
+    }
+  }
+
+  async function handleDeleteFile(file) {
     const confirmed = window.confirm(`Are you sure you want to delete the file: ${file.name}?`);
-    if (confirmed) {
+    const res = await deleteFile(file)
+
+    if (confirmed && res) {
       const updatedFiles = files.filter(f => f.name !== file.name);
       setFiles(updatedFiles);
       setFilteredFiles(updatedFiles);
@@ -154,9 +206,9 @@ const FileTable = ({files, setFiles, filteredFiles, setFilteredFiles, formatFile
                 ) :
                 
               <td className='icon-cell'>
-                <button onClick={() => handleDownload(file)} disabled={file.downloading}>
+                {/* <button onClick={() => handleDownload(file)} disabled={file.downloading}>
                   <DownloadIcon />
-                </button>
+                </button> */}
                 <button onClick={() => {
                                     return openFile(file)}} disabled={file.downloading}>
                   Open

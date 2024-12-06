@@ -8,12 +8,12 @@ const ProvidersModal = ({providers, setProviders, selectedProvider, setSelectedP
     }
 
     console.log("Providers: ", providers);
-    
+    providers = providers.filter((provider) => provider.peer_id != "UNAVAILABLE")
     
     return (
     <div className="modal">
     <div className="modal-content" style={{width: "600px"}}>
-        <h2> Found Providers </h2>
+        <h2> {providers.length != 0 ? "Found Providers" : "No Providers Found"} </h2>
             {providers.map((provider, index) => (
             <div
                 key={index}
@@ -26,7 +26,7 @@ const ProvidersModal = ({providers, setProviders, selectedProvider, setSelectedP
             </div>
             ))}
 
-        <h2> Your Balance: {balance} STK</h2>
+        {providers.length !== 0 ? <h2> Your Balance: {balance} STK</h2> : <></>}
         <div style={{
             display: 'flex',
             justifyContent: 'space-between',  
@@ -37,7 +37,7 @@ const ProvidersModal = ({providers, setProviders, selectedProvider, setSelectedP
             <button onClick={closeModal} style={{fontSize: '20px'}}> Close </button>
             </div>
             <div className='modal-actions'>
-            <button onClick={downloadFile} style={{fontSize: '20px'}}>Download</button>
+            {<button onClick={downloadFile} style={{ fontSize: '20px'}} disabled={providers.length === 0}>Download</button>} 
             </div>
         </div>
         </div>
