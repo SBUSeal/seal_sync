@@ -1,6 +1,5 @@
-/* GLOBAL VARIABLES FOR LIGHT MODE */
 :root {
-  --background-color: #f4f4f4; /* Light mode background color */
+  --background-color: #f4f4f4; 
   --container-bg: #f0f4f8;
   --proxy-head-bg: #dde4e9;
   --toggle-button-off-bg: #34495E;
@@ -17,7 +16,6 @@
   --button-hover-color: white;
 }
 
-/* DARK MODE OVERRIDES */
 [data-theme="dark"] {
   --background-color: #181818;
   --container-bg: #232323;
@@ -36,7 +34,6 @@
   --button-hover-color: #ffffff;
 }
 
-/* Apply the global variables */
 body {
   background-color: var(--background-color);
   color: var(--text-color);
@@ -127,7 +124,6 @@ div.container {
   background-color: var(--price-input-bg);
 }
 
-/* Container of list of proxies */
 .proxy-list {
   display: flex;
   flex-direction: column;
@@ -143,7 +139,6 @@ div.proxy-list h1 {
   font-size: 30px;
 }
 
-/* Search Bar and Title */
 .available-proxy-container {
   display: flex;
   align-items: center;
@@ -176,7 +171,6 @@ div.proxy-list h1 {
   color: #2d4a6e !important;
 }
 
-/* Proxy Item (Details) */
 .proxy-item {
   display: grid;
   grid-template-columns: 1fr .5fr 0.6fr 0.6fr 0.4fr 0fr;
@@ -196,7 +190,6 @@ div.proxy-list h1 {
   font-weight: bold;
 }
 
-/* Proxy Join Button */
 .proxy-join {
   display: flex;
   align-items: center;
@@ -232,7 +225,6 @@ div.proxy-list h1 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Current Proxy */
 .current-proxy-details {
   display: grid;
   grid-template-columns: 1fr .5fr 0.6fr 0.6fr 0.4fr 0fr;
@@ -267,7 +259,6 @@ div.proxy-list h1 {
   background-color: #c34646ce;
 }
 
-/* History Button */
 .history-button {
   background-color: var(--history-button-bg);
   border: 1px solid #ccc;

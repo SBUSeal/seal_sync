@@ -4,7 +4,7 @@ import worldMap from '../images/Worldmap.png';
 
 
 
-const StatusPage = ({ downloadsInProgress = [] }) => { // Defaulting downloadsInProgress to an empty array  const [dataAmount, setDataAmount] = useState(100); // Example data amount
+const StatusPage = ({ downloadsInProgress = [] }) => { 
   const [dataAmount, setDataAmount] = useState(100); // Example data amount
   const [peers, setPeers] = useState(5); // Example peers
   const [incomingData, setIncomingData] = useState(1.2); // Incoming traffic
@@ -17,7 +17,7 @@ const StatusPage = ({ downloadsInProgress = [] }) => { // Defaulting downloadsIn
     { city: 'Tokyo', coords: { top: '45%', left: '80%' } }
   ]);
 
-  // Simulate dynamic incoming/outgoing data
+  // For changing incoming/outgoing data
   useEffect(() => {
     const interval = setInterval(() => {
       setIncomingData((Math.random() * 2).toFixed(2));
@@ -27,7 +27,7 @@ const StatusPage = ({ downloadsInProgress = [] }) => { // Defaulting downloadsIn
     return () => clearInterval(interval);
   }, []);
 
-  //Fetch uploaded and downloaded file data from localStorage
+  //Using localStorage for updating counts
   useEffect(() => {
     const uploadCount = localStorage.getItem('uploadedFilesCount') || 0;
     const downloadCount = localStorage.getItem('downloadedFilesCount') || 0;
@@ -46,6 +46,7 @@ const StatusPage = ({ downloadsInProgress = [] }) => { // Defaulting downloadsIn
       </div>
 
       <div className="dashboard-grid">
+        
         {/* Network Traffic Section with Progress Bars */}
         <div className="network-traffic card">
           <h3>Network Traffic</h3>

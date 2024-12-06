@@ -1,91 +1,84 @@
-/* General Page Styling */
 body {
   background-color: var(--background-color);
   color: var(--text-color);
 }
 
-/* For buttons, inputs, etc. */
 input, button {
   background-color: var(--input-background);
   color: var(--text-color);
 }
 
-/* Container for file table */
 .container {
     width: 100%;
-    max-width: 1200px; /* Maintain a maximum width */
-    margin: 20px auto; /* Center the container */
-    padding: 20px; /* Padding around the content */
-    background-color: transparent; /* No extra background color */
-    border-radius: 10px; /* Rounded corners */
+    max-width: 1200px; 
+    margin: 20px auto; 
+    padding: 20px; 
+    background-color: transparent; 
+    border-radius: 10px; 
 }
 
-/* File Table */
 .file-table {
     width: 100%;
-    border-collapse: collapse; /* Collapse borders */
-    margin-top: 20px; /* Space above table */
+    border-collapse: collapse; 
+    margin-top: 20px; 
 }
 
 .file-table th,
 .file-table td {
-    padding: 15px; /* Padding inside table cells */
-    text-align: left; /* Align text to the left */
-    font-size: 14px; /* Font size */
+    padding: 15px; 
+    text-align: left; 
+    font-size: 14px; 
 }
 
 .file-table th {
-    background-color: #f2f2f2; /* Light gray header */
-    color: #333; /* Dark text color for headers */
+    background-color: #f2f2f2; 
+    color: #333; 
 }
 
 .file-table td {
-    border-bottom: 1px solid #f0f0f0; /* Light border below cells */
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .file-table td.icon {
-    width: 40px; /* Fixed width for icons */
+    width: 40px; 
 }
 
 .file-table td.actions {
-    text-align: right; /* Align action buttons to the right */
+    text-align: right; 
 }
 
-/* Buttons Styling */
 button {
-    padding: 10px 15px; /* Padding inside buttons */
-    border: none; /* No border */
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    font-size: 14px; /* Font size for buttons */
-    transition: background-color 0.3s ease; /* Smooth transition */
-    color: black; /* Black text color */
+    padding: 10px 15px; 
+    border: none; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    font-size: 14px; 
+    transition: background-color 0.3s ease; 
+    color: black; 
 }
 
 button:hover {
-    background-color: #e0e0e0; /* Light gray on hover */
+    background-color: #e0e0e0;
 }
 
-/* Specific Button Styles */
 .btn-network {
-    background-color: white; /* White background for Upload to Network */
-    color: #007bff; /* Blue text color */
+    background-color: white;
+    color: #007bff;
 }
 
 .btn-local {
-    background-color: white; /* White background for Upload Local */
-    color: #28a745; /* Green text color */
+    background-color: white; 
+    color: #28a745;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .file-table th,
     .file-table td {
-        font-size: 12px; /* Smaller font size for smaller screens */
+        font-size: 12px; 
     }
 
     button {
-        font-size: 12px; /* Smaller font size for buttons */
-        padding: 8px 15px; /* Adjust padding */
+        font-size: 12px; 
+        padding: 8px 15px; 
     }
 }

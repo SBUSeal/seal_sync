@@ -1,51 +1,10 @@
-/*.signup-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 400px;
-    margin: 0 auto;
-  }*/
-
-  /*.signup-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh; 
-    background-color: #34495E;  
-} 
-  
-  h2 {
-    margin-bottom: 20px;
-  }
-  
-  button {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #34495E; 
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  textarea {
-    width: 100%;
-    height: 50px;
-    margin-top: 10px;
-  }  */
-
   .signup-page {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column; /* Stack items vertically */
+    flex-direction: column; 
     height: 100vh;
-    background-color: #f4f6f9; /* Match the lighter blue from the topbar */
+    background-color: #f4f6f9; 
   }
 
   .signup-container h1 {
@@ -72,17 +31,17 @@
 
   .signup-form label {
     width: 100%;
-    color: black; /* Label color to match the rest */
-    margin-bottom: 5px; /* Space between label and textarea */
+    color: black;
+    margin-bottom: 5px; 
 }
 
   .signup-form {
-    background-color: #f4f6f9; /* Navy blue background to match sidebar */
+    background-color: #f4f6f9;
     color: white;
     padding: 40px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 600px; /* Match width with LoginPage */
+    width: 600px; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -97,9 +56,9 @@
 }
 
 .signup-container button {
-    width: auto; /* Remove full-width */
+    width: auto; 
     padding: 10px 20px;
-    background-color: #1ABC9C; /* Green hover color */
+    background-color: #1ABC9C; 
     color: white;
     border: none;
     border-radius: 5px;
@@ -128,22 +87,22 @@
   }
 
   .seal-logo {
-    width: 150px;/*Adjustable*/
+    width: 150px;
     height: auto;
   }
 
   .download-button {
-    width: auto; /* Keep it as small as needed */
-    padding: 8px 16px; /* Smaller padding than the other buttons */
-    background-color: black; /* Black background */
-    color: white; /* White text */
+    width: auto; 
+    padding: 8px 16px; 
+    background-color: black; 
+    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin: 10px 0; /* Space around the button */
+    margin: 10px 0; 
 }
 
 .download-button:hover {
-    background-color: #444; /* Darker black on hover */
+    background-color: #444; 
 }
