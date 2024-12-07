@@ -5,9 +5,13 @@ let mainWindow;
 
 function createWindow() {
   // Create the browser window.
+  const iconPath = path.join(__dirname, 'frontend', 'src', 'images', 'seal_logo_vUs_icon.ico');
+  console.log(iconPath);
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    title: 'SealShare',
+    icon: path.join(__dirname, 'src', 'images', 'seal_logo_vUs_icon.ico'),
     webPreferences: {
       nodeIntegration: true, // Optional, to use Node.js features in the renderer process
     },
@@ -15,9 +19,9 @@ function createWindow() {
 
   // Load the React app (from the development server).
   mainWindow.loadURL('http://localhost:3000');
+  mainWindow.setTitle('SealShare');
 
-  // Open the DevTools (optional).
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();// Open the DevTools (optional).
 
   mainWindow.on('closed', () => {
     mainWindow = null;
