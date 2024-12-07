@@ -252,7 +252,7 @@ func DeleteDownloadedFile(cid string) {
 func autoUnpublishFiles() {
 	var expiredUploads []UploadedFileInfo
 	for _, fileInfo := range uploadedFileMap {
-		if time.Now().After(fileInfo.UnpublishTime) {
+		if fileInfo.Published == true && time.Now().After(fileInfo.UnpublishTime) {
 			expiredUploads = append(expiredUploads, fileInfo)
 		}
 	}
