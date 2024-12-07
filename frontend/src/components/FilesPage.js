@@ -17,6 +17,7 @@ const FilesPage = (props) => {
   const setFiles = props.setFiles
   const setDownloadsInProgress = props.setDownloadsInProgress; 
   // Modal States
+  const [sharedLink, setSharedLink] = useState('');
   const [isUploadModalOpen, setisUploadModalOpen] = useState(false); 
   const [isFileModalOpen, setIsFileModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -261,6 +262,20 @@ const FilesPage = (props) => {
     return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
   }
 
+  async function generateSharedLink(file) {
+    try {
+      const response = await fetch(`http://${window.location.hostname}:8080/generateFileLink?file=${file.name}`);
+      if (response.ok) {
+        const data = await response.json(); // Extract the link from the response
+        setSharedLink(data.link); // Update the state with the generated link
+      } else {
+        console.error('Error generating shared link:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error generating shared link:', error);
+    }
+  }
+  
 
   return (
     <div className="file-manager-container">

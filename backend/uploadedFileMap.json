@@ -1,0 +1,46 @@
+{
+  "bafkreibn5tc56qoskmvjp7i4rx33atgsvzwko545nwob2f7egtc5f4f65m": {
+    "name": "hw4.pdf",
+    "price": 2,
+    "description": "132",
+    "size": 1169573,
+    "cid": "bafkreibn5tc56qoskmvjp7i4rx33atgsvzwko545nwob2f7egtc5f4f65m",
+    "published": true,
+    "unpublishTime": "2024-12-13T21:45:00Z",
+    "dateAdded": "12/6/2024",
+    "source": "uploaded"
+  },
+  "bafkreibpt7pelyubsh52mzpwqdpl34jnaneyuosi7elz4kj3t7ef4ih6ae": {
+    "name": "resumeeeeeeeeeee.pdf",
+    "price": 3,
+    "description": "rf",
+    "size": 408341,
+    "cid": "bafkreibpt7pelyubsh52mzpwqdpl34jnaneyuosi7elz4kj3t7ef4ih6ae",
+    "published": true,
+    "unpublishTime": "2024-12-26T21:42:00Z",
+    "dateAdded": "12/6/2024",
+    "source": "uploaded"
+  },
+  "bafkreigym4ajnvq2yluqn5xkjjm5ufxo7uv75dvjiu5ub55s7dfihy2gou": {
+    "name": "q3.png",
+    "price": 8,
+    "description": ",m,m",
+    "size": 26735,
+    "cid": "bafkreigym4ajnvq2yluqn5xkjjm5ufxo7uv75dvjiu5ub55s7dfihy2gou",
+    "published": true,
+    "unpublishTime": "2024-12-20T20:01:00Z",
+    "dateAdded": "12/6/2024",
+    "source": "uploaded"
+  },
+  "bafkreih7oe52ct5jp6yligcrcvofxsv7ikepjrrubk5dsxuc3q77bxw6a4": {
+    "name": "hw1.txt",
+    "price": 2,
+    "description": ".txt file",
+    "size": 3156,
+    "cid": "bafkreih7oe52ct5jp6yligcrcvofxsv7ikepjrrubk5dsxuc3q77bxw6a4",
+    "published": true,
+    "unpublishTime": "2024-12-20T21:21:00Z",
+    "dateAdded": "12/6/2024",
+    "source": "uploaded"
+  }
+}
