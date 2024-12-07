@@ -130,7 +130,7 @@ func handleFileRequests(node host.Host) {
 	})
 }
 
-// Connect to peer through relay, (get price), send cid then wait for response containing the file
+// Connect to peer through relay, send cid then wait for response containing the file
 func requestFile(node host.Host, targetpeerid string, cid string) (FileMetadata, network.Stream) {
 	peerinfo := connectToPeerUsingRelay(node, targetpeerid)
 	s, err := node.NewStream(network.WithAllowLimitedConn(globalCtx, "file transfer"), peerinfo.ID, file_transfer_protocol)
