@@ -1,120 +1,87 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
-
-	// "path"
-	"strings"
+	// "strings"
 )
 
-// With out configuring proxy: localhost:8888/webserver/page
-// Configuring proxy:  on network settings, set proxy server's IP address and port in the device's network settings
-// no need to add localhost:8888
-
-// Making a functional proxy page.
-// Enable being a proxy and show available ones
-// Connecting to someone as a proxy
-
-// Create a custom transport that can be used to send the request
-var customTransport = &http.Transport{
-	// Proxy: http.ProxyFromEnvironment, // This uses the standard proxy settings defined in environment variables, remove if not using a proxy.
-}
-
-// proxy request handler, should route request to destination server
-func handleRequest(w http.ResponseWriter, r *http.Request) {
-	targetURL := r.URL.String()
-	// skip http:// or https://
-	http_index := strings.Index(targetURL, "://")
-	if http_index != -1 {
-		targetURL = targetURL[(http_index + 3):]
-	}
-	slash_index := strings.Index(targetURL, "/")
-	// skip initial /
-	if slash_index == 0 {
-		targetURL = targetURL[1:]
-	}
-
-	page := ""
-	port := ""
-	webserver := ""
-	// If there is another '/', then there is a path to specific page
-	page_index := strings.Index(targetURL, "/")
-	if page_index == -1 {
-		page = "/"
-		webserver = targetURL
-	} else {
-		page = targetURL[page_index:]
-		targetURL = targetURL[:page_index] // Adjust targetURL to exclude the page path
-	}
-
-	// Find port if it is specified, else default to 80
-	port_index := strings.Index(targetURL, ":")
-	if port_index == -1 {
-		port = ":80"
-		webserver = targetURL
-	} else {
-		port = targetURL[port_index:]
-		webserver = targetURL[:port_index]
-	}
-
-	fullURL := "http://" + webserver + port + page
-	fmt.Println("GIVEN URL:", r.URL.String())
-	fmt.Println("FULL URL:", fullURL)
-
-	proxyReq, err := http.NewRequest(r.Method, fullURL, r.Body)
+func handleTunneling(w http.ResponseWriter, r *http.Request) {
+	log.Printf("CONNECT")
+	destConn, err := net.Dial("tcp", r.Host)
 	if err != nil {
-		fmt.Println("Failed to create request:", err)
-		http.Error(w, "Error creating proxy request", http.StatusInternalServerError)
+		http.Error(w, "Server error", http.StatusInternalServerError)
+		log.Printf("Failed to connect to host %s: %v", r.Host, err)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	hijacker, ok := w.(http.Hijacker)
+	if !ok {
+		http.Error(w, "Hijacking not supported", http.StatusInternalServerError)
+		return
+	}
+	clientConn, _, err := hijacker.Hijack()
+	if err != nil {
+		log.Printf("Hijacking failed: %v", err)
 		return
 	}
 
-	// Copy the headers from the original request to the proxy request
-	for name, values := range r.Header {
-		for _, value := range values {
-			proxyReq.Header.Add(name, value)
+	go transfer(destConn, clientConn)
+	go transfer(clientConn, destConn)
+}
+
+func handleHTTP(w http.ResponseWriter, req *http.Request) {
+	log.Printf("HTTP REQ")
+
+	transport := http.DefaultTransport
+
+	outReq := new(http.Request)
+	*outReq = *req // This creates a shallow copy of the request
+
+	if req.URL.Scheme == "" {
+		req.URL.Scheme = "http" // Assume http if not specified
+		if req.TLS != nil {
+			req.URL.Scheme = "https" // Use https if the incoming request was over TLS
 		}
 	}
 
-	// Send the proxy request using the custom transport
-	resp, err := customTransport.RoundTrip(proxyReq)
+	resp, err := transport.RoundTrip(outReq)
 	if err != nil {
-		fmt.Printf("Error during RoundTrip: %v\n", err)
-		http.Error(w, "Error sending proxy request", http.StatusInternalServerError)
+		http.Error(w, "Failed to reach the destination server.", http.StatusBadGateway)
 		return
 	}
 	defer resp.Body.Close()
 
-	// Copy the headers from the proxy response to the original response
-	for name, values := range resp.Header {
-		for _, value := range values {
-			w.Header().Add(name, value)
-		}
-	}
-
-	// Set the status code of the original response to the status code of the proxy response
+	copyHeader(w.Header(), resp.Header)
 	w.WriteHeader(resp.StatusCode)
-
-	// Copy the body of the proxy response to the original response
 	io.Copy(w, resp.Body)
 }
 
-// Starting the proxy
+func transfer(destination io.WriteCloser, source io.ReadCloser) {
+	defer destination.Close()
+	defer source.Close()
+	io.Copy(destination, source)
+}
+
+func copyHeader(dst, src http.Header) {
+	for k, vv := range src {
+		for _, v := range vv {
+			dst.Add(k, v)
+		}
+	}
+}
+
 func start_proxy() {
-	proxy_port := ":8888" // specifying the port the proxy server will listen to
+	proxy := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodConnect {
+			handleTunneling(w, r)
+		} else {
+			handleHTTP(w, r)
+		}
+	})
 
-	// create new http server with handler as handleRequest function
-	server := &http.Server{
-		Addr:    proxy_port,
-		Handler: http.HandlerFunc(handleRequest),
-	}
-
-	// Start server and log errors
-	fmt.Println("Starting Proxy Server On", proxy_port)
-	err := server.ListenAndServe()
-	if err != nil {
-		log.Fatal("Error starting proxy server: ", err)
-	}
+	log.Println("Starting Proxy Server on port 8888...")
+	log.Fatal(http.ListenAndServe(":8888", proxy))
 }
