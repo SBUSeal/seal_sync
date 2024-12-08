@@ -67,19 +67,17 @@ func getFileMetadata(file *os.File, price float64) FileMetadata {
 	fileType := mime.TypeByExtension(fileExt)
 	// If we can't get the type, do it manually
 	if fileType == "" {
-		if fileType == "" {
-			switch fileExt {
-			case ".txt":
-				fileType = "text/plain"
-			case ".html":
-				fileType = "text/html"
-			case ".png":
-				fileType = "image/png"
-			case ".pdf":
-				fileType = "application/pdf"
-			default:
-				fileType = "application/octet-stream" // Fallback
-			}
+		switch fileExt {
+		case ".txt":
+			fileType = "text/plain"
+		case ".html":
+			fileType = "text/html"
+		case ".png":
+			fileType = "image/png"
+		case ".pdf":
+			fileType = "application/pdf"
+		default:
+			fileType = "application/octet-stream" // Fallback
 		}
 	}
 
