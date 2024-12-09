@@ -23,6 +23,13 @@ var (
 )
 
 func main() {
+	privateIP, err := getPrivateIP()
+	if err != nil {
+		fmt.Println("Error retrieving public IP:", err)
+	} else {
+		fmt.Println("Server Private IP Address:", privateIP)
+	}
+	go startTransferServer(privateIP)
 
 	// Initialize our node (connect to bootstrap & relay node, initialize dht)
 	node, dht := initializeNode()
