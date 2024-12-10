@@ -5,9 +5,9 @@ import (
 	"log"
 	"net"
 	"net/http"
-	// "strings"
 )
 
+// setting up proxy, tcp request
 func handleTunneling(w http.ResponseWriter, r *http.Request) {
 	log.Printf("CONNECT")
 	destConn, err := net.Dial("tcp", r.Host)
@@ -32,6 +32,7 @@ func handleTunneling(w http.ResponseWriter, r *http.Request) {
 	go transfer(clientConn, destConn)
 }
 
+// http request
 func handleHTTP(w http.ResponseWriter, req *http.Request) {
 	log.Printf("HTTP REQ")
 
@@ -65,6 +66,7 @@ func transfer(destination io.WriteCloser, source io.ReadCloser) {
 	io.Copy(destination, source)
 }
 
+// copy header values
 func copyHeader(dst, src http.Header) {
 	for k, vv := range src {
 		for _, v := range vv {
@@ -73,6 +75,7 @@ func copyHeader(dst, src http.Header) {
 	}
 }
 
+// start up the proxy
 func start_proxy() {
 	proxy := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodConnect {

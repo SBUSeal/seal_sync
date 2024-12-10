@@ -23,8 +23,7 @@ var (
 )
 
 func main() {
-	start_proxy()
-
+	go start_proxy()
 	// Initialize our node (connect to bootstrap & relay node, initialize dht)
 	node, dht := initializeNode()
 	defer node.Close()
@@ -61,6 +60,10 @@ func main() {
 	})
 	mux.HandleFunc("/deleteUploadedFile/{cid}", deleteUploadedFile)
 	mux.HandleFunc("/deleteDownloadedFile/{cid}", deleteDownloadedFile)
+
+	mux.HandleFunc("/enableProxy", func(w http.ResponseWriter, r *http.Request) {
+		enableProxy(w, r)
+	})
 
 	fmt.Println("Server is running on port 8080")
 	handler := enableCORS(mux)
