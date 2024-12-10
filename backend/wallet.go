@@ -18,19 +18,11 @@ func HandleGetBalance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate session and get the wallet address
-	walletAddress, err := ValidateSession(r)
-	if err != nil {
-		http.Error(w, "Unauthorized: "+err.Error(), http.StatusUnauthorized)
+	if WALLET_ADDRESS == "" {
+		http.Error(w, "Wallet address is not set", http.StatusBadRequest)
 		return
 	}
 
-	// Identify the wallet name using the wallet address
-	walletName, err := IdentifyWalletByAddress(walletAddress)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Error identifying wallet: %v", err), http.StatusInternalServerError)
-		return
-	}
 
 	client := &http.Client{}
 	getBalanceReq := map[string]interface{}{
@@ -46,7 +38,7 @@ func HandleGetBalance(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Make RPC request to Bitcoin Core
-	req, err := http.NewRequest("POST", fmt.Sprintf("http://127.0.0.1:8332/wallet/%s", walletName), bytes.NewBuffer(reqBody))
+	req, err := http.NewRequest("POST", fmt.Sprintf("http://127.0.0.1:8332/wallet/%s", WALLET_NAME), bytes.NewBuffer(reqBody))
 	if err != nil {
 		http.Error(w, "Failed to create HTTP request", http.StatusInternalServerError)
 		return

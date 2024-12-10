@@ -6,13 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"sync"
 	"time"
-)
-
-var (
-	miningEnabled = true
-	miningMutex   sync.Mutex
 )
 
 func HandleStartMining(w http.ResponseWriter, r *http.Request) {
@@ -21,19 +15,8 @@ func HandleStartMining(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Retrieve session ID from headers
-	sessionID := r.Header.Get("session_id")
-	if sessionID == "" {
-		http.Error(w, "Session ID is required", http.StatusUnauthorized)
-		return
-	}
-
-	// Validate session and retrieve wallet address
-	sessionMutex.Lock()
-	session, exists := sessionStore[sessionID]
-	sessionMutex.Unlock()
-	if !exists || session.Expiry.Before(time.Now()) {
-		http.Error(w, "Invalid or expired session", http.StatusUnauthorized)
+	if WALLET_ADDRESS == "" {
+		http.Error(w, "Wallet address is not set", http.StatusBadRequest)
 		return
 	}
 
@@ -61,7 +44,7 @@ func HandleStartMining(w http.ResponseWriter, r *http.Request) {
 				"jsonrpc": "1.0",
 				"id":      "curltext",
 				"method":  "generatetoaddress",
-				"params":  []interface{}{1, session.WalletAddress},
+				"params":  []interface{}{1, WALLET_ADDRESS},
 			}
 			miningReqBody, _ := json.Marshal(miningReq)
 
@@ -71,7 +54,7 @@ func HandleStartMining(w http.ResponseWriter, r *http.Request) {
 				fmt.Printf("Failed to create HTTP request for mining: %v\n", err)
 				return
 			}
-			req.SetBasicAuth("user", "password") // Replace with your RPC credentials
+			req.SetBasicAuth("user", "password")
 			req.Header.Set("Content-Type", "application/json")
 
 			resp, err := client.Do(req)
@@ -107,22 +90,6 @@ func HandleStartMining(w http.ResponseWriter, r *http.Request) {
 func HandleStopMining(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
-
-	// Retrieve session ID from headers
-	sessionID := r.Header.Get("session_id")
-	if sessionID == "" {
-		http.Error(w, "Session ID is required", http.StatusUnauthorized)
-		return
-	}
-
-	// Validate session
-	sessionMutex.Lock()
-	_, exists := sessionStore[sessionID]
-	sessionMutex.Unlock()
-	if !exists {
-		http.Error(w, "Invalid session", http.StatusUnauthorized)
 		return
 	}
 

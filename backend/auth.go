@@ -7,10 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"sync"
-	"time"
-
-	"github.com/google/uuid" 
 )
 
 type RPCResponse struct {
@@ -142,6 +138,7 @@ func IdentifyWalletByAddress(address string) (string, error) {
 
 	return "", fmt.Errorf("address not found in any wallet")
 }
+
 func SanityRoute(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	response := map[string]string{"message": "Server is running smoothly!"}
@@ -378,45 +375,20 @@ func HandleLoginWallet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Step 2: Unlock the wallet using walletpassphrase
-	rpcRequest := map[string]interface{}{
+	rpcRequestToUnlock := map[string]interface{}{
 		"jsonrpc": "1.0",
 		"id":      "curltext",
 		"method":  "walletpassphrase",
 		"params":  []interface{}{requestBody.WalletPassword, 6000}, // Unlock for 60 seconds
 	}
-	rpcRequestBody, _ := json.Marshal(rpcRequest)
-	req, err = http.NewRequest("POST", "http://127.0.0.1:8332/wallet/"+WalletName, bytes.NewBuffer(rpcRequestBody))
+	rpcRequestBodyToUnlock, _ := json.Marshal(rpcRequestToUnlock)
+	req, err = http.NewRequest("POST", "http://127.0.0.1:8332/wallet/"+WalletName, bytes.NewBuffer(rpcRequestBodyToUnlock))
 	if err != nil {
 		http.Error(w, "Failed to create HTTP request for unlocking wallet", http.StatusInternalServerError)
 		return
 	}
 
-	if rpcResponse.Error != nil {
-		http.Error(w, fmt.Sprintf("Error unlocking wallet: %v", rpcResponse.Error), http.StatusUnauthorized)
-		return
-	}
-
-	// Generate session ID
-	sessionID := uuid.New().String()
-
-	// Store session with expiry
-	sessionMutex.Lock()
-	sessionStore[sessionID] = Session{
-		WalletAddress: requestBody.WalletAddress,
-		Expiry:        time.Now().Add(24 * time.Hour),
-	}
-	sessionMutex.Unlock()
-
-	// Set session ID in response
-	http.SetCookie(w, &http.Cookie{
-		Name:     "session_id",
-		Value:    sessionID,
-		Expires:  time.Now().Add(24 * time.Hour),
-		HttpOnly: true,
-		Secure:   true, // Ensure HTTPS is used
-	})
-
-	response := map[string]string{"message": "Login successful!", "sessionID": sessionID}
+	response := map[string]string{"message": "Login successful!"}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 

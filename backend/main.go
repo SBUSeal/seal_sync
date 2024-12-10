@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"time"
+	"sync"
 )
 
 var (
@@ -20,8 +21,9 @@ var (
 	unpublishedFiles      = []string{}
 	WALLET_ADDRESS        string
 	WALLET_NAME           string
+	miningEnabled = true
+	miningMutex   sync.Mutex
 )
-
 func enableCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins (or restrict to specific domains)
