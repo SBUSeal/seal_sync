@@ -1,0 +1,94 @@
+hw1
+
+(* Question 1: Write a function compress to remove consecutive duplicates from a list. *)
+let rec compress = function
+  | q :: (w :: _ as e) -> if q = w then compress e else q :: compress e
+  | smaller -> smaller
+
+(* Question 2: Write a function remove_if of the type 'a list -> ('a -> bool) -> 'a list. *)
+let rec remove_if lst f = match lst with
+  | [] -> []
+  | h :: t -> if f h then remove_if t f else h :: remove_if t f
+
+(* Question 3: Write a function slice to extract a slice of the list. *)
+let rec slice list i j =
+  let rec get n = function
+    | [] -> []
+    | hd :: tl -> if i > j || n = 0 then [] else hd :: get (n - 1) tl
+  in
+  let rec remove n = function
+    | [] -> []
+    | hd :: tl as l -> if n = 0 then l else remove (n - 1) tl
+  in
+  get (j - i) (remove i list)
+
+(* Question 4: Write a function equivs to partition a list into equivalence classes. *)
+let rec equivs fn lst =
+  let rec equivsMethod fn lst = match lst with
+    | [] -> []
+    | h :: t -> if fn h then h :: equivsMethod fn t else equivsMethod fn t
+  in
+  let rec listComparison lst1 lst2 = match lst1 with
+    | [] -> lst2
+    | h :: t -> let x = remove_if lst2 (fun elem -> elem = h) in listComparison t x
+  in
+  match lst with
+  | [] -> [[]]
+  | h :: t ->
+    let x = equivsMethod (fn h) lst in
+    let y = listComparison x t in
+    match y with
+    | [] -> [x]
+    | hd :: tl -> x :: equivs fn y
+
+(* Question 5: Write a function goldbachpair to find two prime numbers that sum up to a given even integer. *)
+let primeCheck input =
+  let input = max input (-input) in
+  let rec divideCheck div =
+    div * div > input || (input mod div <> 0 && divideCheck (div + 1))
+  in
+  divideCheck 2
+
+let rec goldbachpair mainInput =
+  let rec aux x =
+    if primeCheck x && primeCheck (mainInput - x) then (x, mainInput - x)
+    else aux (x + 1)
+  in
+  aux 2
+
+(* Question 6: Write a function identical_on to check if two functions behave identically on a list. *)
+let rec identical_on input1 input2 list =
+  match list with
+  | [] -> true
+  | head :: tail -> (input1 head) = (input2 head) && identical_on input1 input2 tail
+
+(* Question 7: Write a function pairwisefilter to filter a list using a pairwise comparison function. *)
+let rec pairwisefilter cmp list1 =
+  match list1 with
+  | [] -> []
+  | hd :: snd :: tail ->
+    let new_tl = pairwisefilter cmp tail in
+    (cmp hd snd) :: new_tl
+  | hd :: [] -> [hd]
+
+(* Question 8: Write the polynomial function. *)
+let rec poly a = fun n ->
+  match a with
+  | [] -> 0
+  | (b, c) :: tail ->
+    let remaining = poly tail in
+    let x = float_of_int n ** float_of_int c |> int_of_float in
+    (b * x) + remaining n
+
+(* Question 9: Write a function suffixes to return a list of all the suffixes of the input list. *)
+let rec suffixes lst =
+  match lst with
+  | [] -> [[]]
+  | _ :: tail -> lst :: suffixes tail
+
+(* Question 10: Write a function powerset to find the power set of a list. *)
+let rec powerset = function
+  | [] -> [[]]
+  | hd :: tl ->
+    let finalList = powerset tl in
+    finalList @ List.map (fun s -> hd :: s) finalList
