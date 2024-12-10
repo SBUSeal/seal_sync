@@ -334,3 +334,33 @@ func generateCid(file io.Reader) cid.Cid {
 	// Create the CID
 	return cid.NewCidV1(cid.Raw, mh)
 }
+
+// function for uploading to dht
+func enableProxy(w http.ResponseWriter, r *http.Request) {
+	// check if the method is valid
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// parse the form data
+	err := r.ParseMultipartForm(50 << 20) // For example, 10 MB max memory
+	if err != nil {
+		http.Error(w, "Error parsing form data", http.StatusBadRequest)
+		return
+	}
+	// Retrieve form values
+	ip := r.FormValue("ip")
+	price := r.FormValue("price")
+	port := r.FormValue("port")
+	dateAdded := r.FormValue("dateAdded")
+
+	fmt.Printf("Received proxy with IP: %s, Price: %s, Port: %s, Date Added: %s\n", ip, price, port, dateAdded)
+
+	// // Additional logic to add the proxy to the DHT here
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	responseJSON := `{"message": "Proxy enabled successfully", "ip": "` + ip + `"}`
+	w.Write([]byte(responseJSON))
+}
