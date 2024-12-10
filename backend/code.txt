@@ -89,7 +89,7 @@ func ServeFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fullPath := filepath.Join("./uploads", filePath)
+	fullPath := filepath.Join("./shared_files", filePath)
 	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
 		http.Error(w, "File not found", http.StatusNotFound)
 		return
@@ -106,7 +106,7 @@ func GenerateFileLink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fullPath := filepath.Join("./uploads", filePath)
+	fullPath := filepath.Join("./shared_files", filePath)
 	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
 		http.Error(w, "File not found", http.StatusNotFound)
 		return

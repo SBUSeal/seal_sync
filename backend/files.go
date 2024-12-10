@@ -67,19 +67,17 @@ func getFileMetadata(file *os.File, price float64) FileMetadata {
 	fileType := mime.TypeByExtension(fileExt)
 	// If we can't get the type, do it manually
 	if fileType == "" {
-		if fileType == "" {
-			switch fileExt {
-			case ".txt":
-				fileType = "text/plain"
-			case ".html":
-				fileType = "text/html"
-			case ".png":
-				fileType = "image/png"
-			case ".pdf":
-				fileType = "application/pdf"
-			default:
-				fileType = "application/octet-stream" // Fallback
-			}
+		switch fileExt {
+		case ".txt":
+			fileType = "text/plain"
+		case ".html":
+			fileType = "text/html"
+		case ".png":
+			fileType = "image/png"
+		case ".pdf":
+			fileType = "application/pdf"
+		default:
+			fileType = "application/octet-stream" // Fallback
 		}
 	}
 
@@ -130,7 +128,7 @@ func handleFileRequests(node host.Host) {
 	})
 }
 
-// Connect to peer through relay, (get price), send cid then wait for response containing the file
+// Connect to peer through relay, send cid then wait for response containing the file
 func requestFile(node host.Host, targetpeerid string, cid string) (FileMetadata, network.Stream) {
 	peerinfo := connectToPeerUsingRelay(node, targetpeerid)
 	s, err := node.NewStream(network.WithAllowLimitedConn(globalCtx, "file transfer"), peerinfo.ID, file_transfer_protocol)

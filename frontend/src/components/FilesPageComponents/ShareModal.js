@@ -1,56 +1,104 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useState } from 'react';
 
-const ShareModal = ({ file, setIsShareModalOpen, dummyLink }) => {
-   
-    const [hasGeneratedLink, setHasGeneratedLink] = useState(false)
+const ShareModal = ({ file, setIsShareModalOpen }) => {
+  const [generatedLink, setGeneratedLink] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-    const closeShareModal = () => {
-        setHasGeneratedLink(false)
-        setIsShareModalOpen(false)
+  const closeShareModal = () => {
+    setGeneratedLink('');
+    setIsShareModalOpen(false);
+  };
+
+  const copyLinkToClipboard = () => {
+    if (generatedLink) {
+      navigator.clipboard
+        .writeText(generatedLink)
+        .then(() => {
+          alert('Link copied to clipboard!');
+        })
+        .catch((err) => {
+          console.error('Failed to copy link:', err);
+          alert('Failed to copy the link. Please try again.');
+        });
+    } else {
+      alert('No link generated to copy.');
     }
+  };
 
-    const copyLinkToClipboard = () => {
-      navigator.clipboard.writeText(dummyLink);
-      alert('Link copied to clipboard!');
+  const generateLink = async () => {
+    setIsLoading(true);
+    try {
+      // Fetch the generated link from the backend
+      const response = await fetch(`http://localhost:8080/generateFileLink?file=${file.name}`);
+      if (response.ok) {
+        const data = await response.json();
+        setGeneratedLink(data.link); // Store the generated link
+        console.log(`Generated Link: ${data.link}`); // Debugging log
+      } else {
+        alert('Failed to generate the shareable link');
+        console.error('Error generating link:', response.statusText);
+      }
+    } catch (error) {
+      alert('Error generating the shareable link');
+      console.error('Error:', error);
     }
-
+    setIsLoading(false);
+  };
 
   return (
     <div className="modal">
-    <div className="modal-content"  style={{width:'500px'}}>
-      <h2>Share File</h2>
-      <button onClick={()=>setHasGeneratedLink(true)} className='modal-content' style={{marginBottom: "10px", border:'1px lightgrey solid'}}>Generate Share Link </button>
-      {hasGeneratedLink && <div> 
+      <div className="modal-content" style={{ width: '500px' }}>
+        <h2>Share File</h2>
+        <button
+          onClick={generateLink}
+          disabled={isLoading}
+          className="modal-content"
+          style={{ marginBottom: '10px', border: '1px lightgrey solid' }}
+        >
+          {isLoading ? 'Generating...' : 'Generate Share Link'}
+        </button>
+        {generatedLink && (
+          <div>
+            <input
+              className="modal-content"
+              type="text"
+              value={generatedLink}
+              readOnly
+              style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
+            />
+            <button
+              onClick={copyLinkToClipboard}
+              className="modal-content"
+              style={{ border: '1px lightgrey solid' }}
+            >
+              Copy Link
+            </button>
+          </div>
+        )}
+        <h2 style={{ marginTop: '5px' }}>Or</h2>
+        <p style={{ marginBottom: '10px' }}>Copy the file CID below</p>
         <input
-        className='modal-content'
           type="text"
-          value={dummyLink}
+          value={file.cid}
           readOnly
           style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
         />
-        <button className='modal-content' style={{border:'1px lightgrey solid'}} onClick={copyLinkToClipboard}> 
-          Copy Link
+        <button
+          className="modal-content"
+          onClick={() => {
+            navigator.clipboard.writeText(file.cid);
+            alert('CID copied to clipboard!');
+          }}
+          style={{ border: '1px lightgrey solid' }}
+        >
+          Copy CID
         </button>
-      </div>}
-      <h2  style={{marginTop: "5px"}}> Or </h2>
-      <p  style={{marginBottom: "10px"}}> Copy the file CID below </p>
-      <input
-        type="text"
-        value={file.cid}
-        readOnly
-        style={{ width: '100%', padding: '8px', marginBottom: '10px' }}
-      />
-      <button className='modal-content' style={{border:'1px lightgrey solid'}}onClick={() => {
-        navigator.clipboard.writeText(file.cid);
-        alert('CID copied to clipboard!');
-      }}>Copy CID </button>
-      <div className="modal-actions">
-        <button onClick={closeShareModal}>Close</button>
+        <div className="modal-actions">
+          <button onClick={closeShareModal}>Close</button>
+        </div>
       </div>
     </div>
-  </div>
-  )
-}
+  );
+};
 
-export default ShareModal
+export default ShareModal;
