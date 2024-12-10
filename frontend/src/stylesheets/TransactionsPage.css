@@ -1,10 +1,8 @@
-/* General Styling for the Transactions Page */
 body {
     background-color: var(--background-color);
     color: var(--text-color);
 }
 
-/* For buttons, inputs, etc. */
 input, button {
     background-color: var(--input-background);
     color: var(--text-color);
@@ -19,7 +17,6 @@ input, button {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Transaction History Heading */
 h3 {
     color: var(--primary-text-color);
     margin-bottom: 25px;
@@ -27,7 +24,6 @@ h3 {
     font-weight: bold;
 }
 
-/* Filter and Search Section */
 .search-filter-section {
     display: flex;
     justify-content: space-between;
@@ -36,14 +32,12 @@ h3 {
     gap: 20px;
 }
 
-/* Labels for Filter and Search */
 .search-filter-section label {
     font-weight: bold;
     margin-right: 10px;
     color: var(--secondary-text-color);
 }
 
-/* Input Fields */
 .input-field {
     padding: 12px;
     border-radius: 8px;
@@ -60,7 +54,6 @@ h3 {
     box-shadow: 0 0 5px var(--input-focus-shadow);
 }
 
-/* Transaction Buttons */
 .transaction-buttons {
     display: flex;
     gap: 10px;
@@ -84,12 +77,11 @@ h3 {
     border-color: var(--button-background);
 }
 
-/* Transaction History */
 .transaction-history {
     margin-top: 30px;
 }
 
-/* Transaction Item Box */
+/*Transaction Item Box*/
 .transaction-item {
     background-color: var(--card-background);
     border: 1px solid var(--input-border);
@@ -108,7 +100,6 @@ h3 {
     box-shadow: 0px 6px 15px var(--box-shadow-hover-color);
 }
 
-/* Transaction Columns */
 .transaction-column {
     display: flex;
     flex-direction: column;
@@ -131,11 +122,11 @@ h3 {
 }
 
 .transaction-amount.sent {
-    color: var(--transaction-sent-color); /* Red for sent */
+    color: var(--transaction-sent-color); /*Red = sent*/
 }
 
 .transaction-amount.received {
-    color: var(--transaction-received-color); /* Green for received */
+    color: var(--transaction-received-color); /*Green=received*/
 }
 
 .transaction-date {
@@ -144,19 +135,16 @@ h3 {
     margin-top: 5px;
 }
 
-/* Button Hover Effects */
 .btn-transaction:hover {
     background-color: var(--button-background);
     color: var(--button-text-color);
 }
 
-/* Smooth Input Focus Effects */
 .input-field:focus {
     border-color: var(--input-focus-border);
     box-shadow: 0 0 5px var(--input-focus-shadow);
 }
 
-/* Light Mode Variables */
 :root {
     --background-color: #f4f6f8;
     --text-color: #343a40;
@@ -178,7 +166,7 @@ h3 {
     --transaction-received-color: #28a745;
 }
 
-/* Dark Mode Variables */
+
 [data-theme="dark"] {
     --background-color: #121212;
     --text-color: #e0e0e0;

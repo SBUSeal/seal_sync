@@ -28,7 +28,7 @@ function Sidebar(props) {
         {!isMinimized && <h2 className='logo-text'>Seal Share</h2>}
       </div>
       <button onClick={toggleSidebar} className="minimize-btn" style={{backgroundColor: "#34495E", height: 60, borderRadius: 5, marginBottom: 40}}>
-        {isMinimized ? <ArrowLeftIcon color='white'> </ArrowLeftIcon> : <ArrowRightIcon color='white'> </ArrowRightIcon>}
+        {isMinimized ? <ArrowRightIcon color='white'> </ArrowRightIcon> : <ArrowLeftIcon color='white'> </ArrowLeftIcon>}
       </button>
       <ul>
         <li onClick={() => setActivePage('Status')}>

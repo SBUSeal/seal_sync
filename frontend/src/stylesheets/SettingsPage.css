@@ -1,30 +1,27 @@
-/* Global Styles for Dark and Light Modes */
 :root {
-    /* Default Dark Mode Variables */
     --background-color: #121212;
     --text-color: #f9f9f9;
     --input-background: #333333;
     --input-border: #555555;
-    --button-background: #001f3f; /* Navy Blue */
+    --button-background: #001f3f;
     --button-background-hover: #00102a;
     --button-text-color: white;
-    --logout-button-background: #c62828; /* Red for logout button */
+    --logout-button-background: #c62828;
     --logout-button-hover: #b71c1c;
-    --nav-item-background: #2c2c2c; /* Darker sidebar background for better readability */
-    --nav-item-hover: #444444; /* Hover effect for better visibility */
-    --nav-item-active: #4A90E2; /* Active state for sidebar items */
+    --nav-item-background: #2c2c2c; 
+    --nav-item-hover: #444444; 
+    --nav-item-active: #4A90E2; 
 }
 
 [data-theme="light"] {
-    /* Light Mode Variables */
     --background-color: #f9f9f9;
     --text-color: #333333;
     --input-background: #ffffff;
     --input-border: #ccc;
-    --button-background: #001f3f; /* Navy Blue */
+    --button-background: #001f3f;
     --button-background-hover: #00102a;
     --button-text-color: white;
-    --logout-button-background: #c62828; /* Red for logout button */
+    --logout-button-background: #c62828; 
     --logout-button-hover: #b71c1c;
     --nav-item-background: #f0f0f0;
     --nav-item-hover: #e0e0e0;
@@ -160,7 +157,6 @@ h2 {
     background-color: var(--button-background-hover);
 }
 
-/* Logout Button */
 .logout-button {
     font-size: 16px;
     padding: 12px 24px;
@@ -179,7 +175,7 @@ h2 {
     background-color: var(--logout-button-hover);
 }
 
-/* Notification pop-up styles */
+
 .notification-popup {
     position: fixed;
     bottom: 20px;
@@ -201,7 +197,7 @@ h2 {
     100% { opacity: 0; transform: translateY(20px); }
 }
 
-/* Theme Toggle Button */
+
 .theme-toggle-button {
     background-color: var(--button-background);
     color: var(--button-text-color);
@@ -216,23 +212,23 @@ h2 {
 .theme-toggle-button:hover {
     background-color: var(--button-background-hover);
 }
-/* Dark Mode Background */
+
 .settings-container.dark-mode {
-    background-color: #121212; /* Dark background */
-    color: #ffffff; /* Light text */
+    background-color: #121212;
+    color: #ffffff; 
 }
 
-/* Dark Mode Sidebar */
+
 .nav-item.dark-mode {
-    background-color: #333; /* Darker background for buttons */
-    color: #fff; /* White text */
+    background-color: #333; 
+    color: #fff; 
 }
 
 .nav-item.dark-mode.active {
-    background-color: #555; /* Slightly different for active */
+    background-color: #555; 
 }
 
-/* Dark Mode for Content Area */
+
 .content-area.dark-mode {
     background-color: #1e1e1e;
     color: #fff;
