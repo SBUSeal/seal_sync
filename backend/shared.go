@@ -6,12 +6,15 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/url" // Added for URL encoding
 	"os"
 	"path/filepath"
 )
 
 func startTransferServer(privateIP string) {
 	transferRouter := http.NewServeMux()
+	transferRouter.HandleFunc("/shared_link", ServeFile)
+	transferRouter.HandleFunc("/generate_link", GenerateFileLink)
 
 	fmt.Println("Transfer server is running on IP: ", privateIP, " Port: 8081")
 	err := http.ListenAndServe(privateIP+":8081", transferRouter)
@@ -119,8 +122,11 @@ func GenerateFileLink(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// URL-encode the file path to handle spaces and special characters
+	encodedFilePath := url.QueryEscape(filePath)
+
 	// Replace `privateIP` with your domain if available
-	shareableLink := fmt.Sprintf("http://%s:8080/shared_link?file=%s", privateIP, filePath)
+	shareableLink := fmt.Sprintf("http://%s:8081/shared_link?file=%s", privateIP, encodedFilePath)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"link": shareableLink})
