@@ -110,7 +110,7 @@ const FilesPage = (props) => {
   }
 
 
-  function triggerNonBlobDownload(url) {
+  function triggerNonBlobDownload(url) {    
     const a = document.createElement('a')
     a.href = url
     a.download = ''
@@ -161,12 +161,13 @@ const FilesPage = (props) => {
       // If file > 50 MB, dont use a blob to download it
       // Also means we wont be able to show a preview of it
       let blob;
-      if (downloadedFile.size > 50 * 1024 * 1024) {
-        blob = await triggerNonBlobDownload(url)
-      }
-      else {
-        blob = await triggerBlobDownload(url, downloadedFile.name)
-      }
+      // if (downloadedFile.size > 50 * 1024 * 1024) {
+      //   blob = await triggerNonBlobDownload(url)
+      // }
+      // else {
+      //   blob = await triggerBlobDownload(url, downloadedFile.name)
+      // }
+      blob = await triggerNonBlobDownload(url)
       downloadedFile.fileObject = blob
 
       setFiles([...files, downloadedFile]);

@@ -259,7 +259,8 @@ func initializeNode() (host.Host, *dht.IpfsDHT) {
 	connectToPeer(node, relay_node_addr) // connect to relay node
 	makeReservation(node)                // make reservation on realy node
 	go refreshReservation(node, 10*time.Minute)
-	connectToPeer(node, bootstrap_node_addr) // connect to bootstrap node
+	connectToPeer(node, bootstrap_node_1_addr) // connect to bootstrap node 1
+	connectToPeer(node, bootstrap_node_2_addr) // connect to bootstrap node 2
 
 	go handlePeerExchange(node)
 	handleProviderInfoRequests(node)
