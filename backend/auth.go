@@ -7,6 +7,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sync"
+	"time"
+
+	"github.com/google/uuid" 
 )
 
 type RPCResponse struct {
@@ -14,6 +18,10 @@ type RPCResponse struct {
 	Error  map[string]interface{} `json:"error"`
 	ID     string                 `json:"id"`
 }
+
+
+var sessionStore = make(map[string]Session) 
+var sessionMutex sync.Mutex
 
 func IdentifyWalletByAddress(address string) (string, error) {
 	client := &http.Client{}
@@ -98,19 +106,6 @@ func IdentifyWalletByAddress(address string) (string, error) {
 	}
 
 	return "", fmt.Errorf("address not found in any loaded wallet")
-}
-func enableCORS(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins (or restrict to specific domains)
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-
-		if r.Method == http.MethodOptions {
-			w.WriteHeader(http.StatusOK)
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
 }
 
 func SanityRoute(w http.ResponseWriter, r *http.Request) {
@@ -283,6 +278,7 @@ func HandleCreateWallet(w http.ResponseWriter, r *http.Request) {
 }
 
 
+
 func HandleLoginWallet(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -294,72 +290,33 @@ func HandleLoginWallet(w http.ResponseWriter, r *http.Request) {
 		WalletPassword string `json:"walletPassword"`
 	}
 
-	// Decode the JSON request body
 	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	// Validate input
 	if requestBody.WalletAddress == "" || requestBody.WalletPassword == "" {
 		http.Error(w, "Wallet address and password are required", http.StatusBadRequest)
 		return
 	}
 
-	client := &http.Client{}
-
 	WalletName, err := IdentifyWalletByAddress(requestBody.WalletAddress)
 	if err != nil {
-		fmt.Printf("Error identifying wallet: %v\n", err)
+		http.Error(w, fmt.Sprintf("Error identifying wallet: %v", err), http.StatusInternalServerError)
 		return
 	}
 
-	// Step 1: Attempt to load the wallet
-	loadWalletReq := map[string]interface{}{
-		"jsonrpc": "1.0",
-		"id":      "curltext",
-		"method":  "loadwallet",
-		"params":  []string{WalletName},
-	}
-	loadWalletBody, _ := json.Marshal(loadWalletReq)
-	req, err := http.NewRequest("POST", "http://127.0.0.1:8332", bytes.NewBuffer(loadWalletBody))
-	if err != nil {
-		http.Error(w, "Failed to create HTTP request for loading wallet", http.StatusInternalServerError)
-		return
-	}
-	req.SetBasicAuth("user", "password") // Replace with your RPC credentials
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		http.Error(w, "Failed to connect to Bitcoin Core for loading wallet", http.StatusInternalServerError)
-		return
-	}
-	defer resp.Body.Close()
-
-	respBody, _ := ioutil.ReadAll(resp.Body)
-	var loadWalletResponse map[string]interface{}
-	json.Unmarshal(respBody, &loadWalletResponse)
-
-	// Handle the case where the wallet is already loaded
-	if loadWalletResponse["error"] != nil {
-		errorCode := loadWalletResponse["error"].(map[string]interface{})["code"].(float64)
-		// Ignore error code -35 (wallet already loaded)
-		if errorCode != -35 {
-			http.Error(w, fmt.Sprintf("Error loading wallet: %v", loadWalletResponse["error"]), http.StatusNotFound)
-			return
-		}
-	}
-
-	// Step 2: Unlock the wallet using walletpassphrase
+	// Attempt to unlock the wallet
+	client := &http.Client{}
 	rpcRequest := map[string]interface{}{
 		"jsonrpc": "1.0",
 		"id":      "curltext",
 		"method":  "walletpassphrase",
-		"params":  []interface{}{requestBody.WalletPassword, 60}, // Unlock for 60 seconds
+		"params":  []interface{}{requestBody.WalletPassword, 60},
 	}
 	rpcRequestBody, _ := json.Marshal(rpcRequest)
-	req, err = http.NewRequest("POST", "http://127.0.0.1:8332/wallet/"+ WalletName, bytes.NewBuffer(rpcRequestBody))
+
+	req, err := http.NewRequest("POST", "http://127.0.0.1:8332/wallet/"+WalletName, bytes.NewBuffer(rpcRequestBody))
 	if err != nil {
 		http.Error(w, "Failed to create HTTP request for unlocking wallet", http.StatusInternalServerError)
 		return
@@ -367,25 +324,68 @@ func HandleLoginWallet(w http.ResponseWriter, r *http.Request) {
 	req.SetBasicAuth("user", "password")
 	req.Header.Set("Content-Type", "application/json")
 
-	resp, err = client.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		http.Error(w, "Failed to connect to Bitcoin Core for unlocking wallet", http.StatusInternalServerError)
 		return
 	}
 	defer resp.Body.Close()
 
-	respBody, _ = ioutil.ReadAll(resp.Body)
-	var rpcResponse map[string]interface{}
-	json.Unmarshal(respBody, &rpcResponse)
-
-	// Handle errors from walletpassphrase
-	if rpcResponse["error"] != nil {
-		http.Error(w, fmt.Sprintf("Error unlocking wallet: %v", rpcResponse["error"]), http.StatusUnauthorized)
+	respBody, _ := ioutil.ReadAll(resp.Body)
+	var rpcResponse RPCResponse
+	if err := json.Unmarshal(respBody, &rpcResponse); err != nil {
+		http.Error(w, "Failed to parse response from Bitcoin Core", http.StatusInternalServerError)
 		return
 	}
 
-	// Step 3: Return a success message
-	response := map[string]string{"message": "Login successful!"}
+	if rpcResponse.Error != nil {
+		http.Error(w, fmt.Sprintf("Error unlocking wallet: %v", rpcResponse.Error), http.StatusUnauthorized)
+		return
+	}
+
+	// Generate session ID
+	sessionID := uuid.New().String()
+
+	// Store session with expiry
+	sessionMutex.Lock()
+	sessionStore[sessionID] = Session{
+		WalletAddress: requestBody.WalletAddress,
+		Expiry:        time.Now().Add(24 * time.Hour),
+	}
+	sessionMutex.Unlock()
+
+	// Set session ID in response
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_id",
+		Value:    sessionID,
+		Expires:  time.Now().Add(24 * time.Hour),
+		HttpOnly: true,
+		Secure:   true, // Ensure HTTPS is used
+	})
+
+	response := map[string]string{"message": "Login successful!", "sessionID": sessionID}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
 }
+
+func ValidateSession(r *http.Request) (string, error) {
+	cookie, err := r.Cookie("session_id")
+	if err != nil {
+		return "", fmt.Errorf("session not found")
+	}
+
+	sessionID := cookie.Value
+
+	fmt.Printf("the session for the user is ", sessionID)
+
+	sessionMutex.Lock()
+	session, exists := sessionStore[sessionID]
+	sessionMutex.Unlock()
+
+	if !exists || time.Now().After(session.Expiry) {
+		return "", fmt.Errorf("invalid or expired session")
+	}
+
+	return session.WalletAddress, nil
+}
+
