@@ -12,7 +12,11 @@ import SignUpPage from './components/SignUpPage';
 import MiningPage from './components/MiningPage';
 import TransactionsPage from './components/TransactionsPage';
 
+const getBalanceEndpoint = "http://localhost:8080/getBalance";
+
+
 function App() {
+  
   const [activePage, setActivePage] = useState('Status');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
@@ -29,6 +33,7 @@ function App() {
   const [miningLog, setMiningLog] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState(0);
   const [downloadedFiles, setDownloadedFiles] = useState(0);
+  const [isMining, setIsMining] = useState(false);
 
   // Log activePage to debug any unexpected reloads
   console.log("Current Active Page:", activePage);
@@ -106,6 +111,29 @@ function App() {
     setIsDarkMode(!isDarkMode);
   };
 
+  const fetchBalance = () => {
+    fetch(getBalanceEndpoint, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Failed to fetch balance: ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (data.balance) {
+                setSealTokenBalance(data.balance);
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching balance:", error);
+        });
+};
+
   // Function to render content based on activePage
   const renderContent = () => {
     if (isSigningUp) {
@@ -162,6 +190,9 @@ function App() {
             setSealTokenBalance={setSealTokenBalance}
             miningLog={miningLog}
             setMiningLog={setMiningLog}
+            isMining={isMining}
+            setIsMining={setIsMining}
+            fetchBalance={fetchBalance}
           />
         );
       case 'Settings':
