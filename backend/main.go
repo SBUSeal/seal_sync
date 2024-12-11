@@ -10,9 +10,8 @@ import (
 )
 
 var (
-	node_id         = "114418346" // give your SBU ID
-	relay_node_addr = "/ip4/130.245.173.221/tcp/4001/p2p/12D3KooWDpJ7As7BWAwRMfu1VU2WCqNjvq387JEYKDBj4kx6nXTN"
-	// bootstrap_node_addr = "/ip4/130.245.173.222/tcp/61000/p2p/12D3KooWQd1K1k8XA9xVEzSAu7HUCodC7LJB6uW5Kw4VwkRdstPE"
+	node_id               = "114418346" // give your SBU ID
+	relay_node_addr       = "/ip4/130.245.173.221/tcp/4001/p2p/12D3KooWDpJ7As7BWAwRMfu1VU2WCqNjvq387JEYKDBj4kx6nXTN"
 	bootstrap_node_1_addr = "/ip4/130.245.173.221/tcp/6001/p2p/12D3KooWE1xpVccUXZJWZLVWPxXzUJQ7kMqN8UQ2WLn9uQVytmdA"
 	bootstrap_node_2_addr = "/ip4/130.245.173.222/tcp/61020/p2p/12D3KooWM8uovScE5NPihSCKhXe8sbgdJAi88i2aXT2MmwjGWoSX"
 	globalCtx             = context.Background()
@@ -21,10 +20,8 @@ var (
 	unpublishedFiles      = []string{}
 	WALLET_ADDRESS        string
 	WALLET_NAME           string
-
-	miningEnabled = true
-	miningMutex   sync.Mutex
-
+	miningEnabled         = true
+	miningMutex           sync.Mutex
 )
 
 func enableCORS(next http.Handler) http.Handler {
@@ -32,6 +29,7 @@ func enableCORS(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Origin", "*") // Allow all origins (or restrict to specific domains)
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Expose-Headers", "Name, Cid, Price, Size, Description, DateAdded, Source")
 
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusOK)
@@ -42,6 +40,9 @@ func enableCORS(next http.Handler) http.Handler {
 }
 
 func main() {
+
+	go start_proxy()
+
 	privateIP, err := getPrivateIP()
 	if err != nil {
 		fmt.Println("Error retrieving public IP:", err)
@@ -88,6 +89,9 @@ func main() {
 	mux.HandleFunc("/deleteUploadedFile/{cid}", deleteUploadedFile)
 	mux.HandleFunc("/deleteDownloadedFile/{cid}", deleteDownloadedFile)
 
+	mux.HandleFunc("/enableProxy", func(w http.ResponseWriter, r *http.Request) {
+		enableProxy(w, r)
+	})
 
 	mux.HandleFunc("/startMining", HandleStartMining)
 	mux.HandleFunc("/stopMining", HandleStopMining)
@@ -96,9 +100,7 @@ func main() {
 	mux.HandleFunc("/getTransactions", HandleGetTransactions)
 
 
-
 	fmt.Println("Server is running on port 8080")
 	handler := enableCORS(mux)
 	log.Fatal(http.ListenAndServe(":8080", handler))
-
 }

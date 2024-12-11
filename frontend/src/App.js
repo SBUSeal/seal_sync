@@ -27,6 +27,7 @@ function App() {
   const [isOn, setIsOn] = useState(false); 
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [price, setPrice] = useState('');
+  const [notifStatus, setNotifStatus] = useState('All');
 
   // State to manage Files
   const [files, setFiles] = useState([]);
@@ -94,6 +95,20 @@ function App() {
     setIsDarkMode(!isDarkMode);
   };
 
+  const toggleNotifUrgent = () => {
+    setNotifStatus('Urgent');
+    console.log('notifStatus set to "Urgent" in App.js');
+  }
+
+  const toggleNotifOff = () => {
+    setNotifStatus('Off');
+    console.log('notifStatus set to "None" in App.js');
+  }
+
+  const toggleNotifAll = () => {
+    setNotifStatus('All');
+    console.log('notifStatus set to "All" in App.js');
+  }
   const fetchBalance = () => {
     fetch(getBalanceEndpoint, {
         method: "GET",
@@ -138,6 +153,7 @@ function App() {
             transactions={transactions}
             setTransactions={setTransactions}
             setDownloadsInProgress={setDownloadsInProgress}
+            notifStatus={notifStatus}
           />
         );
       case 'Wallet':
@@ -148,7 +164,8 @@ function App() {
             setSealTokenBalance={setSealTokenBalance}
             transactions={transactions}
             setTransactions={setTransactions}
-            onShowMore={() => setActivePage('Transactions')}  
+            onShowMore={() => setActivePage('Transactions')} 
+            notifStatus={notifStatus} 
           />
         );
       case 'Proxy':
@@ -165,6 +182,7 @@ function App() {
             setTransactions={setTransactions}
             price={price}
             setPrice={setPrice}
+            notifStatus={notifStatus}
           />
         );
       case 'Mining':
@@ -174,13 +192,14 @@ function App() {
             setSealTokenBalance={setSealTokenBalance}
             miningLog={miningLog}
             setMiningLog={setMiningLog}
+            notifStatus={notifStatus}
             isMining={isMining}
             setIsMining={setIsMining}
             fetchBalance={fetchBalance}
           />
         );
       case 'Settings':
-        return <SettingsPage handleLogout={handleLogout} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />;
+        return <SettingsPage handleLogout={handleLogout} isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} notifStatus={notifStatus} setNotifStatus={setNotifStatus}/>;
       case 'Transactions': // Handle when the active page is Transactions
         return (
           <TransactionsPage

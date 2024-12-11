@@ -290,6 +290,7 @@ const FilesPage = (props) => {
       setTempFile={setTempFile}
       setisUploadModalOpen={setisUploadModalOpen}
       setCid={setCid}
+      notifStatus={props.notifStatus}
       > 
       </TopBar>
       <div className="file-section">
@@ -304,6 +305,7 @@ const FilesPage = (props) => {
         setIsFileModalOpen={setIsFileModalOpen}
         filter={filter}
         setFilter={setFilter}
+        /*notifStatus={props.notifStatus}*/
         > 
         </FileTable>
       </div>

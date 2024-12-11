@@ -1,11 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import '../stylesheets/MiningPage.css';
 
-const MiningPage = ({ sealTokenBalance, setSealTokenBalance, miningLog, setMiningLog, isMining, setIsMining, fetchBalance}) => {
+/*const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMiningLog, notifStatus}) => {
+    const [isMining, setIsMining] = useState(false);
+    const [hashPower, setHashPower] = useState(492.44);
+    const [cpuUsage, setCpuUsage] = useState(0);
+    const [gpuUsage, setGpuUsage] = useState(0);
+    const [notification, setNotification] = useState({ message: '', type: '' });
+
+    useEffect(() => {
+        let interval;
+        if (isMining) {
+            interval = setInterval(() => {
+                setSealTokenBalance(prevBalance => prevBalance + (hashPower * 0.0001));
+
+                setCpuUsage((Math.random() * 40 + 20).toFixed(2))//20% to 60%
+                setGpuUsage((Math.random() *30 + 10).toFixed(2));//10% to 40%
+                if (miningLog.length === 0 || miningLog[0].type === 'stop') {
+                    const startEntry = {
+                        type: 'start',
+                        timestamp: new Date().toLocaleString()
+                    };
+                    setMiningLog(prevLog => [startEntry, ...prevLog]);
+                }
+            }, 1000);
+        } else {
+            clearInterval(interval);
+            if (miningLog.length !== 0 && miningLog[0].type === 'start') {
+                const stopEntry = {
+                    type: 'stop',
+                    timestamp: new Date().toLocaleString()
+                };
+                setMiningLog(prevLog => [stopEntry, ...prevLog]);
+            }
+        }*/
+       
+const MiningPage = ({ sealTokenBalance, setSealTokenBalance, miningLog, setMiningLog, isMining, setIsMining, fetchBalance, notifStatus}) => {
     const [tokenRate, setTokenRate] = useState(0); 
     const [prevBalance, setPreviousBalance] = useState(0);
     const startMiningEndpoint = "http://localhost:8080/startMining";
     const stopMiningEndpoint = "http://localhost:8080/stopMining";
+    const [notification, setNotification] = useState({ message: '', type: '' });
 
 
     const updateLog = (message) => {
@@ -72,6 +107,26 @@ const MiningPage = ({ sealTokenBalance, setSealTokenBalance, miningLog, setMinin
         }
     };
 
+    const showNotification = (message, type) => {
+        setNotification({ message, type });
+        setTimeout(() => {
+            setNotification({ message: '', type: '' });
+        }, 3000);
+    };
+
+    const testAllNotifications = () => {
+        console.log('testAllNotifs called with notifStatus'+notifStatus);
+        if (notifStatus === 'All') {
+            showNotification('This is a test for "All notifications" setting.', 'success');
+        }
+    };
+
+    const testUrgentNotifications = () => {
+        console.log('testUrgentNotifs called with notifStatus'+notifStatus);
+        if (notifStatus === 'All' || notifStatus === 'Urgent') {
+            showNotification('This is a test for "Urgent notifications" setting.', 'success');
+        }
+    };
     useEffect(() => {
         if (isMining) {
             startMining();
@@ -83,6 +138,12 @@ const MiningPage = ({ sealTokenBalance, setSealTokenBalance, miningLog, setMinin
 
     return (
         <div className="mining-container">
+            {/* Notification */}
+            {notification.message && (
+                <div className={`notification ${notification.type}`}>
+                    {notification.message}
+                </div>
+            )}
             <div className="dashboard">
                 <div className="tile">
                     <h2>Balance: {sealTokenBalance.toFixed(2)} SKT</h2>
@@ -97,6 +158,10 @@ const MiningPage = ({ sealTokenBalance, setSealTokenBalance, miningLog, setMinin
                         {isMining ? 'Stop Mining' : 'Start Mining'}
                     </span>
                 </div>
+            </div>
+            <div className="test-buttons">
+                <button onClick={testAllNotifications}>Test "All Notifications"</button>
+                <button onClick={testUrgentNotifications}>Test "Urgent Notifications"</button>
             </div>
             <div className="mining-log">
                 <h3>Mining Activity Log:</h3>
