@@ -33,8 +33,7 @@ type Proxy struct {
 type ProxyProviderInfo struct {
 	PeerID        string       `json:"peer_id"`
 	Price         float64      `json:"price"`
-	WalletAddress string       `json:"wallet"`
-	WalletName    string       `json:"walletName"`
+	WalletAddress string       `json:"walletAddress"`
 	Location      LocationInfo `json:"location"`
 }
 
@@ -255,7 +254,6 @@ func handleProxyProviderInfoRequests(node host.Host) {
 			PeerID:        peer_id,
 			Price:         proxy.Price,
 			WalletAddress: WALLET_ADDRESS,
-			WalletName:    WALLET_NAME,
 			Location:      geoLocation,
 		}
 		fmt.Println("XPROXY INFO FROM HOST:", proxyInfo)
