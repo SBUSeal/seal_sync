@@ -57,19 +57,23 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     // GET req constantly getting
     useEffect(() => {
         const getProxies = async () => {
-            console.log("REQUESTING FOR PROXIES")
+            console.log("REQUESTING FOR PROXIES");
             try {
-                let proxies = await fetch('http://localhost:8080/proxies', {
+                const response = await fetch('http://localhost:8080/proxies', {
                     method: 'GET'
-                })
-                proxies = await proxies.json() || []
-                setProxies(proxies)
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const proxies = await response.json() || [];
+                console.log("Received proxies data:", proxies);  // Print the proxies data
+                setProxies(proxies);
             } catch (error) {
-                console.error("Error fetching proxies", error)
+                console.error("Error fetching proxies", error);
             }
-        }
-        getProxies()
-    }, [])
+        };
+        getProxies();
+    }, []);
 
 
     // helper to get IP

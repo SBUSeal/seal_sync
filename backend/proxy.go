@@ -12,14 +12,11 @@ import (
 	"os"
 	"strconv"
 	"time"
-	"bufio"
 
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/libp2p/go-libp2p/core/host"
 	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/protocol"
-
-
 )
 
 type Proxy struct {
@@ -34,12 +31,13 @@ type Proxy struct {
 }
 
 type ProxyProviderInfo struct {
-	PeerID      string       `json:"peer_id"`   
-	Price       float64      `json:"price"`
-	WalletAddress string     `json:"wallet"`    
-	WalletName  string       `json:"walletName"`
-	Location    LocationInfo `json:"location"`  
+	PeerID        string       `json:"peer_id"`
+	Price         float64      `json:"price"`
+	WalletAddress string       `json:"wallet"`
+	WalletName    string       `json:"walletName"`
+	Location      LocationInfo `json:"location"`
 }
+
 var proxy_provider_info_protocol = protocol.ID("/sealsync/proxy_providerinfo")
 
 // setting up proxy, tcp request
@@ -125,7 +123,8 @@ func start_proxy() {
 }
 
 var proxy Proxy
-// function for uploading to dht, 
+
+// function for uploading to dht,
 func enableProxy(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r *http.Request) {
 	proxy_status = true
 
@@ -177,7 +176,7 @@ func enableProxy(ctx context.Context, dht *dht.IpfsDHT, w http.ResponseWriter, r
 		log.Fatalf("failed to start providing key: %v", err)
 	}
 	fmt.Println("Successfully announced as provider for proxy:", key)
-	
+
 	jsonData, err := json.Marshal(proxy)
 	if err != nil {
 		log.Printf("Error marshaling proxy to JSON: %v", err)
@@ -238,22 +237,13 @@ func appendProxyHistory(proxy Proxy) {
 	}
 }
 
-
-
 // function to handle the protocol, proxy_provider_info_protocol
 func handleProxyProviderInfoRequests(node host.Host) {
-	fmt.Println("XINSIDE STREAM HANDLER, FOR PROVIDERS")
 	node.SetStreamHandler(proxy_provider_info_protocol, func(s network.Stream) {
 		defer s.Close()
 
-		// Read data from the stream
-		reader := bufio.NewReader(s)
-		receivedData, err := reader.ReadString('\n')
-		if err != nil {
-			log.Println("Failed to read from stream:", err)
-			return
-		}
-		log.Printf("XReceived AT INSIDE STREAM HANDLER: %s", receivedData)
+		data := []byte("hello")
+		s.Write(data)
 
 		var peer_id string
 		if proxy_status {
@@ -265,14 +255,14 @@ func handleProxyProviderInfoRequests(node host.Host) {
 
 		// Suppose you parsed the data into a struct and now respond with the host info
 		proxyInfo := ProxyProviderInfo{
-			PeerID: peer_id,
-			Price: proxy.Price,
+			PeerID:        peer_id,
+			Price:         proxy.Price,
 			WalletAddress: WALLET_ADDRESS,
-			WalletName: WALLET_NAME,
-			Location: geoLocation,
+			WalletName:    WALLET_NAME,
+			Location:      geoLocation,
 		}
-		fmt.Println("XPROXY INFO FROM HOST:",proxyInfo)
-		
+		fmt.Println("XPROXY INFO FROM HOST:", proxyInfo)
+
 		jsonData, err := json.Marshal(proxyInfo)
 		if err != nil {
 			log.Println("Error marshaling JSON:", err)
@@ -297,15 +287,29 @@ func requestProxyProviderInfo(node host.Host, targetpeerid string) ProxyProvider
 	if err != nil {
 		log.Fatalf("Failed to open stream to %s: %s", peerinfo.ID, err)
 	}
-	defer s.Close()
-	
-	// Read the provider info
-	decoder := json.NewDecoder(s)
+
+	buffer := make([]byte, 1024)
+	var data []byte
+    for {
+        n, err := s.Read(buffer)
+        if err != nil {
+            if err != io.EOF {
+                log.Fatal("ERROR")
+            }
+            break
+        }
+        // Append the data read to the slice
+        data = append(data, buffer[:n]...)
+    }
+
+	fmt.Print(data)
+	// // Read the provider info
+	// decoder := json.NewDecoder(s)
 	var info ProxyProviderInfo
-	err = decoder.Decode(&info)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// err = decoder.Decode(&info)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 	fmt.Println("Recieved AT INFO REQUESTER")
 	return info
 }
