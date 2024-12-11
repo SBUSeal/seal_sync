@@ -43,6 +43,12 @@ const WalletPage = (props) => {
     };
 
     const showNotification = (message, type) => {
+        if (
+            notifStatus === 'None' ||
+            (notifStatus === 'Urgent' && type !== 'error')
+        ) {
+            return;
+        }
         setNotification({ message, type });
         setTimeout(() => {
             setNotification({ message: '', type: '' });
