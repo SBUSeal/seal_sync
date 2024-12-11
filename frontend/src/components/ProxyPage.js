@@ -16,6 +16,12 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     const [filteredProxies, setFilteredProxies] = useState([]);
     const [notification, setNotification] = useState({ message: '', type: '' });
     const showNotification = (message, type) => {
+        if (
+            notifStatus === 'None' ||
+            (notifStatus === 'Urgent' && type !== 'error')
+        ) {
+            return;
+        }
             setNotification({ message, type });
             setTimeout(() => {
                 setNotification({ message: '', type: '' });
@@ -112,7 +118,8 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     // handle the enable and disable toggle
     const handleToggle = async () => {
         if (price === '') {
-            alert('Proxy Price Can Not Be Empty');
+            //alert('Proxy Price Can Not Be Empty');
+            showNotification('Proxy Price Can Not Be Empty', 'error');                                                                                                                                                                                     
         } else {
             const newIsOn = !isOn;
             setIsPriceEditing(false);
@@ -400,11 +407,24 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     }
 
 
-    const ProxyItem = ({ proxy, sealTokenBalance, setSealTokenBalance, setcurrentProxy, setProxyHistory, setTransactions}) => {
-    
+    const ProxyItem = ({ proxy, sealTokenBalance, setSealTokenBalance, setcurrentProxy, setProxyHistory, setTransactions, notifStatus}) => {
+        const [notification, setNotification] = useState({ message: '', type: '' });
+        const showNotification = (message, type) => {
+            if (
+            notifStatus === 'None' ||
+            (notifStatus === 'Urgent' && type !== 'error')
+            ) {
+            return;
+            }
+            setNotification({ message, type });
+            setTimeout(() => {
+                setNotification({ message: '', type: '' });
+            }, 3000);
+        };
         const handlePurchase = (price) => {
         if (sealTokenBalance >= price) {
-            alert(`Purchase successful! You spent ${price} SealTokens.`);
+            //alert(`Purchase successful! You spent ${price} SealTokens.`);
+            showNotification(`Purchase successful! You spent ${price} SealTokens.`, 'success');
             setSealTokenBalance((prevBalance) => prevBalance - price);
 
             const historyProxy = {
@@ -423,7 +443,8 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                 reason: 'Proxy Purchase',
             },] )
         } else {
-            alert('Insufficient balance.');
+            //alert('Insufficient balance.');
+            showNotification('Insufficient balance.', 'error');
         }
     };
   
