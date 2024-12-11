@@ -22,7 +22,7 @@ function App() {
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [sealTokenBalance, setSealTokenBalance] = useState(100);
   const [currentProxy, setcurrentProxy] = useState(null);
-  const [proxyHistory, setProxyHistory] = useState([]); 
+  // const [proxyHistory, setProxyHistory] = useState([]); 
   const [isOn, setIsOn] = useState(false); 
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [price, setPrice] = useState('');
@@ -174,8 +174,8 @@ function App() {
             setSealTokenBalance={setSealTokenBalance}
             currentProxy={currentProxy}
             setcurrentProxy={setcurrentProxy}
-            proxyHistory={proxyHistory}
-            setProxyHistory={setProxyHistory}
+            // proxyHistory={proxyHistory}
+            // setProxyHistory={setProxyHistory}
             isOn={isOn}
             setIsOn={setIsOn}
             setTransactions={setTransactions}

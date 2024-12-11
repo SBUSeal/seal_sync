@@ -21,8 +21,9 @@ var (
 	unpublishedFiles      = []string{}
 	WALLET_ADDRESS        string
 	WALLET_NAME           string
-	miningEnabled = true
-	miningMutex   sync.Mutex
+	miningEnabled         = true
+	miningMutex           sync.Mutex
+	proxy_status          = false
 )
 
 func enableCORS(next http.Handler) http.Handler {
@@ -40,9 +41,10 @@ func enableCORS(next http.Handler) http.Handler {
 }
 
 func main() {
-  
+
+	// start proxy
 	go start_proxy()
-  
+
 	privateIP, err := getPrivateIP()
 	if err != nil {
 		fmt.Println("Error retrieving public IP:", err)
@@ -90,14 +92,19 @@ func main() {
 	mux.HandleFunc("/deleteDownloadedFile/{cid}", deleteDownloadedFile)
 
 	mux.HandleFunc("/enableProxy", func(w http.ResponseWriter, r *http.Request) {
-		enableProxy(w, r)
+		enableProxy(ctx, dht, w, r)
+	})
+	mux.HandleFunc("/disableProxy", func(w http.ResponseWriter, r *http.Request) {
+		disableProxy(ctx, w, r)
+	})
+	mux.HandleFunc("/proxies", func(w http.ResponseWriter, r *http.Request) {
+		getAvailableProxies(ctx, dht, node, w, r)
 	})
 
 	mux.HandleFunc("/startMining", HandleStartMining)
 	mux.HandleFunc("/stopMining", HandleStopMining)
 
 	mux.HandleFunc("/getBalance", HandleGetBalance)
-
 
 	fmt.Println("Server is running on port 8080")
 	handler := enableCORS(mux)

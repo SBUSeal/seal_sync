@@ -1,63 +1,76 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../stylesheets/ProxyPage.css';
 
 // A variable of all proxies, getting that will be similar to getting all files or filtered files **
 // When enable proxy is hit we are going to remove that proxy from the list
 // Use file logic for making the proxy, each proxy have its own CID
 
-const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcurrentProxy, proxyHistory, 
-    setProxyHistory, isOn, setIsOn, setTransactions, price, setPrice}) => { 
-    const proxies = [ 
-        {
-            id: 1,
-            ip_addr: '41.77.0.1',
-            host: '1B3qRz5g4dEF4DMPGT1L3TThzv6CvzNB',
-            price: 5,
-            location: 'Africa',
-            bandwidth: 40,
-            users: 2
-        },
-        {
-            id: 2,
-            ip_addr: '8.8.8.8',
-            host: '1A72tpP5QGeiF2DMPfTT1S5LLmv7DivFNa',
-            price: 200,
-            location: 'North America',
-            bandwidth: 50,
-            users: 20
-        },
-        {
-            id: 3,
-            ip_addr: '95.165.0.1',
-            host: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-            price: 30,
-            location: 'Europe',
-            bandwidth: 60,
-            users: 3
-        },
-        {
-            id: 4,
-            ip_addr: '58.14.0.1',
-            host: 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kygt080',
-            price: 45,
-            location: 'Asia',
-            bandwidth: 70,
-            users: 5
-          },
-    ];
+const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcurrentProxy, isOn, setIsOn, setTransactions, price, setPrice}) => { 
 
+    // const proxies = [ 
+    //     {
+    //         id: 1,
+    //         ip_addr: '41.77.0.1',
+    //         host: '1B3qRz5g4dEF4DMPGT1L3TThzv6CvzNB',
+    //         price: 5,
+    //         location: 'Africa',
+    //         bandwidth: 40,
+    //         users: 2
+    //     },
+    //     {
+    //         id: 2,
+    //         ip_addr: '8.8.8.8',
+    //         host: '1A72tpP5QGeiF2DMPfTT1S5LLmv7DivFNa',
+    //         price: 200,
+    //         location: 'North America',
+    //         bandwidth: 50,
+    //         users: 20
+    //     },
+    //     {
+    //         id: 3,
+    //         ip_addr: '95.165.0.1',
+    //         host: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+    //         price: 30,
+    //         location: 'Europe',
+    //         bandwidth: 60,
+    //         users: 3
+    //     },
+    //     {
+    //         id: 4,
+    //         ip_addr: '58.14.0.1',
+    //         host: 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kygt080',
+    //         price: 45,
+    //         location: 'Asia',
+    //         bandwidth: 70,
+    //         users: 5
+    //       },
+    // ];
+    
     const [isPriceEditing, setIsPriceEditing] = useState(price === '');  
     const [searchQuery, setSearchQuery] = useState('');  
-    const [filteredProxies, setFilteredProxies] = useState(proxies);  
     const [showHistory, setShowHistory] = useState(false); 
+    const [host_data, setHostData] = useState(null)
+    const [proxies, setProxies] = useState([])
+    const [proxyHistory, setProxyHistory] = useState([]);
+    const [filteredProxies, setFilteredProxies] = useState(proxies); 
 
-    const host_data = { 
-        ip_addr: '11.79.0.1',
-        price: price,
-        users: 5,
-        dataTransferred: 1024, 
-        latency: 50,
-    };
+    // GET req constantly getting
+    useEffect(() => {
+        const getProxies = async () => {
+            console.log("REQUESTING FOR PROXIES")
+            try {
+                let proxies = await fetch('http://localhost:8080/proxies', {
+                    method: 'GET'
+                })
+                proxies = await proxies.json() || []
+                setProxies(proxies)
+            } catch (error) {
+                console.error("Error fetching proxies", error)
+            }
+        }
+        getProxies()
+    }, [])
+
 
     // helper to get IP
     async function getIP(){
@@ -76,18 +89,36 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
         const formData = new FormData();
         // await until promise is resolved
         const ip_addr = await getIP();
-
         formData.append('ip', ip_addr);
         formData.append('price', price);
         formData.append('port', '8888');
-        formData.append('dateAdded', new Date().toLocaleDateString())    
+        formData.append('dateAdded', new Date().toLocaleDateString())  
         try {
             const response = await fetch('http://localhost:8080/enableProxy', {
                 method: 'POST',
                 body: formData
             });
             if (response.ok) {
-                console.log(response.json)
+                const data = await response.json();
+                setHostData(data);
+                console.log("Proxy enabled:", data);
+                return true;
+            } else {
+                console.error("Bad response code", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error enabling proxy mode", error);
+        }
+    }
+
+    // disable proxy, not provide on dht
+    async function disableProxy() {
+        try {
+            const response = await fetch('http://localhost:8080/disableProxy', {
+                method: 'GET',
+            });
+            if (response.ok) {
+                console.log(response)
                 return true;
             } else {
                 console.error("Bad response code", response.statusText);
@@ -109,12 +140,26 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
             if (newIsOn) {
                 enableProxy()
             } else {
-                console.log("DISABLING PROXY");
-                // disableProxy()
+                disableProxy()
             }
         }
     };
 
+    function readDate(x) {
+        //  x is a string
+        const date = new Date(x);
+        const readableDate = date.toLocaleString('en-US', {
+            year: 'numeric',  // "2024"
+            month: 'long',    // "December"
+            day: 'numeric',   // "11"
+            hour: '2-digit',  // "10 AM" or "10 PM"
+            minute: '2-digit',// "03"
+            hour12: true      // Use AM/PM format
+        });
+        return readableDate
+    }
+
+    // handleprice change, save price and edit are for setting the price
     const handlePriceChange = (e) => {
         const value = e.target.value;
         if (/^\d*\.?\d*$/.test(value)) {
@@ -137,6 +182,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
         setIsPriceEditing(true);
     };
 
+    // Handling search
     function handleSearchInput(e) {
         const query = e.target.value;
         setSearchQuery(query);
@@ -175,14 +221,15 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                     </div>
                 </div>
 
-                {isOn && (  
+                {isOn && host_data && (  
                 <div className="proxy-form">
                     <div>
                         <p>Active Proxy Details:</p>
-                        <p>Your IP: <strong>{host_data.ip_addr}</strong></p>
-                        <p>Connected Users: <strong>{host_data.users}</strong></p>
-                        <p>Data Transferred: <strong>{host_data.dataTransferred} MB</strong></p>
-                        <p>Latency: <strong>50 ms</strong></p>
+                        <p>Your IP: <strong>{host_data.ip}</strong></p>
+                        <p>Connected Users: <strong>{host_data.connectedUsers}</strong></p>
+                        <p>Data Transferred: <strong>{host_data.dataUsed} MB</strong></p>
+                        <p>Price Rate: <strong>{host_data.price}</strong></p>
+                        <p>Start Time <strong>{readDate(host_data.dateAdded)}</strong></p>
                     </div>
                 </div>
                 )}

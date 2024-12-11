@@ -266,6 +266,9 @@ func initializeNode() (host.Host, *dht.IpfsDHT) {
 	handleProviderInfoRequests(node)
 	handleFileRequests(node)
 
+	// setting stream handler for it, it listens for that protocol.ID in Stream
+	handleProxyProviderInfoRequests(node)
+
 	// Load file maps in
 	uploadedFileMap = LoadUploadedMap()
 	downloadedFileMap = LoadDownloadedMap()
