@@ -86,6 +86,9 @@ const SignUpPage = (props) => {
                   </button>
                 </div>
                 {copySuccess && <span style={{ marginLeft: "10px", color: "green" }}>{copySuccess}</span>}
+                <button onClick={() => props.setActivePage("Login")} style={{marginLeft: "10px", padding: '5px 10px'}} type='button'> 
+                  Back to Login 
+                </button>
               </div>
             )}
 
