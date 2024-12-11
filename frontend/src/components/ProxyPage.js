@@ -62,11 +62,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                 const response = await fetch('http://localhost:8080/proxies', {
                     method: 'GET'
                 });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
                 const proxies = await response.json() || [];
-                console.log("Received proxies data:", proxies);  // Print the proxies data
                 setProxies(proxies);
             } catch (error) {
                 console.error("Error fetching proxies", error);

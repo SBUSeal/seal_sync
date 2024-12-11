@@ -242,9 +242,6 @@ func handleProxyProviderInfoRequests(node host.Host) {
 	node.SetStreamHandler(proxy_provider_info_protocol, func(s network.Stream) {
 		defer s.Close()
 
-		data := []byte("hello")
-		s.Write(data)
-
 		var peer_id string
 		if proxy_status {
 			peer_id = node.ID().String()
@@ -288,28 +285,28 @@ func requestProxyProviderInfo(node host.Host, targetpeerid string) ProxyProvider
 		log.Fatalf("Failed to open stream to %s: %s", peerinfo.ID, err)
 	}
 
-	buffer := make([]byte, 1024)
-	var data []byte
-    for {
-        n, err := s.Read(buffer)
-        if err != nil {
-            if err != io.EOF {
-                log.Fatal("ERROR")
-            }
-            break
-        }
-        // Append the data read to the slice
-        data = append(data, buffer[:n]...)
-    }
-
-	fmt.Print(data)
-	// // Read the provider info
-	// decoder := json.NewDecoder(s)
-	var info ProxyProviderInfo
-	// err = decoder.Decode(&info)
-	// if err != nil {
-	// 	log.Fatal(err)
+	// buffer := make([]byte, 1024)
+	// var data []byte
+	// for {
+	//     n, err := s.Read(buffer)
+	//     if err != nil {
+	//         if err != io.EOF {
+	//             log.Fatal("ERROR")
+	//         }
+	//         break
+	//     }
+	//     // Append the data read to the slice
+	//     data = append(data, buffer[:n]...)
 	// }
-	fmt.Println("Recieved AT INFO REQUESTER")
+
+	// fmt.Print(data)
+	// Read the provider info
+	decoder := json.NewDecoder(s)
+	var info ProxyProviderInfo
+	err = decoder.Decode(&info)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Recieved AT INFO REQUESTER:", info)
 	return info
 }
