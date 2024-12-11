@@ -13,6 +13,7 @@ const ShareModal = ({ file, setIsShareModalOpen, notifStatus }) => {
         return;
     }
         setNotification({ message, type });
+        console.log(`Notification: ${message}`);//Debug the notification
         setTimeout(() => {
             setNotification({ message: '', type: '' });
         }, 3000);
@@ -66,6 +67,12 @@ const ShareModal = ({ file, setIsShareModalOpen, notifStatus }) => {
 
   return (
     <div className="modal">
+      {/* Notification Box */}
+      {notification.message && (
+        <div className={`notification ${notification.type}`}>
+          {notification.message}
+        </div>
+      )}
       <div className="modal-content" style={{ width: '500px' }}>
         <h2>Share File</h2>
         <button
@@ -107,6 +114,7 @@ const ShareModal = ({ file, setIsShareModalOpen, notifStatus }) => {
           onClick={() => {
             navigator.clipboard.writeText(file.cid);
             //alert('CID copied to clipboard!');
+            console.log('CID copied to clipboard!');
             showNotification('CID copied to clipboard!', 'success');
           }}
           style={{ border: '1px lightgrey solid' }}
