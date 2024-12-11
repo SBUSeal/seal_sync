@@ -43,22 +43,7 @@ function App() {
   }, []);
 
   // State to manage transactions
-  const [transactions, setTransactions] = useState([
-    {
-      id: 1,
-      type: 'Received',
-      date: 'September 20 2024',
-      from: '1B3qRz5g4dEF4DMPGT1L3TThzv6CvzNB',
-      sealTokens: 20,
-    },
-    {
-      id: 2,
-      type: 'Sent',
-      date: 'September 20 2024',
-      to: '1A72tpP5QGeiF2DMPfTT1S5LLmv7DivFNa',
-      sealTokens: 15,
-    },
-  ]);
+  const [transactions, setTransactions] = useState([]);
 
 
   const handleDebug = () => {
