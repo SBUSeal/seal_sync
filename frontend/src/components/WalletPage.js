@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import '../stylesheets/WalletPage.css'; 
+import { TrashIcon } from '@radix-ui/react-icons';
 
 const WalletPage = (props) => {
     
@@ -25,7 +26,14 @@ const WalletPage = (props) => {
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        return date.toLocaleString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+        });
     };
 
 
@@ -90,10 +98,6 @@ const WalletPage = (props) => {
             if (!response.ok) {
                 throw new Error(`Failed to send tokens: ${response.statusText}`);
             }
-
-        
-        setTransactions([...transactions, pendingTransaction]);
-
       
         props.setSealTokenBalance((prevBalance) => {
             const updatedBalance = prevBalance - transferAmount;
@@ -113,6 +117,46 @@ const WalletPage = (props) => {
         showNotification("Failed to complete the transaction.", 'error');
     }
 }
+
+const fetchTransactions = async () => {
+    try {
+        const response = await fetch("http://localhost:8080/getTransactions", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch transactions: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        setTransactions(data);
+    } catch (error) {
+        console.error("Error fetching transactions:", error);
+        showNotification("Failed to load transactions.", "error");
+    }
+};
+
+const convertCategory = (category) => {
+    switch (category) {
+        case 'send':
+            return 'Sent';
+        case 'received':
+            return 'Received';
+        case 'generate':
+            return 'Mined';
+        case 'immature':
+            return 'Pending';
+        default:
+            return 'Unknown';
+    }
+};
+    useEffect(() => {
+        fetchTransactions();
+    }, [props.sealTokenBalance]);
+
 
     return (
         <div className="wallet-page">
@@ -171,23 +215,24 @@ const WalletPage = (props) => {
             <div className="transaction-history">
                 <h3>Transaction History</h3>
                 {displayedTransactions.map((transaction) => (
-                    <div key={transaction.id} className="transaction-item">
+                    <div key={transaction.txid} className="transaction-item">
                         <div className="transaction-column">
-                            <p className="transaction-status">{transaction.type} SealToken</p>
-                            <p className="transaction-date">{formatDate(transaction.date)}</p>
+                            <p className="transaction-status">{convertCategory(transaction.category.toLowerCase())} SealToken</p>
+                            <p className="transaction-date">{formatDate(transaction.time * 1000)}</p>
                         </div>
                         <div className="transaction-column">
                             <p className="transaction-id">
-                                {transaction.type === 'Sent' 
-                                    ? `To: ${transaction.to}` 
-                                    : `From: ${transaction.from}`}
+                            {transaction.category === 'send'
+                                    ? `To: ${transaction.address}` 
+                                    : transaction.category === 'recieved' && `From: ${transaction.address}` }
                             </p>
-                            <p className="transaction-reason">Reason: {transaction.reason || 'No reason provided'}</p>
+                            <p className="transaction-reason">Reason: {transaction.comment || 'No reason provided'}</p>
                         </div>
-                        <div className={`transaction-amount ${transaction.type.toLowerCase()}`}>
-                            {transaction.type === 'Sent' 
-                                ? `- ${transaction.sealTokens} STK` 
-                                : `+ ${transaction.sealTokens} STK`}
+                        <div className={`transaction-amount ${transaction.category.toLowerCase()}`}>
+                            
+                            {(transaction.type === 'recieved' || 'generated')
+                                ? `${transaction.amount} STK` 
+                                : `+ ${transaction.amount} STK`}
                         </div>
                     </div>
                 ))}
