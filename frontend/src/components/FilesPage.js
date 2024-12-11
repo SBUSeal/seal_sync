@@ -17,6 +17,7 @@ const FilesPage = (props) => {
   const setFiles = props.setFiles
   const setDownloadsInProgress = props.setDownloadsInProgress; 
   // Modal States
+  const [sharedLink, setSharedLink] = useState('');
   const [isUploadModalOpen, setisUploadModalOpen] = useState(false); 
   const [isFileModalOpen, setIsFileModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -109,7 +110,7 @@ const FilesPage = (props) => {
   }
 
 
-  function triggerNonBlobDownload(url) {
+  function triggerNonBlobDownload(url) {    
     const a = document.createElement('a')
     a.href = url
     a.download = ''
@@ -160,12 +161,13 @@ const FilesPage = (props) => {
       // If file > 50 MB, dont use a blob to download it
       // Also means we wont be able to show a preview of it
       let blob;
-      if (downloadedFile.size > 50 * 1024 * 1024) {
-        blob = await triggerNonBlobDownload(url)
-      }
-      else {
-        blob = await triggerBlobDownload(url, downloadedFile.name)
-      }
+      // if (downloadedFile.size > 50 * 1024 * 1024) {
+      //   blob = await triggerNonBlobDownload(url)
+      // }
+      // else {
+      //   blob = await triggerBlobDownload(url, downloadedFile.name)
+      // }
+      blob = await triggerNonBlobDownload(url)
       downloadedFile.fileObject = blob
 
       setFiles([...files, downloadedFile]);
@@ -261,6 +263,20 @@ const FilesPage = (props) => {
     return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'KB', 'MB', 'GB', 'TB'][i];
   }
 
+  async function generateSharedLink(file) {
+    try {
+      const response = await fetch(`http://${window.location.hostname}:8080/generateFileLink?file=${file.name}`);
+      if (response.ok) {
+        const data = await response.json(); // Extract the link from the response
+        setSharedLink(data.link); // Update the state with the generated link
+      } else {
+        console.error('Error generating shared link:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error generating shared link:', error);
+    }
+  }
+  
 
   return (
     <div className="file-manager-container">

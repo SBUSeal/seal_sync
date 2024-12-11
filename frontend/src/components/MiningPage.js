@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../stylesheets/MiningPage.css';
 
-const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMiningLog, notifStatus}) => {
+/*const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMiningLog, notifStatus}) => {
     const [isMining, setIsMining] = useState(false);
     const [hashPower, setHashPower] = useState(492.44);
     const [cpuUsage, setCpuUsage] = useState(0);
@@ -33,13 +33,78 @@ const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMining
                 };
                 setMiningLog(prevLog => [stopEntry, ...prevLog]);
             }
-        }
+        }*/
+       
+const MiningPage = ({ sealTokenBalance, setSealTokenBalance, miningLog, setMiningLog, isMining, setIsMining, fetchBalance, notifStatus}) => {
+    const [tokenRate, setTokenRate] = useState(0); 
+    const [prevBalance, setPreviousBalance] = useState(0);
+    const startMiningEndpoint = "http://localhost:8080/startMining";
+    const stopMiningEndpoint = "http://localhost:8080/stopMining";
+    const [notification, setNotification] = useState({ message: '', type: '' });
 
-        return () => clearInterval(interval);
-    }, [isMining, hashPower, miningLog, setSealTokenBalance, setMiningLog]);
+
+    const updateLog = (message) => {
+        const entry = {
+            message,
+            timestamp: new Date().toLocaleString(),
+        };
+        setMiningLog((prevLog) => [entry, ...prevLog]);
+    };
+
+
+    const startMining = () => {
+            fetch(startMiningEndpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`Failed to start mining: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .catch((error) => {
+                    updateLog(`Error: ${error.message}`);
+                });
+    };
+
+     const stopMining = () => {
+            fetch(stopMiningEndpoint, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`Failed to stop mining: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .catch((error) => {
+                    updateLog(`Error: ${error.message}`);
+                });
+    };
+
+
+  
+ 
+   useEffect(() => {
+        fetchBalance(); 
+        const balanceInterval = setInterval(fetchBalance, 5000);
+        return () => clearInterval(balanceInterval); 
+    }, []);
 
     const handleToggle = () => {
-        setIsMining(!isMining);
+        setIsMining((prevState) => !prevState);
+        if (isMining){
+            updateLog("Mining stopped successfully.");
+        }
+        else{
+            updateLog("Mining started successfully.");
+        }
     };
 
     const showNotification = (message, type) => {
@@ -62,6 +127,14 @@ const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMining
             showNotification('This is a test for "Urgent notifications" setting.', 'success');
         }
     };
+    useEffect(() => {
+        if (isMining) {
+            startMining();
+        } else {
+            stopMining();
+        }
+    }, [isMining]);
+
 
     return (
         <div className="mining-container">
@@ -74,9 +147,7 @@ const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMining
             <div className="dashboard">
                 <div className="tile">
                     <h2>Balance: {sealTokenBalance.toFixed(2)} SKT</h2>
-                    <h2>Hash Power: {hashPower} MH/s</h2>
-                    <h2>CPU Usage: {cpuUsage}%</h2>
-                    <h2>GPU Usage: {gpuUsage}%</h2> 
+                    <h2>Hash Rate: {tokenRate} blocks/sec</h2>
                 </div>
                 <div className="mining-control">
                     <label className="switch">
@@ -96,12 +167,14 @@ const MiningPage = ({sealTokenBalance, setSealTokenBalance, miningLog, setMining
                 <h3>Mining Activity Log:</h3>
                 <ul>
                     {miningLog.map((entry, index) => (
-                        <li key={index}>{entry.type === 'start' ? 'Started' : 'Stopped'} Mining at {entry.timestamp}</li>
+                        <li key={index}>
+                            {entry.message} at {entry.timestamp}
+                        </li>
                     ))}
                 </ul>
             </div>
         </div>
     );
-}
+};
 
 export default MiningPage;

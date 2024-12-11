@@ -2,19 +2,18 @@ import React, { useState } from 'react';
 import '../stylesheets/WalletPage.css'; 
 
 const WalletPage = (props) => {
+    
     const [receiverId, setReceiverId] = useState('');
     const [amount, setAmount] = useState('');
     const [reason, setReason] = useState('');
     const transactions = props.transactions;
     const setTransactions = props.setTransactions;
+    
 
     const [showModal, setShowModal] = useState(false);  
     const [pendingTransaction, setPendingTransaction] = useState(null);  
     const [notification, setNotification] = useState({ message: '', type: '' });
 
-    const walletId = '13hgruwdGXvPyWFABDX6QBy';
-
-   
     const sortedTransactions = [...transactions].sort((a, b) => {
         if (a.id < 3 && b.id < 3) return 0;
         return new Date(b.date) - new Date(a.date);
@@ -31,7 +30,7 @@ const WalletPage = (props) => {
 
 
     const copyToClipboard = () => {
-        navigator.clipboard.writeText(walletId);
+        navigator.clipboard.writeText(props.globalWalletAddress);
         showNotification("Wallet ID copied to clipboard!", 'success');
     };
 
@@ -45,7 +44,6 @@ const WalletPage = (props) => {
   
     const handleTransfer = () => {
         const transferAmount = parseFloat(amount);
-
        
         if (!receiverId || !amount || isNaN(transferAmount)) {
             showNotification("Please fill in the receiver ID and valid amount.", 'error');
@@ -72,10 +70,28 @@ const WalletPage = (props) => {
         setShowModal(true);
     };
 
-    const confirmTransfer = () => {
+    const confirmTransfer = async () => {
         const transferAmount = pendingTransaction?.sealTokens;
 
-     
+        try {
+            const response = await fetch("http://localhost:8080/sendToAddress", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    walletName: props.globalWalletAddress, 
+                    recipientAddress: pendingTransaction?.to, 
+                    amount: transferAmount, 
+                    comment: pendingTransaction?.reason, 
+                }),
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Failed to send tokens: ${response.statusText}`);
+            }
+
+        
         setTransactions([...transactions, pendingTransaction]);
 
       
@@ -91,7 +107,12 @@ const WalletPage = (props) => {
         setShowModal(false);
         setPendingTransaction(null);
         showNotification("Transaction successful!", 'success');
-    };
+    }
+    catch (error) {
+        console.error("Error sending tokens:", error);
+        showNotification("Failed to complete the transaction.", 'error');
+    }
+}
 
      //** Test Button Logic **
      const handleAllNotificationsTest = () => {
@@ -126,7 +147,7 @@ const WalletPage = (props) => {
                 <div className="card wallet-id-card">
                     <h3>Wallet Address</h3>
                     <p className="wallet-id">
-                        {walletId} 
+                        {props.globalWalletAddress} 
                         <button onClick={copyToClipboard} className="copy-btn">Copy</button>
                     </p>
                 </div>

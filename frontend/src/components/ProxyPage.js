@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import '../stylesheets/ProxyPage.css';
 
+// A variable of all proxies, getting that will be similar to getting all files or filtered files **
+// When enable proxy is hit we are going to remove that proxy from the list
+// Use file logic for making the proxy, each proxy have its own CID
+
 const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcurrentProxy, proxyHistory, 
     setProxyHistory, isOn, setIsOn, setTransactions, price, setPrice, notifStatus}) => { 
     const [notification, setNotification] = useState({ message: '', type: '' });
@@ -62,13 +66,59 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
         latency: 50,
     };
 
-    const handleToggle = () => {
+    // helper to get IP
+    async function getIP(){
+        try {
+            const response = await fetch(`https://api.ipify.org?format=json`);
+            const data = await response.json();
+            return data.ip
+        }
+        catch(error) {
+            console.log("Error fetching IP", error)
+        }
+    }
+
+    // add proxy to the DHT
+    async function enableProxy() {
+        const formData = new FormData();
+        // await until promise is resolved
+        const ip_addr = await getIP();
+
+        formData.append('ip', ip_addr);
+        formData.append('price', price);
+        formData.append('port', '8888');
+        formData.append('dateAdded', new Date().toLocaleDateString())    
+        try {
+            const response = await fetch('http://localhost:8080/enableProxy', {
+                method: 'POST',
+                body: formData
+            });
+            if (response.ok) {
+                console.log(response.json)
+                return true;
+            } else {
+                console.error("Bad response code", response.statusText);
+            }
+        } catch (error) {
+            console.error("Error enabling proxy mode", error);
+        }
+    }
+
+    // handle the enable and disable toggle
+    const handleToggle = async () => {
         if (price === '') {
-            alert('Proxy Price Can Not Be Empty')
+            alert('Proxy Price Can Not Be Empty');
         } else {
             const newIsOn = !isOn;
             setIsPriceEditing(false);
             setIsOn(newIsOn);
+            // logic for adding proxy to DHT or removing / depending on what the toggle is
+            if (newIsOn) {
+                enableProxy()
+            } else {
+                console.log("DISABLING PROXY");
+                // disableProxy()
+            }
         }
     };
 
@@ -81,7 +131,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
 
     const savePrice = (e) => {
         e.preventDefault();
-        setPrice(price)
+        setPrice(price);
         if (price !== '') {
             setIsPriceEditing(false);  
         } 

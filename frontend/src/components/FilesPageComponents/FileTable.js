@@ -209,10 +209,10 @@ const FileTable = ({files, setFiles, filteredFiles, setFilteredFiles, formatFile
                 {/* <button onClick={() => handleDownload(file)} disabled={file.downloading}>
                   <DownloadIcon />
                 </button> */}
-                <button onClick={() => {
+                {/* <button onClick={() => {
                                     return openFile(file)}} disabled={file.downloading}>
                   Open
-                </button>
+                </button> */}
                 <button onClick={() => openShareModal(file)} disabled={file.downloading}>
                   <Share1Icon />
                 </button>
