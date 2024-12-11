@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../stylesheets/LoginPage.css';
 import SealLogo from '../images/Seal_Logo.png';
 
-function LoginPage({ handleDebug, onLogin, onSignUp }) {
+function LoginPage({ handleDebug, onLogin, onSignUp, setGlobalWalletAddress}) {
   const [walletAddress, setWalletAddress] = useState('');
   const [walletPassword, setWalletPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -11,8 +11,8 @@ function LoginPage({ handleDebug, onLogin, onSignUp }) {
     e.preventDefault();
     setErrorMessage('');
     if (walletAddress) {
+      setGlobalWalletAddress(walletAddress)
       onLogin(walletAddress, walletPassword);
-
     } else {
       setErrorMessage('Please enter your Wallet Address.');
     }
