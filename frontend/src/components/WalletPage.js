@@ -47,8 +47,8 @@ const WalletPage = (props) => {
 
     const showNotification = (message, type) => {
         if (
-            notifStatus === 'None' ||
-            (notifStatus === 'Urgent' && type !== 'error')
+            props.notifStatus === 'None' ||
+            (props.notifStatus === 'Urgent' && type !== 'error')
         ) {
             return;
         }
