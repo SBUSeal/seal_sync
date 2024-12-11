@@ -359,6 +359,7 @@ func getAvailableProxies(ctx context.Context, dht *dht.IpfsDHT, node host.Host, 
 	results := []ProxyProviderInfo{}
 
 	cid := generateProxyKey("http_proxy_providers")
+	fmt.Println("FINDING PROVIDERS FOR CID: ", cid)
 
 	// search for all proxy providers
 	providers, err := dht.FindProviders(ctx, cid)
@@ -375,12 +376,13 @@ func getAvailableProxies(ctx context.Context, dht *dht.IpfsDHT, node host.Host, 
 
 
 	for _, peerID := range peerIDs {
-		info := requestProxyProviderInfo(node, peerID, cid)
+		info := requestProxyProviderInfo(node, peerID)
 		results = append(results, info)
 	}
 	providersJson, err := json.Marshal(results)
 	if err != nil {
 		log.Fatal("marshalling error", err)
 	}
+	fmt.Printf("Sending JSON to client: %s", string(providersJson))
 	w.Write(providersJson)
 }

@@ -16,7 +16,6 @@ import (
 
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	"github.com/libp2p/go-libp2p/core/host"
-	"github.com/ipfs/go-cid"
 	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/protocol"
 
@@ -243,7 +242,7 @@ func appendProxyHistory(proxy Proxy) {
 
 // function to handle the protocol, proxy_provider_info_protocol
 func handleProxyProviderInfoRequests(node host.Host) {
-	fmt.Println("INSIDE STREAM HANDLER, FOR PROVIDERS")
+	fmt.Println("XINSIDE STREAM HANDLER, FOR PROVIDERS")
 	node.SetStreamHandler(proxy_provider_info_protocol, func(s network.Stream) {
 		defer s.Close()
 
@@ -254,7 +253,7 @@ func handleProxyProviderInfoRequests(node host.Host) {
 			log.Println("Failed to read from stream:", err)
 			return
 		}
-		log.Printf("Received FROM PROXY PROVIDE STREAM: %s", receivedData)
+		log.Printf("XReceived AT INSIDE STREAM HANDLER: %s", receivedData)
 
 		var peer_id string
 		if proxy_status {
@@ -272,7 +271,7 @@ func handleProxyProviderInfoRequests(node host.Host) {
 			WalletName: WALLET_NAME,
 			Location: geoLocation,
 		}
-		fmt.Println("PROXY INFO FROM HOST:",proxyInfo)
+		fmt.Println("XPROXY INFO FROM HOST:",proxyInfo)
 		
 		jsonData, err := json.Marshal(proxyInfo)
 		if err != nil {
@@ -289,10 +288,9 @@ func handleProxyProviderInfoRequests(node host.Host) {
 }
 
 // function to get proxyprovider info from the peerID
-func requestProxyProviderInfo(node host.Host, targetpeerid string, cid cid.Cid) ProxyProviderInfo {
+func requestProxyProviderInfo(node host.Host, targetpeerid string) ProxyProviderInfo {
 
 	fmt.Println("GETTING PROXY PROVIDER INFO")
-
 
 	peerinfo := connectToPeerUsingRelay(node, targetpeerid)
 	s, err := node.NewStream(network.WithAllowLimitedConn(globalCtx, "Provider info"), peerinfo.ID, proxy_provider_info_protocol)
@@ -300,10 +298,7 @@ func requestProxyProviderInfo(node host.Host, targetpeerid string, cid cid.Cid) 
 		log.Fatalf("Failed to open stream to %s: %s", peerinfo.ID, err)
 	}
 	defer s.Close()
-	_, err = s.Write([]byte(cid.String() + "\n"))
-	if err != nil {
-		log.Fatalf("Failed to write to stream: %s", err)
-	}
+	
 	// Read the provider info
 	decoder := json.NewDecoder(s)
 	var info ProxyProviderInfo
@@ -311,5 +306,6 @@ func requestProxyProviderInfo(node host.Host, targetpeerid string, cid cid.Cid) 
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("Recieved AT INFO REQUESTER")
 	return info
 }
