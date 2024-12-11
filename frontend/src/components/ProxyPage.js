@@ -6,7 +6,14 @@ import '../stylesheets/ProxyPage.css';
 // Use file logic for making the proxy, each proxy have its own CID
 
 const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcurrentProxy, proxyHistory, 
-    setProxyHistory, isOn, setIsOn, setTransactions, price, setPrice}) => { 
+    setProxyHistory, isOn, setIsOn, setTransactions, price, setPrice, notifStatus}) => { 
+    const [notification, setNotification] = useState({ message: '', type: '' });
+    const showNotification = (message, type) => {
+            setNotification({ message, type });
+            setTimeout(() => {
+                setNotification({ message: '', type: '' });
+            }, 3000);
+        };
     const proxies = [ 
         {
             id: 1,
@@ -147,7 +154,25 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     );
         setFilteredProxies(filtered);
     }
-  
+
+    // Function to handle "All Notifications" test
+    const handleTestAllNotifications = () => {
+        if (notifStatus === 'All') {
+            showNotification('This is a test for "All notifications" setting.', 'success');
+        } 
+    };
+
+    // Function to handle "Urgent Notifications" test
+    const handleTestUrgentNotifications = () => {
+        if (notifStatus === 'All' || notifStatus === 'Urgent') {
+            showNotification('This is a test for "Urgent notifications" setting.', 'success');
+        }
+    };
+
+    const handleTestErrorNotifications = () => {
+        showNotification('This is a test for error notifications.', 'error');
+    };
+
     return (
         <div className="container">
             <div className="proxy-head">
@@ -174,6 +199,29 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                         </form>
                     </div>
                 </div>
+
+                {/* Notification Test Buttons */}
+                <div className="notification-test-buttons">
+                    <button
+                        className="test-button"
+                        onClick={handleTestAllNotifications}
+                    >
+                        Test All Notifications
+                    </button>
+                    <button
+                        className="test-button"
+                        onClick={handleTestUrgentNotifications}
+                    >
+                        Test Urgent Notifications
+                    </button>
+                </div>
+
+                {/* Notification */}
+                {notification.message && (
+                    <div className={`notification ${notification.type}`}>
+                        {notification.message}
+                    </div>
+                )}
 
                 {isOn && (  
                 <div className="proxy-form">

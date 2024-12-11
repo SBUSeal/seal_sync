@@ -136,6 +136,27 @@ h2 {
     color: #888;
 }
 
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 5px;
+    color: white;
+    z-index: 1000;
+    font-size: 16px;
+    opacity: 0;
+    animation: fadeInOut 3s forwards;
+  }
+  
+  .notification.success {
+    background-color: var(--success-background);
+  }
+  
+  .notification.error {
+    background-color: var(--error-background);
+  }
+
 /* Buttons */
 .primary-button, .secondary-button {
 
@@ -176,7 +197,7 @@ h2 {
 }
 
 
-.notification-popup {
+/*.notification-popup {
     position: fixed;
     bottom: 20px;
     right: 20px;
@@ -188,7 +209,7 @@ h2 {
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     animation: fadeInOut 3s forwards;
-}
+}*/
 
 @keyframes fadeInOut {
     0% { opacity: 0; transform: translateY(20px); }

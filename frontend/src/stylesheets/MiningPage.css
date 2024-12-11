@@ -21,26 +21,43 @@ input, button {
 
 .dashboard {
     display: flex;
-    justify-content: space-around;
-    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
     margin-top: 20px;
-    gap: 0px;
+    gap: 20px;
+    width: 90%;
 }
 
 .tile {
-    background: var(--tile-background);
+    background: var(--card-background);
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px var(--box-shadow-color);
+    margin: 0;
     text-align: center;
+    width: 48%; /*Align two tiles side by side*/
 }
 
-/* Mining Control */
+.tile h2 {
+    font-size: 18px;
+    color: var(--primary-text-color);
+}
+
+/*Mining Control section*/
 .mining-control {
+    background: var(--card-background);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--box-shadow-color);
     display: flex;
     align-items: center;
     gap: 10px;
+    width: 48%;
+}
+
+.switch .slider {
+    background-color: var(--input-border);
+    transition: .4s;
 }
 
 .switch {
@@ -82,10 +99,12 @@ input, button {
 
 input:checked + .slider {
     background-color: var(--slider-checked-background);
+    /*background-color: var(--button-background);*/
 }
 
 input:checked + .slider:before {
     transform: translateX(26px);
+    background-color: var(--button-text-color);
 }
 
 input:focus + .slider {
@@ -96,6 +115,10 @@ input:focus + .slider {
 .mining-status {
     font-size: 16px;
     font-weight: bold;
+    /*color: var(--button-text-color);*/
+    color: black;
+    margin-left: 10px;
+    flex-grow: 1;
 }
 
 /* Mining Log */
@@ -103,11 +126,17 @@ input:focus + .slider {
     margin-top: 20px;
     max-height: 400px;
     overflow-y: auto;
-    width: 100%;
-    padding: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 90%; /* Better alignment with other content */
+    padding: 20px;
+    box-shadow: 0 4px 8px var(--box-shadow-color);
     border-radius: 8px;
-    background-color: #f9f9f9;
+    background-color: var(--card-background);
+}
+
+.mining-log h3 {
+    font-size: 20px;
+    color: var(--primary-text-color);
+    margin-bottom: 10px;
 }
 
 .mining-log ul {
@@ -117,18 +146,56 @@ input:focus + .slider {
 }
 
 .mining-log li {
-    background: var(--log-background);
-    padding: 8px;
-    margin-bottom: 5px;
-    border-radius: 4px;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+    align-items: center;
+    background: var(--card-background);
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px var(--box-shadow-color);
+    border: 1px solid var(--input-border);
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .mining-log li:hover {
-    background-color: #d3d3d3;  
+    background-color: var(--button-background-light); 
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
-    cursor: pointer; 
+    cursor: pointer;  
 }
+
+.mining-log li span {
+    font-size: 1rem;
+    color: var(--secondary-text-color);
+}
+
+.mining-log li .timestamp {
+    font-weight: bold;
+    text-align: right;
+    color: var(--primary-text-color);
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 20px;
+    border-radius: 5px;
+    color: white;
+    z-index: 1000;
+    font-size: 16px;
+    opacity: 0;
+    animation: fadeInOut 3s forwards;
+  }
+  
+  .notification.success {
+    background-color: var(--success-background);
+  }
+  
+  .notification.error {
+    background-color: var(--error-background);
+  }
 
 /* Light Mode Variables */
 :root {
@@ -152,4 +219,24 @@ input:focus + .slider {
     --slider-handle-color: #1f1f1f;
     --slider-checked-background: #4CAF50;
     --log-background: #333333;
+}
+
+.test-buttons {
+    margin-top: 20px;
+}
+
+.test-buttons button {
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.test-buttons button:hover {
+    background-color: #0056b3;
 }

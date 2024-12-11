@@ -114,6 +114,21 @@ const WalletPage = (props) => {
     }
 }
 
+     //** Test Button Logic **
+     const handleAllNotificationsTest = () => {
+        console.log("Entered handleAllNotificationsTest with notifStatus: "+props.notifStatus);
+        if (props.notifStatus === 'All') {
+            showNotification("All Notifications Test Successful!", 'success');
+        }
+    };
+
+    const handleUrgentNotificationsTest = () => {
+        console.log("Entered handleUrgentNotificationsTest with notifStatus: "+props.notifStatus);
+        if (props.notifStatus === 'All' || props.notifStatus === 'Urgent') {
+            showNotification("Urgent Notifications Test Successful!", 'success');
+        }
+    };
+
     return (
         <div className="wallet-page">
             {/* Notification */}
@@ -165,6 +180,23 @@ const WalletPage = (props) => {
                     />
                     <button onClick={handleTransfer} className="primary-button">Send</button>
                 </div>
+            </div>
+
+            {/* Test Buttons Section */}
+            <div className="test-buttons">
+                <h3>Test Notification Preferences</h3>
+                <button 
+                    onClick={handleAllNotificationsTest} 
+                    className="test-button all-notifications"
+                >
+                    Test All Notifications
+                </button>
+                <button 
+                    onClick={handleUrgentNotificationsTest} 
+                    className="test-button urgent-notifications"
+                >
+                    Test Urgent Notifications
+                </button>
             </div>
 
             {/* Transaction History */}

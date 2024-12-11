@@ -1,8 +1,47 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { DownloadIcon, UploadIcon } from '@radix-ui/react-icons';
 
-const TopBar = ({searchQuery, setSearchQuery, files, filter, setFilteredFiles, setIsDownloadModalOpen, setTempFile, setisUploadModalOpen, setCid}) => {
+const TopBar = ({searchQuery, setSearchQuery, files, filter, setFilteredFiles, setIsDownloadModalOpen, setTempFile, setisUploadModalOpen, setCid, notifStatus}) => {
 
+
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
+  const [notification, setNotification] = useState({ message: '', type: '' });
+  
+  /*const triggerPopup = (message) => {
+    setPopupMessage(message);
+    setShowPopup(true);
+
+    setTimeout(() => {
+      setShowPopup(false);
+    }, 3000);
+  }*/
+    const showNotification = (message, type) => {
+      setNotification({ message, type });
+      setTimeout(() => {
+          setNotification({ message: '', type: '' });
+      }, 3000);
+  };
+
+  const handleAllNotificationsTest = () => {
+    console.log('notifStatus in handleAllNotificationsTest:', notifStatus);
+    if(notifStatus === 'All') {
+      //triggerPopup('This is a test for "All notifications".');
+      showNotification('This is a test for "All notifications" setting.', 'success');
+    } else {
+      console.log('No action taken: Notification setting is not set to "All".');
+    }
+  };
+
+  const handleUrgentNotificationsTest = () => {
+    console.log('notifStatus in handleUrgentNotificationsTest:', notifStatus);
+    if (notifStatus === 'All' || notifStatus === 'Urgent') {
+      //triggerPopup('This is a test for "Urgent notifications only".');
+      showNotification('This is a test for "Urgent notifications" setting.', 'success');
+    } else {
+      console.log('No action taken: Notification setting is "None".');
+    }
+  };
     function handleSearchInput(e) {
         const query = e.target.value;
         setSearchQuery(query);
@@ -45,6 +84,21 @@ const TopBar = ({searchQuery, setSearchQuery, files, filter, setFilteredFiles, s
             <input type="file" onChange={handleFileUpload} />
           </button>
         </div>
+
+        <div className="test-buttons">
+        <button onClick={handleAllNotificationsTest}>
+          Test All Notifications
+        </button>
+        <button onClick={handleUrgentNotificationsTest}>
+          Test Urgent Notifications
+        </button>
+        </div>
+        {/* Notification */}
+        {notification.message && (
+                <div className={`notification ${notification.type}`}>
+                    {notification.message}
+                </div>
+            )}
     </div>
   )
 }
