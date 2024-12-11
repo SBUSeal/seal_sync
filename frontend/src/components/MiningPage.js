@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import '../stylesheets/MiningPage.css';
 
 const MiningPage = ({ sealTokenBalance, setSealTokenBalance, miningLog, setMiningLog, isMining, setIsMining, fetchBalance}) => {
-    const [hashRate, setHashRate] = useState(0); 
+    const [tokenRate, setTokenRate] = useState(0); 
+    const [prevBalance, setPreviousBalance] = useState(0);
     const startMiningEndpoint = "http://localhost:8080/startMining";
     const stopMiningEndpoint = "http://localhost:8080/stopMining";
 
@@ -64,10 +65,10 @@ const MiningPage = ({ sealTokenBalance, setSealTokenBalance, miningLog, setMinin
     const handleToggle = () => {
         setIsMining((prevState) => !prevState);
         if (isMining){
-            updateLog("Mining started successfully.");
+            updateLog("Mining stopped successfully.");
         }
         else{
-            updateLog("Mining stopped successfully.");
+            updateLog("Mining started successfully.");
         }
     };
 
@@ -85,7 +86,7 @@ const MiningPage = ({ sealTokenBalance, setSealTokenBalance, miningLog, setMinin
             <div className="dashboard">
                 <div className="tile">
                     <h2>Balance: {sealTokenBalance.toFixed(2)} SKT</h2>
-                    <h2>Hash Rate: {hashRate} blocks/sec</h2>
+                    <h2>Hash Rate: {tokenRate} blocks/sec</h2>
                 </div>
                 <div className="mining-control">
                     <label className="switch">

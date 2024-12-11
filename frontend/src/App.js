@@ -17,10 +17,11 @@ const getBalanceEndpoint = "http://localhost:8080/getBalance";
 
 function App() {
   
+  const [globalWalletAddress, setGlobalWalletAddress] = useState(null);
   const [activePage, setActivePage] = useState('Status');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
-  const [sealTokenBalance, setSealTokenBalance] = useState(100);
+  const [sealTokenBalance, setSealTokenBalance] = useState(0);
   const [currentProxy, setcurrentProxy] = useState(null);
   const [proxyHistory, setProxyHistory] = useState([]); 
   const [isOn, setIsOn] = useState(false); 
@@ -35,10 +36,6 @@ function App() {
   const [downloadedFiles, setDownloadedFiles] = useState(0);
   const [isMining, setIsMining] = useState(false);
 
-  // Log activePage to debug any unexpected reloads
-  console.log("Current Active Page:", activePage);
-
-  // Clear localStorage and reset the counters on page load
   useEffect(() => {
     setUploadedFiles(0);
     setDownloadedFiles(0);
@@ -83,6 +80,7 @@ function App() {
         const data = await response.json();
         setActivePage("Status")
         setIsLoggedIn(true)
+        fetchBalance()
       } else {
         const errorData = await response.json();
         alert(`Error: ${errorData.message}`);
@@ -140,7 +138,7 @@ function App() {
       return <SignUpPage setActivePage={setActivePage} setIsSigningUp={setIsSigningUp} setIsLoggedIn={setIsLoggedIn} />;
     }
     if (!isLoggedIn) {
-      return <LoginPage handleDebug={handleDebug} onLogin={handleLogin} onSignUp={handleSignUp} />;
+      return <LoginPage handleDebug={handleDebug} onLogin={handleLogin} onSignUp={handleSignUp} setGlobalWalletAddress={setGlobalWalletAddress}/>;
     }
     switch (activePage) {
       case 'Status':
@@ -160,6 +158,7 @@ function App() {
       case 'Wallet':
         return (
           <WalletPage
+            globalWalletAddress = {globalWalletAddress}
             sealTokenBalance={sealTokenBalance}
             setSealTokenBalance={setSealTokenBalance}
             transactions={transactions}

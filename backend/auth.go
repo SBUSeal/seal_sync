@@ -341,7 +341,7 @@ func HandleLoginWallet(w http.ResponseWriter, r *http.Request) {
 		"jsonrpc": "1.0",
 		"id":      "curltext",
 		"method":  "walletpassphrase",
-		"params":  []interface{}{requestBody.WalletPassword, 60},
+		"params":  []interface{}{requestBody.WalletPassword, 600},
 	}
 	rpcRequestBody, _ := json.Marshal(rpcRequest)
 
@@ -472,7 +472,7 @@ func HandleSendToAddress(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Send coins
-	txID, err := SendToAddress(requestBody.WalletName, requestBody.RecipientAddress, requestBody.Amount, requestBody.Comment)
+	txID, err := SendToAddress(WALLET_NAME, requestBody.RecipientAddress, requestBody.Amount, requestBody.Comment)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error sending coins: %v", err), http.StatusInternalServerError)
 		return
