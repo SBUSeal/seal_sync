@@ -28,7 +28,7 @@ const TransactionsPage = (props) => {
         switch (category) {
             case 'send':
                 return 'Sent';
-            case 'received':
+            case 'receive':
                 return 'Received';
             case 'generate':
                 return 'Mined';
