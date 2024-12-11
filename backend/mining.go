@@ -76,7 +76,6 @@ func HandleStartMining(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			fmt.Println("Successfully mined a block.")
 			time.Sleep(1 * time.Second) // Add a delay to avoid overwhelming the RPC server
 		}
 	}()

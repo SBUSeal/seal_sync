@@ -97,6 +97,8 @@ func main() {
 	mux.HandleFunc("/stopMining", HandleStopMining)
 
 	mux.HandleFunc("/getBalance", HandleGetBalance)
+	mux.HandleFunc("/getTransactions", HandleGetTransactions)
+
 
 	fmt.Println("Server is running on port 8080")
 	handler := enableCORS(mux)

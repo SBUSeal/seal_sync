@@ -164,11 +164,11 @@ input, button {
   text-align: right;
 }
 
-.transaction-amount.sent {
+.transaction-amount.send {
   color: var(--transaction-sent-color);
 }
 
-.transaction-amount.received {
+.transaction-amount.received, .transaction-amount.generate {
   color: var(--transaction-received-color);
 }
 
