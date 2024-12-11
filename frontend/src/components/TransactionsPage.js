@@ -10,19 +10,49 @@ const TransactionsPage = (props) => {
     const months = ['All', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
    
+    console.log(transactions)
+
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        return date.toLocaleString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+        });
+    };
+
+    const convertCategory = (category) => {
+        switch (category) {
+            case 'send':
+                return 'Sent';
+            case 'received':
+                return 'Received';
+            case 'generate':
+                return 'Mined';
+            case 'immature':
+                return 'Pending';
+            default:
+                return 'Unknown';
+        }
     };
 
    
-    const filteredTransactions = transactions.filter((transaction) => {
-        const transactionMonth = new Date(transaction.date).toLocaleString('default', { month: 'long' });
-        const matchesMonth = selectedMonth === 'All' || transactionMonth === selectedMonth;
-        const matchesSearch = (transaction.date?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                              transaction.reason?.toLowerCase().includes(searchQuery.toLowerCase()));
-        return matchesMonth && matchesSearch;
-    }).sort((a, b) => new Date(b.date) - new Date(a.date)); 
+    const filteredTransactions = transactions
+    .filter((transaction) => {
+        const transactionDate = new Date(transaction.time * 1000); // Convert Unix timestamp to Date
+        const transactionMonth = transactionDate.toLocaleString('default', { month: 'long' }); // Get month name
+        const matchesMonth = selectedMonth === 'All' || transactionMonth === selectedMonth; // Check month filter
+        const matchesSearch =
+            searchQuery === '' || // If no search query, match all
+            transactionDate.toISOString().toLowerCase().includes(searchQuery.toLowerCase()) || // Check date match
+            (transaction.comment?.toLowerCase() || '').includes(searchQuery.toLowerCase()); // Check reason match
+        return matchesMonth && matchesSearch; // Apply both filters
+    })
+    .sort((a, b) => b.time - a.time); // Sort by transaction time in descending order
+
 
     return (
         <div className="transactions-page">
@@ -62,23 +92,23 @@ const TransactionsPage = (props) => {
             <div className="transaction-history">
                 {filteredTransactions.length > 0 ? (
                     filteredTransactions.map((transaction) => (
-                        <div key={transaction.id} className="transaction-item">
+                        <div key={transaction.txid} className="transaction-item">
                             <div className="transaction-column">
-                                <p className="transaction-status">{transaction.type} SealToken</p>
-                                <p className="transaction-date">{formatDate(transaction.date)}</p>
+                                <p className="transaction-status">{convertCategory(transaction.category.toLowerCase())} SealToken</p>
+                                <p className="transaction-date">{formatDate(transaction.time*1000)}</p>
                             </div>
                             <div className="transaction-column">
                                 <p className="transaction-id">
-                                    {transaction.type === 'Sent'
-                                        ? `To: ${transaction.to}`
-                                        : `From: ${transaction.from}`}
+                                    {transaction.category === 'send'
+                                        ? `To: ${transaction.address}`
+                                        : transaction.category === 'recieved' && `From: ${transaction.address}` }
                                 </p>
-                                <p className="transaction-reason">Reason: {transaction.reason || 'No reason provided'}</p>
+                                <p className="transaction-reason">Reason: {transaction.comment || 'No reason provided'}</p>
                             </div>
-                            <div className={`transaction-amount ${transaction.type.toLowerCase()}`}>
-                                {transaction.type === 'Sent'
-                                    ? `- ${transaction.sealTokens} STK`
-                                    : `+ ${transaction.sealTokens} STK`}
+                            <div className={`transaction-amount ${transaction.category.toLowerCase()}`}>
+                            {(transaction.type === 'recieved' || 'generated')
+                                    ? `${transaction.amount} STK`
+                                    : `+ ${transaction.amount} STK`}
                             </div>
                         </div>
                     ))
