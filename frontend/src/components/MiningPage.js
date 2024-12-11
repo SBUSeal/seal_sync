@@ -105,6 +105,16 @@ const MiningPage = ({ sealTokenBalance, setSealTokenBalance, miningLog, setMinin
             showNotification('This is a test for "Urgent notifications" setting.', 'success');
         }
     };
+    useEffect(() => {
+        if (isMining) {
+            startMining();
+            if(notifStatus === 'All' || notifStatus == 'Urgent'){
+            showNotification('Mining Started: Using resources');
+        } else {
+            stopMining();
+        }
+    }, [isMining]);
+
 
     return (
         <div className="mining-container">
@@ -128,10 +138,6 @@ const MiningPage = ({ sealTokenBalance, setSealTokenBalance, miningLog, setMinin
                         {isMining ? 'Stop Mining' : 'Start Mining'}
                     </span>
                 </div>
-            </div>
-            <div className="test-buttons">
-                <button onClick={testAllNotifications}>Test "All Notifications"</button>
-                <button onClick={testUrgentNotifications}>Test "Urgent Notifications"</button>
             </div>
             <div className="mining-log">
                 <h3>Mining Activity Log:</h3>
