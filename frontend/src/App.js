@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './stylesheets/App.css';
 import './stylesheets/SignUpPage.css';
 import Files from './components/FilesPage';
-import StatusPage from './components/StatusPage';
 import WalletPage from './components/WalletPage';
 import Sidebar from './components/SideBar';
 import SettingsPage from './components/SettingsPage';
@@ -18,7 +17,7 @@ const getBalanceEndpoint = "http://localhost:8080/getBalance";
 function App() {
   
   const [globalWalletAddress, setGlobalWalletAddress] = useState(null);
-  const [activePage, setActivePage] = useState('Status');
+  const [activePage, setActivePage] = useState('Login');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [sealTokenBalance, setSealTokenBalance] = useState(0);
@@ -64,7 +63,7 @@ function App() {
 
       if (response.ok) {
         const data = await response.json();
-        setActivePage("Status")
+        setActivePage("Files")
         setIsLoggedIn(true)
         fetchBalance()
       } else {
@@ -77,7 +76,8 @@ function App() {
   };
 
   const handleSignUp = () => {
-    setIsSigningUp(true);
+    // setIsSigningUp(true);
+    setActivePage("SignUp")
   };
 
   // Handle sign-out
@@ -89,6 +89,7 @@ function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    setActivePage("Login")
   };
 
   const toggleDarkMode = () => {
@@ -120,15 +121,18 @@ function App() {
 
   // Function to render content based on activePage
   const renderContent = () => {
-    if (isSigningUp) {
-      return <SignUpPage setActivePage={setActivePage} setIsSigningUp={setIsSigningUp} setIsLoggedIn={setIsLoggedIn} />;
-    }
-    if (!isLoggedIn) {
-      return <LoginPage handleDebug={handleDebug} onLogin={handleLogin} onSignUp={handleSignUp} setGlobalWalletAddress={setGlobalWalletAddress}/>;
-    }
+    // if (isSigningUp) {
+      // return <SignUpPage setActivePage={setActivePage} setIsSigningUp={setIsSigningUp} setIsLoggedIn={setIsLoggedIn} />;
+    // }
+    // if (!isLoggedIn) {
+    //   return <LoginPage handleDebug={handleDebug} onLogin={handleLogin} onSignUp={handleSignUp} setGlobalWalletAddress={setGlobalWalletAddress}/>;
+    // }
     switch (activePage) {
-      case 'Status':
-        return <StatusPage downloadsInProgress={downloadsInProgress} />;
+      case "Login":
+        return <LoginPage handleDebug={handleDebug} onLogin={handleLogin} onSignUp={handleSignUp} setGlobalWalletAddress={setGlobalWalletAddress}/>;
+      case "SignUp":
+        return <SignUpPage setActivePage={setActivePage} setIsSigningUp={setIsSigningUp} setIsLoggedIn={setIsLoggedIn} />;
+
       case 'Files':
         return (
           <Files

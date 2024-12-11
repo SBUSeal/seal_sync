@@ -238,7 +238,7 @@ func saveDownloadedFile(fileData FileMetadata, cid string, from string, download
 }
 
 func writeFileToResponse(w http.ResponseWriter, filename string) int64 {
-	downloadedFile, err := os.Open(filename)
+	downloadedFile, err := os.Open(filepath.Join("downloads", filename))
 	if err != nil {
 		log.Fatal("Error reading saved file: ", err)
 	}
@@ -283,7 +283,7 @@ func downloadFile(node host.Host, w http.ResponseWriter, r *http.Request) {
 	saveDownloadedFile(fileData, cid, targetPeerID, downloadStream)
 
 	// Send the file as response
-	nbytes := writeFileToResponse(w, filepath.Join("downloads", fileData.Name))
+	nbytes := writeFileToResponse(w, fileData.Name)
 	log.Printf(" (server.go) Downloaded file %s, streamed %d bytes\n", fileData.Name, nbytes)
 }
 
