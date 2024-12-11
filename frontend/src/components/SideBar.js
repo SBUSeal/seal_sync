@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import sealImage from '../images/Seal_Logo.png';
-import statusIcon from '../images/Status_Page_White.png';
+// import statusIcon from '../images/Status_Page_White.png';
 import filesIcon from '../images/File_Icon_White.png';
 import walletIcon from '../images/Wallet_Icon.png';
 import proxyIcon from '../images/Proxy_Icon_White.png';
@@ -31,10 +31,10 @@ function Sidebar(props) {
         {isMinimized ? <ArrowRightIcon color='white'> </ArrowRightIcon> : <ArrowLeftIcon color='white'> </ArrowLeftIcon>}
       </button>
       <ul>
-        <li onClick={() => setActivePage('Status')}>
+        {/* <li onClick={() => setActivePage('Status')}>
           <img src={statusIcon} alt="Status Icon" className="sidebar-icon" />
           {!isMinimized && <span>Status</span>}
-        </li>
+        </li> */}
         <li onClick={() => setActivePage('Files')}>
           <img src={filesIcon} alt="Files Icon" className="sidebar-icon" />
           {!isMinimized && <span>Files</span>}
