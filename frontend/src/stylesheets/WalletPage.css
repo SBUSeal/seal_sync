@@ -168,7 +168,7 @@ input, button {
   color: var(--transaction-sent-color);
 }
 
-.transaction-amount.received, .transaction-amount.generate {
+.transaction-amount.receive, .transaction-amount.generate {
   color: var(--transaction-received-color);
 }
 
