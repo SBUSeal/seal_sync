@@ -173,18 +173,6 @@ const FilesPage = (props) => {
       setIsProvidersModalOpen(false)
       setSelectedProvider(null)
       setCid("")
-<<<<<<< HEAD
-
-      const newBalance = props.sealTokenBalance - downloadedFile.price;
-      if (newBalance < 0) {
-        //alert("Insufficient funds, cannot download file")
-        console.log("Insufficient funds, cannot download file");
-        showNotification("Insufficient funds, cannot download file", 'error');
-        return
-      }
-=======
-      
->>>>>>> dev
       props.setSealTokenBalance(newBalance)
       //alert(`Successfully bought file for ${downloadedFile.price} STK!`)
       console.log(`Successfully bought file for ${downloadedFile.price} STK!`);
