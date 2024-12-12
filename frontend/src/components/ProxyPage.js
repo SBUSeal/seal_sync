@@ -6,15 +6,47 @@ import '../stylesheets/ProxyPage.css';
 // When enable proxy is hit we are going to remove that proxy from the list
 // Use file logic for making the proxy, each proxy have its own CID
 
-const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcurrentProxy, isOn, setIsOn, setTransactions, price, setPrice, notifStatus}) => { 
+const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, 
+    setcurrentProxy, isOn, setIsOn, setTransactions, price, setPrice, notifStatus, proxyHistory, setProxyHistory}) => { 
     
+    const proxies = [ 
+        {
+            id: 1,
+            location: {ip:'41.77.0.1', region: 'Africa'},
+            walletAddress: '1B3qRz5g4dEF4DMPGT1L3TThzv6CvzNB',
+            price: 5,
+            connectedUsers: 2
+        },
+        {
+            id: 2,
+            location: {ip:'8.8.8.8', region: 'North America'},
+            walletAddress: '1A72tpP5QGeiF2DMPfTT1S5LLmv7DivFNa',
+            price: 50,
+            connectedUsers: 20
+        },
+        {
+            id: 3,
+            location: {ip:'95.165.0.1', region: 'Europe'},
+            walletAddress: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+            price: 30,
+            connectedUsers: 3
+        },
+        {
+            id: 1,
+            location: {ip:'58.14.0.1', region: 'Asia'},
+            walletAddress: 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kygt080',
+            price: 5,
+            connectedUsers: 5
+          },
+    ];
+
     const [isPriceEditing, setIsPriceEditing] = useState(price === '');  
     const [searchQuery, setSearchQuery] = useState('');  
     const [showHistory, setShowHistory] = useState(false); 
     const [host_data, setHostData] = useState(null)
-    const [proxies, setProxies] = useState([])
-    const [proxyHistory, setProxyHistory] = useState([]);
-    const [filteredProxies, setFilteredProxies] = useState([]);
+    // const [proxies, setProxies] = useState([])
+    // const [proxyHistory, setProxyHistory] = useState(proxies);
+    const [filteredProxies, setFilteredProxies] = useState(proxies);
     const [notification, setNotification] = useState({ message: '', type: '' });
     const showNotification = (message, type) => {
         if (
@@ -29,35 +61,35 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
             }, 3000);
         };
 
-    // GET req constantly getting
-    useEffect(() => {
-        const getProxies = async () => {
-          console.log("REQUESTING FOR PROXIES");
-          try {
-            const response = await fetch('http://localhost:8080/proxies', {
-              method: 'GET'
-            });
-            console.log("AFTER HERE IS REQUEST",response)
-            const proxies = await response.json() || [];
-            setProxies(proxies);
-            setFilteredProxies(proxies)
-            console.log("to json",proxies)
+    // // GET req constantly getting
+    // useEffect(() => {
+    //     const getProxies = async () => {
+    //       console.log("REQUESTING FOR PROXIES");
+    //       try {
+    //         const response = await fetch('http://localhost:8080/proxies', {
+    //           method: 'GET'
+    //         });
+    //         console.log("AFTER HERE IS REQUEST",response)
+    //         const proxies = await response.json() || [];
+    //         setProxies(proxies);
+    //         setFilteredProxies(proxies)
+    //         console.log("to json",proxies)
       
-          } catch (error) {
-            console.error("Error fetching proxies", error);
-          }
-        };
+    //       } catch (error) {
+    //         console.error("Error fetching proxies", error);
+    //       }
+    //     };
       
-        // Initial fetch
-        getProxies();
+    //     // Initial fetch
+    //     getProxies();
       
-        // Schedule subsequent fetches every 2 minutes
-        const intervalId = setInterval(getProxies, 120000); // 120000 milliseconds = 2 minutes
+    //     // Schedule subsequent fetches every 2 minutes
+    //     const intervalId = setInterval(getProxies, 120000); // 120000 milliseconds = 2 minutes
       
-        // Cleanup the interval on component unmount
-        return () => clearInterval(intervalId);
+    //     // Cleanup the interval on component unmount
+    //     return () => clearInterval(intervalId);
       
-      }, []);
+    //   }, []);
 
 
     // helper to get IP
