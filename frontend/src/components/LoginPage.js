@@ -76,9 +76,6 @@ function LoginPage({ handleDebug, onLogin, onSignUp, setGlobalWalletAddress}) {
             
           </p>
           <br/>
-          <button  onClick={()=>{handleDebug()}} className="debug-button">
-                Debug
-              </button>
         </div>
       </div>
     </div>

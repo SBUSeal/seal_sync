@@ -36,7 +36,7 @@ import '../stylesheets/MiningPage.css';
         }*/
        
 const MiningPage = ({ sealTokenBalance, setSealTokenBalance, miningLog, setMiningLog, isMining, setIsMining, fetchBalance, notifStatus}) => {
-    const [tokenRate, setTokenRate] = useState(0); 
+    const [tokenRate, setTokenRate] = useState(0.3); 
     const [prevBalance, setPreviousBalance] = useState(0);
     const startMiningEndpoint = "http://localhost:8080/startMining";
     const stopMiningEndpoint = "http://localhost:8080/stopMining";
