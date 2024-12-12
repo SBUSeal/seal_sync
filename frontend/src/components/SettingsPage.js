@@ -3,7 +3,7 @@ import '../stylesheets/SettingsPage.css';
 
 const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode, notifStatus, setNotifStatus }) => {
 
-    const [activeTab, setActiveTab] = useState('Configuration');
+    const [activeTab, setActiveTab] = useState('Appearance');
     const [showLogoutModal, setShowLogoutModal] = useState(false); 
     const [notificationMessage, setNotificationMessage] = useState('');
     const [notificationChoice, setNotificationChoice] = useState('All new activity or messages');
@@ -26,27 +26,27 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode, notifStatus, se
 
     const renderContent = () => {
         switch (activeTab) {
-            case 'Configuration':
-                return (
-                    <div className="section">
-                        <h2>Configuration</h2>
-                        <div className="input-group">
-                            <label>Save Folder</label>
-                            <input type="text" placeholder="Enter new save directory" className="input-field" />
-                        </div>
-                        <div className="input-group">
-                            <label>Upload Limit</label>
-                            <input type="number" placeholder="0" className="input-field" />
-                            <span className="input-addon">Mbps</span>
-                        </div>
-                        <div className="input-group">
-                            <label>Download Limit</label>
-                            <input type="number" placeholder="0" className="input-field" />
-                            <span className="input-addon">Mbps</span>
-                        </div>
-                        <button className="primary-button">Save Changes</button>
-                    </div>
-                );
+            // case 'Configuration':
+            //     return (
+            //         <div className="section">
+            //             <h2>Configuration</h2>
+            //             <div className="input-group">
+            //                 <label>Save Folder</label>
+            //                 <input type="text" placeholder="Enter new save directory" className="input-field" />
+            //             </div>
+            //             <div className="input-group">
+            //                 <label>Upload Limit</label>
+            //                 <input type="number" placeholder="0" className="input-field" />
+            //                 <span className="input-addon">Mbps</span>
+            //             </div>
+            //             <div className="input-group">
+            //                 <label>Download Limit</label>
+            //                 <input type="number" placeholder="0" className="input-field" />
+            //                 <span className="input-addon">Mbps</span>
+            //             </div>
+            //             <button className="primary-button">Save Changes</button>
+            //         </div>
+            //     );
             case 'Appearance':
                 return (
                     <div className="section">
@@ -177,7 +177,7 @@ const SettingsPage = ({ handleLogout, isDarkMode, setIsDarkMode, notifStatus, se
         <div className={containerClass}>
         <div className="settings-container">
             <div className="side">
-                <button className={`nav-item ${activeTab === 'Configuration' ? 'active' : ''}`} onClick={() => setActiveTab('Configuration')}>Config</button>
+                {/* <button className={`nav-item ${activeTab === 'Configuration' ? 'active' : ''}`} onClick={() => setActiveTab('Configuration')}>Config</button> */}
                 <button className={`nav-item ${activeTab === 'Appearance' ? 'active' : ''}`} onClick={() => setActiveTab('Appearance')}>Appearance</button>
                 <button className={`nav-item ${activeTab === 'Notifications' ? 'active' : ''}`} onClick={() => setActiveTab('Notifications')}>Notifications</button>
         
