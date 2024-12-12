@@ -6,7 +6,7 @@ import '../stylesheets/ProxyPage.css';
 // When enable proxy is hit we are going to remove that proxy from the list
 // Use file logic for making the proxy, each proxy have its own CID
 
-const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcurrentProxy, isOn, setIsOn, setTransactions, price, setPrice}) => { 
+const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcurrentProxy, isOn, setIsOn, setTransactions, price, setPrice, notifStatus}) => { 
     
     const [isPriceEditing, setIsPriceEditing] = useState(price === '');  
     const [searchQuery, setSearchQuery] = useState('');  
