@@ -121,11 +121,11 @@ h3 {
     text-align: right;
 }
 
-.transaction-amount.sent {
+.transaction-amount.send {
     color: var(--transaction-sent-color); /*Red = sent*/
 }
 
-.transaction-amount.received {
+.transaction-amount.receive, .transaction-amount.generate{
     color: var(--transaction-received-color); /*Green=received*/
 }
 
