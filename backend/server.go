@@ -348,8 +348,7 @@ func generateProxyKey(key string) cid.Cid{
 
 // getting all providers of all available proxies from dht
 func getAvailableProxies(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w http.ResponseWriter, r *http.Request) {
-	fmt.Println("FINDING PROVIDERS...")
-	// need to get all from dht using the same key
+	fmt.Println("REQUESTED TO FIND AVAILABLE PROXIES")
 	// must be a GET request
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -366,14 +365,14 @@ func getAvailableProxies(ctx context.Context, dht *dht.IpfsDHT, node host.Host, 
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("ProxyProviders", providers)
 
 	// Get the providers peer ids
 	peerIDs := findAllPeerIDs(node, providers)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("PROVIDERS: ", peerIDs)
-
+	fmt.Println("PEERID: ", peerIDs)
 
 	for _, peerID := range peerIDs {
 		info := requestProxyProviderInfo(node, peerID)
