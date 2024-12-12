@@ -231,7 +231,7 @@ const convertCategory = (category) => {
                 </div>
             </div>
 
-            {/* Test Buttons Section */}
+            {/* Test Buttons Section 
             <div className="test-buttons">
                 <h3>Test Notification Preferences</h3>
                 <button 
@@ -246,7 +246,7 @@ const convertCategory = (category) => {
                 >
                     Test Urgent Notifications
                 </button>
-            </div>
+            </div>*/}
 
             {/* Transaction History */}
             <div className="transaction-history">

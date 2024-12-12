@@ -207,7 +207,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                     </div>
                 </div>
 
-                {/* Notification Test Buttons */}
+                {/* Notification Test Buttons
                 <div className="notification-test-buttons">
                     <button
                         className="test-button"
@@ -221,7 +221,7 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                     >
                         Test Urgent Notifications
                     </button>
-                </div>
+                </div>*/}
 
                 {/* Notification */}
                 {notification.message && (
