@@ -85,14 +85,14 @@ const TopBar = ({searchQuery, setSearchQuery, files, filter, setFilteredFiles, s
           </button>
         </div>
 
-        <div className="test-buttons">
+        {/*<div className="test-buttons">
         <button onClick={handleAllNotificationsTest}>
           Test All Notifications
         </button>
         <button onClick={handleUrgentNotificationsTest}>
           Test Urgent Notifications
         </button>
-        </div>
+        </div>*/}
         {/* Notification */}
         {notification.message && (
                 <div className={`notification ${notification.type}`}>

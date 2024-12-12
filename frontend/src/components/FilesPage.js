@@ -15,7 +15,10 @@ const FilesPage = (props) => {
 
   const files = props.files
   const setFiles = props.setFiles
-  const setDownloadsInProgress = props.setDownloadsInProgress; 
+  const setDownloadsInProgress = props.setDownloadsInProgress;
+
+  const notifStatus = props.notifStatus;
+  const [notification, setNotification] = useState({ message: '', type: '' });
   // Modal States
   const [sharedLink, setSharedLink] = useState('');
   const [isUploadModalOpen, setisUploadModalOpen] = useState(false); 
@@ -36,7 +39,19 @@ const FilesPage = (props) => {
   const [filter, setFilter] = useState("All")
   const [providers, setProviders] = useState([])
 
-
+  const showNotification = (message, type) => {
+    if (
+        notifStatus === 'None' ||
+        (notifStatus === 'Urgent' && type !== 'error')
+    ) {
+        return;
+    }
+        setNotification({ message, type });
+        setTimeout(() => {
+            setNotification({ message: '', type: '' });
+        }, 3000);
+    };
+  
   useEffect(() => {
     const updateFilteredFiles = () => {
       const filtered = files.filter(file => 
@@ -158,9 +173,10 @@ const FilesPage = (props) => {
       setIsProvidersModalOpen(false)
       setSelectedProvider(null)
       setCid("")
-      
       props.setSealTokenBalance(newBalance)
-      alert(`Successfully bought file for ${downloadedFile.price} STK!`)
+      //alert(`Successfully bought file for ${downloadedFile.price} STK!`)
+      console.log(`Successfully bought file for ${downloadedFile.price} STK!`);
+      showNotification(`Successfully bought file for ${downloadedFile.price} STK!`, 'success');
   
       //add new transaction
       props.setTransactions((prevTransactions) => [...prevTransactions, {
@@ -285,7 +301,7 @@ const FilesPage = (props) => {
       {isUploadModalOpen && <UploadModal newFileDetails ={newFileDetails} setNewFileDetails={setNewFileDetails} handleUploadModalClose={handleUploadModalClose} handleUploadModalSubmit={handleUploadModalSubmit}> </UploadModal>}
       {isFileModalOpen && currentFile && <FileModal currentFile={currentFile} formatFileSize={formatFileSize} setIsFileModalOpen={setIsFileModalOpen}> </FileModal>}
       {isDownloadModalOpen &&  <DownloadModal cid={cid} setCid={setCid} closeDownloadModal={closeDownloadModal} showProvidersModal={showProvidersModal} > </DownloadModal>}
-      {isShareModalOpen && <ShareModal file = {currentFile} setIsShareModalOpen= {setIsShareModalOpen} dummyLink={dummyLink}> </ShareModal>}
+      {isShareModalOpen && <ShareModal file = {currentFile} setIsShareModalOpen= {setIsShareModalOpen} dummyLink={dummyLink}> notifStatus={props.notifStatus} </ShareModal>}
       {isProvidersModalOpen && providers && <ProvidersModal providers={providers} setProviders={setProviders} selectedProvider={selectedProvider} setSelectedProvider={setSelectedProvider} setIsProvidersModalOpen={setIsProvidersModalOpen} balance={props.sealTokenBalance} downloadFile={downloadFile}> </ProvidersModal>}
     </div>
   );

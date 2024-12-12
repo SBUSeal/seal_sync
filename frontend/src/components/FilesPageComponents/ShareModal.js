@@ -1,9 +1,24 @@
 import React, { useState } from 'react';
 
-const ShareModal = ({ file, setIsShareModalOpen }) => {
+const ShareModal = ({ file, setIsShareModalOpen, notifStatus }) => {
   const [generatedLink, setGeneratedLink] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [notification, setNotification] = useState({ message: '', type: '' });
 
+  const showNotification = (message, type) => {
+    if (
+        notifStatus === 'None' ||
+        (notifStatus === 'Urgent' && type !== 'error')
+    ) {
+        return;
+    }
+        setNotification({ message, type });
+        console.log(`Notification: ${message}`);//Debug the notification
+        setTimeout(() => {
+            setNotification({ message: '', type: '' });
+        }, 3000);
+    };
+  
   const closeShareModal = () => {
     setGeneratedLink('');
     setIsShareModalOpen(false);
@@ -14,14 +29,17 @@ const ShareModal = ({ file, setIsShareModalOpen }) => {
       navigator.clipboard
         .writeText(generatedLink)
         .then(() => {
-          alert('Link copied to clipboard!');
+          //alert('Link copied to clipboard!');
+          showNotification('Link copied to clipboard!', 'success');
         })
         .catch((err) => {
           console.error('Failed to copy link:', err);
-          alert('Failed to copy the link. Please try again.');
+          //alert('Failed to copy the link. Please try again.');
+          showNotification('Failed to copy the link. Please try again.', 'error');
         });
     } else {
-      alert('No link generated to copy.');
+      //alert('No link generated to copy.');
+      showNotification('No link generated to copy.', 'error');
     }
   };
 
@@ -35,11 +53,13 @@ const ShareModal = ({ file, setIsShareModalOpen }) => {
         setGeneratedLink(data.link); // Store the generated link
         console.log(`Generated Link: ${data.link}`); // Debugging log
       } else {
-        alert('Failed to generate the shareable link');
+        //alert('Failed to generate the shareable link');
+        showNotification('Failed to generate the shareable link', 'error');
         console.error('Error generating link:', response.statusText);
       }
     } catch (error) {
-      alert('Error generating the shareable link');
+      //alert('Error generating the shareable link');
+      showNotification('Error generating the shareable link', 'error');
       console.error('Error:', error);
     }
     setIsLoading(false);
@@ -47,6 +67,12 @@ const ShareModal = ({ file, setIsShareModalOpen }) => {
 
   return (
     <div className="modal">
+      {/* Notification Box */}
+      {notification.message && (
+        <div className={`notification ${notification.type}`}>
+          {notification.message}
+        </div>
+      )}
       <div className="modal-content" style={{ width: '500px' }}>
         <h2>Share File</h2>
         <button
@@ -87,7 +113,9 @@ const ShareModal = ({ file, setIsShareModalOpen }) => {
           className="modal-content"
           onClick={() => {
             navigator.clipboard.writeText(file.cid);
-            alert('CID copied to clipboard!');
+            //alert('CID copied to clipboard!');
+            console.log('CID copied to clipboard!');
+            showNotification('CID copied to clipboard!', 'success');
           }}
           style={{ border: '1px lightgrey solid' }}
         >
