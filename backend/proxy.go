@@ -37,7 +37,7 @@ type ProxyProviderInfo struct {
 	Location      LocationInfo `json:"location"`
 }
 
-var proxy_provider_info_protocol = protocol.ID("/sealsync/proxy_providerinfo")
+var proxy_provider_info_protocol = protocol.ID("/sealsync/proxyproviderinfo")
 
 // setting up proxy, tcp request
 func handleTunneling(w http.ResponseWriter, r *http.Request) {

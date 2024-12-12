@@ -6,45 +6,6 @@ import '../stylesheets/ProxyPage.css';
 // Use file logic for making the proxy, each proxy have its own CID
 
 const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcurrentProxy, isOn, setIsOn, setTransactions, price, setPrice}) => { 
-
-    // const proxies = [ 
-    //     {
-    //         id: 1,
-    //         ip_addr: '41.77.0.1',
-    //         host: '1B3qRz5g4dEF4DMPGT1L3TThzv6CvzNB',
-    //         price: 5,
-    //         location: 'Africa',
-    //         bandwidth: 40,
-    //         users: 2
-    //     },
-    //     {
-    //         id: 2,
-    //         ip_addr: '8.8.8.8',
-    //         host: '1A72tpP5QGeiF2DMPfTT1S5LLmv7DivFNa',
-    //         price: 200,
-    //         location: 'North America',
-    //         bandwidth: 50,
-    //         users: 20
-    //     },
-    //     {
-    //         id: 3,
-    //         ip_addr: '95.165.0.1',
-    //         host: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-    //         price: 30,
-    //         location: 'Europe',
-    //         bandwidth: 60,
-    //         users: 3
-    //     },
-    //     {
-    //         id: 4,
-    //         ip_addr: '58.14.0.1',
-    //         host: 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kygt080',
-    //         price: 45,
-    //         location: 'Asia',
-    //         bandwidth: 70,
-    //         users: 5
-    //       },
-    // ];
     
     const [isPriceEditing, setIsPriceEditing] = useState(price === '');  
     const [searchQuery, setSearchQuery] = useState('');  
@@ -52,28 +13,37 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
     const [host_data, setHostData] = useState(null)
     const [proxies, setProxies] = useState([])
     const [proxyHistory, setProxyHistory] = useState([]);
+    const [filteredProxies, setFilteredProxies] = useState([]);
 
     // GET req constantly getting
     useEffect(() => {
         const getProxies = async () => {
-            console.log("REQUESTING FOR PROXIES");
-            try {
-                const response = await fetch('http://localhost:8080/proxies', {
-                    method: 'GET'
-                });
-                console.log("AFTER HERE IS REQUEST",response)
-                const proxies = await response.json() || [];
-                setProxies(proxies);
-                console.log("to json",proxies)
-
-            } catch (error) {
-                console.error("Error fetching proxies", error);
-            }
+          console.log("REQUESTING FOR PROXIES");
+          try {
+            const response = await fetch('http://localhost:8080/proxies', {
+              method: 'GET'
+            });
+            console.log("AFTER HERE IS REQUEST",response)
+            const proxies = await response.json() || [];
+            setProxies(proxies);
+            setFilteredProxies(proxies)
+            console.log("to json",proxies)
+      
+          } catch (error) {
+            console.error("Error fetching proxies", error);
+          }
         };
+      
+        // Initial fetch
         getProxies();
-    }, []);
-
-    const [filteredProxies, setFilteredProxies] = useState(proxies); 
+      
+        // Schedule subsequent fetches every 2 minutes
+        const intervalId = setInterval(getProxies, 120000); // 120000 milliseconds = 2 minutes
+      
+        // Cleanup the interval on component unmount
+        return () => clearInterval(intervalId);
+      
+      }, []);
 
 
     // helper to get IP
@@ -191,9 +161,9 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
         const query = e.target.value;
         setSearchQuery(query);
         const filtered = proxies.filter(proxy =>
-        proxy.host.toLowerCase().includes(query.toLowerCase()) ||
-        proxy.ip_addr.toLowerCase().includes(query.toLowerCase()) ||
-        proxy.location.toLowerCase().includes(query.toLowerCase())
+        proxy.walletAddress.toLowerCase().includes(query.toLowerCase()) ||
+        proxy.location.region.toLowerCase().includes(query.toLowerCase()) ||
+        proxy.location.ip.toLowerCase().includes(query.toLowerCase())
     );
         setFilteredProxies(filtered);
     }
@@ -369,7 +339,6 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
                     <p>IP Address</p>
                     <p>Location</p>
                     <p>Price</p>
-                    <p>Bandwidth</p>
                 </div>
                 <div className='proxy-list'>
                     {filteredProxies.map((proxy) => ( 
@@ -412,11 +381,10 @@ const ProxyPage = ({ sealTokenBalance, setSealTokenBalance, currentProxy, setcur
   
     return (
       <div className="proxy-item">
-            <p>{proxy.host}</p>
-            <p>{proxy.ip_addr}</p>
-            <p>{proxy.location}</p>
+            <p>{proxy.walletAddress}</p>
+            <p>{proxy.location.ip}</p>
+            <p>{proxy.location.region}</p>
             <p><span className='proxy-price'>{proxy.price} STK/Day</span></p>
-            <p>{proxy.bandwidth} Mbps</p>
         <div className="proxy-join">
           <button className="purchase-button" onClick={() => handlePurchase(proxy.price)}>
            Select
