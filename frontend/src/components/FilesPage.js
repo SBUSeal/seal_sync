@@ -136,23 +136,6 @@ const FilesPage = (props) => {
     return null
   }
 
-  async function triggerBlobDownload(url, filename) {
-    const response = await fetch(url, {
-      method: "GET"
-    })
-    const blob = await response.blob()
-    
-    // Trigger blob download
-    const a = document.createElement('a');
-    const obj_url = URL.createObjectURL(blob);
-    a.href = obj_url;
-    a.download = filename;  
-    document.body.appendChild(a);
-    a.click();
-    URL.revokeObjectURL(obj_url);
-    document.body.removeChild(a);
-    return blob
-  }
 
   async function downloadFile() {
     try {      
@@ -171,22 +154,17 @@ const FilesPage = (props) => {
         dateAdded: response.headers.get("DateAdded"),
         source: response.headers.get("Source")
       }      
-      
 
-      // If file > 50 MB, dont use a blob to download it
-      // Also means we wont be able to show a preview of it
-      let blob;
-      // if (downloadedFile.size > 50 * 1024 * 1024) {
-      //   blob = await triggerNonBlobDownload(url)
-      // }
-      // else {
-      //   blob = await triggerBlobDownload(url, downloadedFile.name)
-      // }
-      blob = await triggerNonBlobDownload(url)
-      downloadedFile.fileObject = blob
-
+      const newBalance = props.sealTokenBalance - downloadedFile.price;
+      if (newBalance < 0) {
+        alert("Insufficient funds, cannot download file")
+        setIsProvidersModalOpen(false)
+        setSelectedProvider(null)
+        setCid("")
+        return
+      }
+      await triggerNonBlobDownload(url)
       setFiles([...files, downloadedFile]);
-  
       const filtered = files.filter(file => {
         return (file.source === filter || filter === "All") && file.name.toLowerCase().includes(searchQuery.toLowerCase());
       });
@@ -195,6 +173,7 @@ const FilesPage = (props) => {
       setIsProvidersModalOpen(false)
       setSelectedProvider(null)
       setCid("")
+<<<<<<< HEAD
 
       const newBalance = props.sealTokenBalance - downloadedFile.price;
       if (newBalance < 0) {
@@ -203,6 +182,9 @@ const FilesPage = (props) => {
         showNotification("Insufficient funds, cannot download file", 'error');
         return
       }
+=======
+      
+>>>>>>> dev
       props.setSealTokenBalance(newBalance)
       //alert(`Successfully bought file for ${downloadedFile.price} STK!`)
       console.log(`Successfully bought file for ${downloadedFile.price} STK!`);
