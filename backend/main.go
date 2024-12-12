@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	node_id               = "114418346" // give your SBU ID
+	node_id               = "your_sbuID" // give your SBU ID
 	relay_node_addr       = "/ip4/130.245.173.221/tcp/4001/p2p/12D3KooWDpJ7As7BWAwRMfu1VU2WCqNjvq387JEYKDBj4kx6nXTN"
 	bootstrap_node_1_addr = "/ip4/130.245.173.221/tcp/6001/p2p/12D3KooWE1xpVccUXZJWZLVWPxXzUJQ7kMqN8UQ2WLn9uQVytmdA"
 	bootstrap_node_2_addr = "/ip4/130.245.173.222/tcp/61020/p2p/12D3KooWM8uovScE5NPihSCKhXe8sbgdJAi88i2aXT2MmwjGWoSX"
@@ -22,7 +22,7 @@ var (
 	WALLET_NAME           string
 	miningEnabled         = true
 	miningMutex           sync.Mutex
-	proxy_status 		  = false
+	proxy_status          = false
 )
 
 func enableCORS(next http.Handler) http.Handler {
@@ -105,7 +105,6 @@ func main() {
 
 	mux.HandleFunc("/getBalance", HandleGetBalance)
 	mux.HandleFunc("/getTransactions", HandleGetTransactions)
-
 
 	fmt.Println("Server is running on port 8080")
 	handler := enableCORS(mux)
