@@ -22,6 +22,7 @@ var (
 	WALLET_NAME           string
 	miningEnabled         = true
 	miningMutex           sync.Mutex
+	proxy_status 		  = false
 )
 
 func enableCORS(next http.Handler) http.Handler {
@@ -90,7 +91,13 @@ func main() {
 	mux.HandleFunc("/deleteDownloadedFile/{cid}", deleteDownloadedFile)
 
 	mux.HandleFunc("/enableProxy", func(w http.ResponseWriter, r *http.Request) {
-		enableProxy(w, r)
+		enableProxy(ctx, dht, w, r)
+	})
+	mux.HandleFunc("/disableProxy", func(w http.ResponseWriter, r *http.Request) {
+		disableProxy(ctx, w, r)
+	})
+	mux.HandleFunc("/proxies", func(w http.ResponseWriter, r *http.Request) {
+		getAvailableProxies(ctx, dht, node, w, r)
 	})
 
 	mux.HandleFunc("/startMining", HandleStartMining)

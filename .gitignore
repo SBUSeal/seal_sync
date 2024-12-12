@@ -29,5 +29,5 @@ backend/downloadedFileMap.json
 backend/unpublishedFiles.json
 backend/uploadedFileMap.json
 
-
+backend/proxyHistoryMap.json
 

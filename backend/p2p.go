@@ -266,6 +266,8 @@ func initializeNode() (host.Host, *dht.IpfsDHT) {
 	handleProviderInfoRequests(node)
 	handleFileRequests(node)
 
+	handleProxyProviderInfoRequests(node)
+
 	// Load file maps in
 	uploadedFileMap = LoadUploadedMap()
 	downloadedFileMap = LoadDownloadedMap()

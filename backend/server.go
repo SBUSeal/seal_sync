@@ -335,32 +335,54 @@ func generateCid(file io.Reader) cid.Cid {
 	return cid.NewCidV1(cid.Raw, mh)
 }
 
-// function for uploading to dht
-func enableProxy(w http.ResponseWriter, r *http.Request) {
-	// check if the method is valid
-	if r.Method != http.MethodPost {
+
+func generateProxyKey(key string) cid.Cid{
+	data := []byte(key)
+	hash := sha256.Sum256(data)
+	mh, err := multihash.EncodeName(hash[:], "sha2-256")
+	if err != nil {
+		log.Fatalf("error encoding multihash: %v", err)
+	}
+	c := cid.NewCidV1(cid.Raw, mh)
+	return c
+}
+
+// getting all providers of all available proxies from dht
+func getAvailableProxies(ctx context.Context, dht *dht.IpfsDHT, node host.Host, w http.ResponseWriter, r *http.Request) {
+	fmt.Println("REQUESTED TO FIND AVAILABLE PROXIES")
+	// must be a GET request
+	if r.Method != http.MethodGet {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-
-	// parse the form data
-	err := r.ParseMultipartForm(50 << 20) // For example, 10 MB max memory
-	if err != nil {
-		http.Error(w, "Error parsing form data", http.StatusBadRequest)
-		return
-	}
-	// Retrieve form values
-	ip := r.FormValue("ip")
-	price := r.FormValue("price")
-	port := r.FormValue("port")
-	dateAdded := r.FormValue("dateAdded")
-
-	fmt.Printf("Received proxy with IP: %s, Price: %s, Port: %s, Date Added: %s\n", ip, price, port, dateAdded)
-
-	// // Additional logic to add the proxy to the DHT here
-
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
-	responseJSON := `{"message": "Proxy enabled successfully", "ip": "` + ip + `"}`
-	w.Write([]byte(responseJSON))
+	results := []ProxyProviderInfo{}
+
+	cid := generateProxyKey("http_proxy_providers")
+	fmt.Println("FINDING PROVIDERS FOR CID: ", cid)
+
+	// search for all proxy providers
+	providers, err := dht.FindProviders(ctx, cid)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("ProxyProviders", providers)
+
+	// Get the providers peer ids
+	peerIDs := findAllPeerIDs(node, providers)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("PEERID: ", peerIDs)
+
+	for _, peerID := range peerIDs {
+		info := requestProxyProviderInfo(node, peerID)
+		results = append(results, info)
+	}
+	providersJson, err := json.Marshal(results)
+	if err != nil {
+		log.Fatal("marshalling error", err)
+	}
+	fmt.Printf("Sending JSON to client: %s", string(providersJson))
+	w.Write(providersJson)
 }
