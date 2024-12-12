@@ -14,11 +14,14 @@ const WalletPage = (props) => {
     const [pendingTransaction, setPendingTransaction] = useState(null);  
     const [notification, setNotification] = useState({ message: '', type: '' });
 
-    const sortedTransactions = [...transactions].sort((a, b) => {
+    var sortedTransactions = []
+    if (transactions){
+
+    sortedTransactions = [...transactions].sort((a, b) => {
         if (a.id < 3 && b.id < 3) return 0;
         return new Date(b.date) - new Date(a.date);
     });
-
+    }
 
     const displayedTransactions = sortedTransactions.slice(0, 5);
 
@@ -252,7 +255,7 @@ const convertCategory = (category) => {
             {/* Transaction History */}
             <div className="transaction-history">
                 <h3>Transaction History</h3>
-                {displayedTransactions.map((transaction) => (
+                {transactions && displayedTransactions.map((transaction) => (
                     <div key={transaction.txid} className="transaction-item">
                         <div className="transaction-column">
                             <p className="transaction-status">{convertCategory(transaction.category.toLowerCase())} SealToken</p>
@@ -277,7 +280,7 @@ const convertCategory = (category) => {
             </div>
 
             {/* Show More Button */}
-            {transactions.length > 1 && (
+            {transactions && transactions.length > 1 && (
                 <div className="show-more">
                     <button onClick={props.onShowMore} className="primary-button">
                         View All Transactions
