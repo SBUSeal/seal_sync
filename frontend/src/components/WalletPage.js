@@ -10,7 +10,6 @@ const WalletPage = (props) => {
     const transactions = props.transactions;
     const setTransactions = props.setTransactions;
     
-
     const [showModal, setShowModal] = useState(false);  
     const [pendingTransaction, setPendingTransaction] = useState(null);  
     const [notification, setNotification] = useState({ message: '', type: '' });
@@ -23,6 +22,10 @@ const WalletPage = (props) => {
 
     const displayedTransactions = sortedTransactions.slice(0, 5);
 
+
+    useEffect(() => {
+        props.fetchBalance(); 
+    }, [])
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -159,14 +162,12 @@ const convertCategory = (category) => {
 
      //** Test Button Logic **
      const handleAllNotificationsTest = () => {
-        console.log("Entered handleAllNotificationsTest with notifStatus: "+props.notifStatus);
         if (props.notifStatus === 'All') {
             showNotification("All Notifications Test Successful!", 'success');
         }
     };
 
     const handleUrgentNotificationsTest = () => {
-        console.log("Entered handleUrgentNotificationsTest with notifStatus: "+props.notifStatus);
         if (props.notifStatus === 'All' || props.notifStatus === 'Urgent') {
             showNotification("Urgent Notifications Test Successful!", 'success');
         }
@@ -255,13 +256,13 @@ const convertCategory = (category) => {
                             <p className="transaction-id">
                             {transaction.category === 'send'
                                     ? `To: ${transaction.address}` 
-                                    : transaction.category === 'recieve' && `From: ${transaction.address}` }
+                                    : ``}
                             </p>
                             <p className="transaction-reason">Reason: {transaction.comment || 'No reason provided'}</p>
                         </div>
                         <div className={`transaction-amount ${transaction.category.toLowerCase()}`}>
                             
-                            {(transaction.type === 'recieve' || 'generated')
+                            {(transaction.type === 'receive' || 'generated')
                                 ? `${transaction.amount} STK` 
                                 : `+ ${transaction.amount} STK`}
                         </div>

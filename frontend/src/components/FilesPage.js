@@ -200,7 +200,6 @@ const FilesPage = (props) => {
       },] )
 
     } catch (error) {
-      console.log("Error downloading")
       console.error(error)
     }
   }

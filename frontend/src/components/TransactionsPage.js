@@ -101,12 +101,12 @@ const TransactionsPage = (props) => {
                                 <p className="transaction-id">
                                     {transaction.category === 'send'
                                         ? `To: ${transaction.address}`
-                                        : transaction.category === 'recieved' && `From: ${transaction.address}` }
+                                        : `` }
                                 </p>
                                 <p className="transaction-reason">Reason: {transaction.comment || 'No reason provided'}</p>
                             </div>
                             <div className={`transaction-amount ${transaction.category.toLowerCase()}`}>
-                            {(transaction.type === 'recieved' || 'generated')
+                            {(transaction.type === 'receive' || 'generated')
                                     ? `${transaction.amount} STK`
                                     : `+ ${transaction.amount} STK`}
                             </div>

@@ -166,6 +166,7 @@ function App() {
             setTransactions={setTransactions}
             onShowMore={() => setActivePage('Transactions')} 
             notifStatus={notifStatus} 
+            fetchBalance={fetchBalance}
           />
         );
       case 'Proxy':
