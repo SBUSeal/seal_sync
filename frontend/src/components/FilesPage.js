@@ -174,7 +174,6 @@ const FilesPage = (props) => {
       setSelectedProvider(null)
       setCid("")
 
-      const newBalance = props.sealTokenBalance - downloadedFile.price;
       if (newBalance < 0) {
         //alert("Insufficient funds, cannot download file")
         console.log("Insufficient funds, cannot download file");
